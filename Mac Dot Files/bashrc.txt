@@ -32,10 +32,6 @@ alias la='ls -A'
 #alias l='ls -CF'
 
 
-#Make cding into my school project folder faster
-alias project5='cd ~/Desktop/"School Flash Drive"/Purdue/"Spring 2013"/"CS 251"/Project5'
-
-
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
