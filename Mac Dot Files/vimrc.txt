@@ -1,0 +1,21 @@
+"Enables line numbering
+set number
+
+"Enables Autoindent
+set autoindent 
+
+"Set the number of undos allowed
+set undolevels=1000
+
+"Syntax Highlighting
+filetype on
+filetype plugin on
+syntax on
+
+"Backspace will delete over end of line and indent characters and 
+"can delete previously modified text.
+set backspace=indent,eol,start
+
+"Set the color of the line numbers
+highlight LineNr ctermfg=LightGray  
+
