@@ -59,7 +59,7 @@ yellow='\e[0;93m'
 encColor='\e[0m'
 
 # Define an alias for a welcome splash screen
-welcome() {
+# I made mine show some cool ASCII art of my initials. Feel free to make your own!welcome() {
 clear
 echo "   __ _  ________    "
 echo "  /  ' \/ __/ __/___ "
@@ -69,5 +69,5 @@ echo "-------------------->"
 echo ""
 }
 
-# Display my welcome splash screen
+# Display your welcome splash screen
 welcome
