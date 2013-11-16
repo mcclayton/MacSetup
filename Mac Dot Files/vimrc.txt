@@ -1,9 +1,6 @@
 "Enables line numbering
 set number
 
-"Enables Autoindent
-set autoindent 
-
 "Set the number of undos allowed
 set undolevels=1000
 
@@ -19,3 +16,21 @@ set backspace=indent,eol,start
 "Set the color of the line numbers
 highlight LineNr ctermfg=LightGray  
 
+"Start scrolling when 8 lines away from margins
+set scrolloff=8
+
+"Mouse support
+set mouse=a
+
+"Enables Autoindent
+set autoindent
+"Use spaces instead of tab characters
+set expandtab
+"Helps with backspacing because of expand tab
+set smarttab
+"Number of spaces to use per tab
+set softtabstop=4
+"Number of spaces to use for autoindent
+set shiftwidth=4
+"Round indent to a multiple of shiftwidth
+set shiftround

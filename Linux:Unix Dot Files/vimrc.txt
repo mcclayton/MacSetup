@@ -10,10 +10,7 @@ augroup END
 hi CursorLineNR cterm=bold
 augroup CLNRSet
     autocmd! ColorScheme * hi CursorLineNR cterm=bold
-augroup END
-
-"Enables Autoindent
-set autoindent 
+augroup END 
 
 "Set the number of undos allowed
 set undolevels=1000
@@ -23,9 +20,26 @@ filetype on
 filetype plugin on
 syntax on
 
-"Backspace will delete over end of line and indent characters and 
-"can delete previously modified text.
+"Backspace will delete over end of line and indent characters and can delete previously modified text.
 set backspace=indent,eol,start
 
 highlight LineNr ctermfg=LightGray
 
+"Start scrolling when 8 lines away from margins
+set scrolloff=8
+
+"Mouse support
+set mouse=a
+
+"Enables Autoindent
+set autoindent
+"Use spaces instead of tab characters
+set expandtab
+"Helps with backspacing because of expand tab
+set smarttab
+"Number of spaces to use per tab
+set softtabstop=4
+"Number of spaces to use for autoindent
+set shiftwidth=4
+"Round indent to a multiple of shiftwidth
+set shiftround
