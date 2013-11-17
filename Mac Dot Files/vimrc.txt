@@ -41,3 +41,11 @@ set softtabstop=4
 set shiftwidth=4
 "Round indent to a multiple of shiftwidth
 set shiftround
+
+"Show current cursor position
+set ruler
+
+"Restore cursor to last cursor line position on file re-open
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
