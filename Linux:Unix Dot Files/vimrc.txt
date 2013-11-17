@@ -1,29 +1,27 @@
-"Enables line numbering
+"Enable line numbering
 set number
-
-"Highlight only the line number of the current line
-set cursorline
-hi clear CursorLine
-augroup CLClear
-    autocmd! ColorScheme * hi clear CursorLine
-augroup END
-hi CursorLineNR cterm=bold
-augroup CLNRSet
-    autocmd! ColorScheme * hi CursorLineNR cterm=bold
-augroup END 
-
-"Set the number of undos allowed
-set undolevels=1000
 
 "Syntax Highlighting
 filetype on
 filetype plugin on
 syntax on
 
+"Set the colorscheme to vividchalk (Must be in the '~/.vim/colors/' directory
+colorscheme vividchalk
+
+"Set the coloring of the line numbers
+highlight LineNr ctermfg=240 ctermbg=233
+
+"Highlight the current line
+set cursorline
+highlight CursorLine cterm=bold ctermbg=233
+highlight CursorLineNR ctermfg=242
+
+"Set the number of undos allowed
+set undolevels=1000
+
 "Backspace will delete over end of line and indent characters and can delete previously modified text.
 set backspace=indent,eol,start
-
-highlight LineNr ctermfg=LightGray
 
 "Start scrolling when 8 lines away from margins
 set scrolloff=8
