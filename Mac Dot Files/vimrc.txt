@@ -1,6 +1,9 @@
 "Enable line numbering
 set number
 
+"Always show the status line
+set laststatus=2
+
 "Syntax Highlighting
 filetype on
 filetype plugin on
@@ -49,3 +52,7 @@ set ruler
 if has("autocmd")
   au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 endif
+
+"Load in vim bundles using pathogen
+call pathogen#infect()
+call pathogen#helptags()

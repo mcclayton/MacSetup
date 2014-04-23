@@ -1,7 +1,7 @@
 DotFiles
 ========
 
-### Important: these configuration files are intended for Terminal Emulators with 256 color support. ###
+#### Important: these configuration files are intended for Terminal Emulators with 256 color support. ####
 
 My configuration files: (.bashrc, .profile, .vimrc)
 
