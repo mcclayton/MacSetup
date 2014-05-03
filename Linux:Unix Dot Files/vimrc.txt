@@ -1,4 +1,4 @@
-"Use the OS Clipboard
+"Use the OS clipboard
 set clipboard=unnamed
 
 "Enable line numbering
@@ -20,8 +20,8 @@ highlight LineNr ctermfg=240 ctermbg=233
 
 "Highlight the current line
 set cursorline
-highlight CursorLine cterm=bold ctermbg=233
-highlight CursorLineNR ctermfg=242
+highlight CursorLine cterm=bold ctermbg=235
+highlight CursorLineNR ctermfg=148
 
 "Set the number of undos allowed
 set undolevels=1000
@@ -50,6 +50,10 @@ set shiftround
 
 "Show current cursor position
 set ruler
+
+"No more annoying error bells and swap files
+set noerrorbells
+set noswapfile
 
 "Restore cursor to last cursor line position on file re-open
 if has("autocmd")
