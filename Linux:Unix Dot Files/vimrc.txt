@@ -17,11 +17,11 @@ colorscheme vividchalk
 
 "Set the coloring of the line numbers
 highlight LineNr ctermfg=240 ctermbg=233
-
+         
 "Highlight the current line
 set cursorline
 highlight CursorLine cterm=bold ctermbg=235
-highlight CursorLineNR ctermfg=148
+highlight CursorLineNR ctermbg=234 ctermfg=Yellow
 
 "Set the number of undos allowed
 set undolevels=1000
