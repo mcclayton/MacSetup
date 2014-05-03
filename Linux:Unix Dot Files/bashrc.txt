@@ -1,11 +1,14 @@
-# this file is processed on each interactive invocation of bash
+# This file is processed on each interactive invocation of bash
 
-# avoid problems with scp -- don't process the rest of the file if non-interactive
+export TERM=xterm-256color
+
+# Avoid problems with scp -- don't process the rest of the file if non-interactive
 [[ $- != *i* ]] && return
 
+# Nice short prompt
 PS1="`shorthostname` \! $ "
 
-# don't put duplicate lines or lines starting with space in the history.
+# Don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
 
@@ -39,39 +42,43 @@ fi
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
+    alias dir='dir --color=auto'
+    alias vdir='vdir --color=auto'
 
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
 fi
 
-# some more ls aliases
+# Some more ls aliases
 alias ll='ls -l'
 alias la='ls -A'
 #alias l='ls -CF'
 
 
-# enable programmable completion features (you don't need to enable
-# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-# sources /etc/bash.bashrc).
+# Enable programmable completion features (you don't need to enable
+# This, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# Sources /etc/bash.bashrc).
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 
-#Set autocompletion to ignore case
+# Set autocompletion to ignore case
 set completion-ignore-case on
 
-#Set default mail service
+# Set default mail service
 alias mail=mailx 
 
-# Define the color yellow
-yellow='\e[0;93m'
-encColor='\e[0m'
+export CLICOLOR=1
+export LSCOLORS=GxFxCxDxBxegedabagaced
+
+# Define some colors
+yellow='\033[1m'
+red='\e[1;31m'
+blue="\e[1;34m"
+endColor='\e[0m'
 
 # Define an alias for a welcome splash screen
-# I made mine show some cool ASCII art of my initials. Feel free to make your own!
 welcome() {
 clear
 echo -e "${yellow}   __ _  ________    ${endColor}"
@@ -81,5 +88,28 @@ echo -e "${yellow}/_/ Michael Clayton  ${endColor}"
 echo -e "${yellow}-------------------->${endColor}"
 echo ""
 }
-# Display your welcome splash screen
-welcome
+
+# Define an alias for a horse wearing a party hat. Why not?
+partyhorse() {
+echo -e "                      .                                                                                "
+echo -e "                     /|                                                                                "
+echo -e "                    /_|                                                                                "
+echo -e "               ,   /__|                                                                                "
+echo -e "              / \,,___:.\'|                                                                            "
+echo -e "           ,{{| /}}}}/_.'                                                                              "
+echo -e "          }}}}\` \'{{\'  \'.                                                                           "
+echo -e "        {{{{{    _   ;, \                                                                              "
+echo -e "     ,}}}}}}    /o\`\  \` ;)                                                                           "
+echo -e "    {{{{{{   /           (                                                                             "
+echo -e "    }}}}}}   |            \                                                                            "
+echo -e "   {{{{{{{{   \            \       ${blue} ___________________${endColor}                              "
+echo -e "   }}}}}}}}}   \'.__      _  |     ${blue}/                   \ ${endColor}                            "
+echo -e "   {{{{{{{{       /\`._  (_\ /     ${blue}<${endColor}  ${yellow}Welcome, Michael. ${blue}|${endColor} "
+echo -e "    }}}}}}'      |    //___/       ${blue}\___________________/${endColor}                             "
+echo -e "    \`{{{{\`       |     '--'                                                                          "
+echo -e "     }}}'                                                                                              "
+}
+
+# Display the welcome splash screen
+# welcome
+partyhorse
