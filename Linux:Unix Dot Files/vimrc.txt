@@ -55,6 +55,9 @@ set ruler
 set noerrorbells
 set noswapfile
 
+"Reset highlighting on exit
+au VimLeave * hi clear
+
 "Restore cursor to last cursor line position on file re-open
 if has("autocmd")
   au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
