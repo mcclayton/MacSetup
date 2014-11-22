@@ -72,7 +72,7 @@ fi
 set completion-ignore-case on
 
 # Set default mail service
-alias mail=mailx 
+alias mail=mailx
 
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
@@ -85,36 +85,36 @@ endColor='\e[0m'
 
 # Define an alias for a welcome splash screen
 welcome() {
-clear
-echo -e "${yellow}   __ _  ________    ${endColor}"
-echo -e "${yellow}  /  ' \/ __/ __/___ ${endColor}"
-echo -e "${yellow} / /_/_/\__/\______/ ${endColor}"
-echo -e "${yellow}/_/ Michael Clayton  ${endColor}"
-echo -e "${yellow}-------------------->${endColor}"
-echo ""
+  clear
+  echo -e "${yellow}   __ _  ________    ${endColor}"
+  echo -e "${yellow}  /  ' \/ __/ __/___ ${endColor}"
+  echo -e "${yellow} / /_/_/\__/\______/ ${endColor}"
+  echo -e "${yellow}/_/ Michael Clayton  ${endColor}"
+  echo -e "${yellow}-------------------->${endColor}"
+  echo ""
 }
 
 # Define an alias for a horse wearing a party hat. Why not?
 partyhorse() {
-echo -e "                      .                                                                                "
-echo -e "                     /|                                                                                "
-echo -e "                    /_|                                                                                "
-echo -e "               ,   /__|                                                                                "
-echo -e "              / \,,___:.\'|                                                                            "
-echo -e "           ,{{| /}}}}/_.'                                                                              "
-echo -e "          }}}}\` \'{{\'  \'.                                                                           "
-echo -e "        {{{{{    _   ;, \                                                                              "
-echo -e "     ,}}}}}}    /o\`\  \` ;)                                                                           "
-echo -e "    {{{{{{   /           (                                                                             "
-echo -e "    }}}}}}   |            \                                                                            "
-echo -e "   {{{{{{{{   \            \       ${blue} ___________________${endColor}                              "
-echo -e "   }}}}}}}}}   \'.__      _  |     ${blue}/                   \ ${endColor}                            "
-echo -e "   {{{{{{{{       /\`._  (_\ /     ${blue}<${endColor}  ${yellow}Welcome, Michael. ${blue}|${endColor} "
-echo -e "    }}}}}}'      |    //___/       ${blue}\___________________/${endColor}                             "
-echo -e "    \`{{{{\`       |     '--'                                                                          "
-echo -e "     }}}'                                                                                              "
+  echo -e "                      .                                      "
+  echo -e "                     /|                                      "
+  echo -e "                    /_|                                      "
+  echo -e "               ,   /__|                                      "
+  echo -e "              / \,,___:\'|                                   "
+  echo -e "           ,{{| /}}}}/_.'                                    "
+  echo -e "          }}}}\` \'{{\'  \'.                                 "
+  echo -e "        {{{{{    _   ;, \                                    "
+  echo -e "     ,}}}}}}    /o\`\  \` ;)                                 "
+  echo -e "    {{{{{{   /           (                                   "
+  echo -e "    }}}}}}   |            \       ${blue}_______________________${endColor}    "
+  echo -e "   {{{{{{{{   \            \     ${blue}/${endColor}    ${yellow}__ _  ________${endColor}     ${blue}\ ${endColor}   "
+  echo -e "   }}}}}}}}}   \'.__      _  |  ${blue}/${endColor}    ${yellow}/  ' \/ __/ __/___${endColor}   ${blue}| ${endColor}  "
+  echo -e "   {{{{{{{{       /\`._  (_\ /  ${blue}<${endColor}    ${yellow}/ /_/_/\__/\______/${endColor}   ${blue}|${endColor} "
+  echo -e "    }}}}}}'      |    //___/    ${blue}\ ${endColor} ${yellow}/_/ Michael Clayton${endColor}    ${blue}| ${endColor} "
+  echo -e "    \`{{{{\`       |     '--'    ${blue}  \_______________________/ ${endColor}"
+  echo -e "     }}}'                                                    "
 }
 
 # Display the welcome splash screen
-# welcome
-partyhorse
+#partyhorse
+welcome
