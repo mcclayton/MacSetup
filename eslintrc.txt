@@ -67,11 +67,5 @@
         "consistent-return": 0,
         "no-underscore-dangle": 0,
         "quotes": 0
-    },
-    "globals": {
-        "app": true,
-        "App": true,
-        "KeyMaker": true,
-        "YT": true
     }
 }
