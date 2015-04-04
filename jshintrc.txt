@@ -1,0 +1,11 @@
+{
+    "node": true,               // Node.js
+    "browser": true,            // Standard browser globals e.g. `window`, `document`.
+    "esnext": true,             // ECMAScript 6 specific syntax
+    "curly": true,              // Require curly braces for every new block or scope.
+    "immed": true,              // Require immediate invocations to be wrapped in parens
+    "noarg": true,              // Prohibit use of `arguments.caller` and `arguments.callee`.
+    "undef": true,              // Require all non-global variables be declared before they are used.
+    "unused": "vars",           // Check for unused vars
+    "strict" : false            // Require `use strict` pragma in every file.
+}
