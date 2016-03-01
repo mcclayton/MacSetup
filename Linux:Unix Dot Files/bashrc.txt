@@ -32,15 +32,18 @@ parse_git_branch() {
 # Enable color support, should work with all modern terminals
 if [ "$TERM" != "dumb" ]; then
 
-	# Enable colors
-	if [ "`uname`" != "SunOS" ]; then
-		eval `dircolors -b`
-		alias ls="ls --color=auto"
-		alias grep="grep --color=auto"
-	fi
+    # Enable colors
+    if [ "`uname`" != "SunOS" ]; then
+        eval `dircolors -b`
+        alias ls="ls --color=auto"
+        alias grep="grep --color=auto"
+    fi
 
-	# Nice pretty color prompt with the current host and our current directory
-        PS1="\[\033[01;32m\]\u@\h:\[\033[01;34m\]\w\[\033[00m\]\[\033[01;31m\]\$(parse_git_branch) \[\033[01;32m\]$ "
+    # Nice pretty color prompt with the current host and our current directory
+    INITIALS='MCC'
+    SYMBOL='༇'
+    RED='\[\033[01;31m\]'; GRAY='\[\033[01;30m\]'; BLUE='\[\033[01;34m\]'; GREEN='\[\033[01;32m\]'
+    PS1="$RED$SYMBOL  $GRAY$INITIALS:$BLUE\w$RED\$(parse_git_branch) $GREEN$ "
 fi
 
 # Enable color support of ls and also add handy aliases
@@ -85,34 +88,34 @@ endColor='\e[0m'
 
 # Define an alias for a welcome splash screen
 welcome() {
-  clear
-  echo -e "${yellow}   __ _  ________    ${endColor}"
-  echo -e "${yellow}  /  ' \/ __/ __/___ ${endColor}"
-  echo -e "${yellow} / /_/_/\__/\______/ ${endColor}"
-  echo -e "${yellow}/_/ Michael Clayton  ${endColor}"
-  echo -e "${yellow}-------------------->${endColor}"
-  echo ""
+    clear
+    echo -e "${yellow}   __ _  ________    ${endColor}"
+    echo -e "${yellow}  /  ' \/ __/ __/___ ${endColor}"
+    echo -e "${yellow} / /_/_/\__/\______/ ${endColor}"
+    echo -e "${yellow}/_/ Michael Clayton  ${endColor}"
+    echo -e "${yellow}-------------------->${endColor}"
+    echo ""
 }
 
 # Define an alias for a horse wearing a party hat. Why not?
 partyhorse() {
-  echo -e "                      .                                      "
-  echo -e "                     /|                                      "
-  echo -e "                    /_|                                      "
-  echo -e "               ,   /__|                                      "
-  echo -e "              / \,,___:\'|                                   "
-  echo -e "           ,{{| /}}}}/_.'                                    "
-  echo -e "          }}}}\` \'{{\'  \'.                                 "
-  echo -e "        {{{{{    _   ;, \                                    "
-  echo -e "     ,}}}}}}    /o\`\  \` ;)                                 "
-  echo -e "    {{{{{{   /           (                                   "
-  echo -e "    }}}}}}   |            \       ${blue}_______________________${endColor}    "
-  echo -e "   {{{{{{{{   \            \     ${blue}/${endColor}    ${yellow}__ _  ________${endColor}     ${blue}\ ${endColor}   "
-  echo -e "   }}}}}}}}}   \'.__      _  |  ${blue}/${endColor}    ${yellow}/  ' \/ __/ __/___${endColor}   ${blue}| ${endColor}  "
-  echo -e "   {{{{{{{{       /\`._  (_\ /  ${blue}<${endColor}    ${yellow}/ /_/_/\__/\______/${endColor}   ${blue}|${endColor} "
-  echo -e "    }}}}}}'      |    //___/    ${blue}\ ${endColor} ${yellow}/_/ Michael Clayton${endColor}    ${blue}| ${endColor} "
-  echo -e "    \`{{{{\`       |     '--'    ${blue}  \_______________________/ ${endColor}"
-  echo -e "     }}}'                                                    "
+    echo -e "                      .                                      "
+    echo -e "                     /|                                      "
+    echo -e "                    /_|                                      "
+    echo -e "               ,   /__|                                      "
+    echo -e "              / \,,___:\'|                                   "
+    echo -e "           ,{{| /}}}}/_.'                                    "
+    echo -e "          }}}}\` \'{{\'  \'.                                 "
+    echo -e "        {{{{{    _   ;, \                                    "
+    echo -e "     ,}}}}}}    /o\`\  \` ;)                                 "
+    echo -e "    {{{{{{   /           (                                   "
+    echo -e "    }}}}}}   |            \       ${blue}_______________________${endColor}    "
+    echo -e "   {{{{{{{{   \            \     ${blue}/${endColor}    ${yellow}__ _  ________${endColor}     ${blue}\ ${endColor}   "
+    echo -e "   }}}}}}}}}   \'.__      _  |  ${blue}/${endColor}    ${yellow}/  ' \/ __/ __/___${endColor}   ${blue}| ${endColor}  "
+    echo -e "   {{{{{{{{       /\`._  (_\ /  ${blue}<${endColor}    ${yellow}/ /_/_/\__/\______/${endColor}   ${blue}|${endColor} "
+    echo -e "    }}}}}}'      |    //___/    ${blue}\ ${endColor} ${yellow}/_/ Michael Clayton${endColor}    ${blue}| ${endColor} "
+    echo -e "    \`{{{{\`       |     '--'    ${blue}  \_______________________/ ${endColor}"
+    echo -e "     }}}'                                                    "
 }
 
 # Display the welcome splash screen
