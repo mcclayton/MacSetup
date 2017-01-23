@@ -1,3 +1,9 @@
+"256 Color Support
+set t_Co=256
+
+"UTF-8 Support
+set encoding=utf-8
+
 "Use the OS clipboard
 set clipboard=unnamed
 
@@ -17,11 +23,11 @@ colorscheme vividchalk
 
 "Set the coloring of the line numbers
 highlight LineNr ctermfg=240 ctermbg=233
-         
+
 "Highlight the current line
 set cursorline
-highlight CursorLine cterm=bold ctermbg=235
-highlight CursorLineNR ctermbg=234 ctermfg=Yellow
+highlight CursorLine cterm=bold ctermbg=233
+highlight CursorLineNR ctermfg=242
 
 "Set the number of undos allowed
 set undolevels=1000
@@ -66,3 +72,9 @@ endif
 "Load in vim bundles using pathogen
 call pathogen#infect()
 call pathogen#helptags()
+
+"Enable airline powerline fonts
+let g:airline_powerline_fonts = 1
+
+"Map Ctrl+n to open nerdtree
+map <C-n> :NERDTreeToggle<CR>
