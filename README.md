@@ -12,3 +12,6 @@ Configuration files are tailored for Macintosh or Unix/Linux Machines.
 Feel free to pick and choose what features you want.
 
 Enjoy!
+
+Note: Since the vim/bundles are git submodules, you will need to manually clone those into those folders.
+I will be creating an installation script or installation steps to make this easier in the future.
