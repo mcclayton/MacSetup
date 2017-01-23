@@ -3,9 +3,6 @@
 # Avoid problems with scp -- don't process the rest of the file if non-interactive
 [[ $- != *i* ]] && return
 
-# Nice short prompt
-PS1="`shorthostname` \! $ "
-
 # Don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -21,28 +18,21 @@ HISTFILESIZE=2000
 # Update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
-
-
 # Git branch in prompt.
 parse_git_branch() {
- git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
 
 # Enable color support, should work with all modern terminals
 if [ "$TERM" != "dumb" ]; then
-
-    # Enable colors
-    if [ "`uname`" != "SunOS" ]; then
-        eval `dircolors -b`
-        alias ls="ls --color=auto"
-        alias grep="grep --color=auto"
-    fi
-
-    # Nice pretty color prompt with the current host and our current directory
+	# Nice pretty color prompt with the current host and our current directory
     INITIALS='MCC'
     SYMBOL='༇'
+    TIBETAN_SYMBOL='࿓'
+    #RED='\[\033[01;31m\]'; GRAY='\[\033[01;30m\]'; BLUE='\[\033[01;34m\]'; GREEN='\[\033[01;32m\]'
+	#PS1="$RED$SYMBOL  $GRAY$INITIALS:$BLUE\w$RED\$(parse_git_branch) $GREEN$ \e[0m"
     RED='\[\033[01;31m\]'; GRAY='\[\033[01;30m\]'; BLUE='\[\033[01;34m\]'; GREEN='\[\033[01;32m\]'
-    PS1="$RED$SYMBOL  $GRAY$INITIALS:$BLUE\w$RED\$(parse_git_branch) $GREEN$ "
+    PS1="\[$RED$TIBETAN_SYMBOL  $GRAY$INITIALS:$BLUE\w$RED\$(parse_git_branch) $GREEN$ \[\e[0m\]"
 fi
 
 # Enable color support of ls and also add handy aliases
@@ -57,11 +47,9 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
-
 # Some more ls aliases
 alias ll='ls -l'
 alias la='ls -A'
-#alias l='ls -CF'
 
 
 # Enable programmable completion features (you don't need to enable
@@ -80,44 +68,104 @@ alias mail=mailx
 export CLICOLOR=1
 export LSCOLORS=GxFxCxDxBxegedabagaced
 
-# Define some colors
-yellow='\033[1m'
-red='\e[1;31m'
-blue="\e[1;34m"
-endColor='\e[0m'
-
 # Define an alias for a welcome splash screen
 welcome() {
     clear
-    echo -e "${yellow}   __ _  ________    ${endColor}"
-    echo -e "${yellow}  /  ' \/ __/ __/___ ${endColor}"
-    echo -e "${yellow} / /_/_/\__/\______/ ${endColor}"
-    echo -e "${yellow}/_/ Michael Clayton  ${endColor}"
-    echo -e "${yellow}-------------------->${endColor}"
+    echo "   __ _  ________    "
+    echo "  /  ' \/ __/ __/___ "
+    echo " / /_/_/\__/\______/ "
+    echo "/_/ Michael Clayton  "
+    echo "-------------------->"
     echo ""
+}
+
+# Open up the network tab of a github project. First argument is the Github org. or user
+network() {
+    REPO_NAME=$(basename `git rev-parse --show-toplevel`)
+    echo $REPO_NAME
+    /usr/bin/open -a "/Applications/Google Chrome.app" "https://github.com/$1/$REPO_NAME/network"
+}
+
+#Display text in rainbow if lolcat installed, else regular text
+rainbowtext() {
+    if hash lolcat 2>/dev/null; then
+        printf "$1" | lolcat
+    else
+        printf "$1"
+    fi
 }
 
 # Define an alias for a horse wearing a party hat. Why not?
 partyhorse() {
-    echo -e "                      .                                      "
-    echo -e "                     /|                                      "
-    echo -e "                    /_|                                      "
-    echo -e "               ,   /__|                                      "
-    echo -e "              / \,,___:\'|                                   "
-    echo -e "           ,{{| /}}}}/_.'                                    "
-    echo -e "          }}}}\` \'{{\'  \'.                                 "
-    echo -e "        {{{{{    _   ;, \                                    "
-    echo -e "     ,}}}}}}    /o\`\  \` ;)                                 "
-    echo -e "    {{{{{{   /           (                                   "
-    echo -e "    }}}}}}   |            \       ${blue}_______________________${endColor}    "
-    echo -e "   {{{{{{{{   \            \     ${blue}/${endColor}    ${yellow}__ _  ________${endColor}     ${blue}\ ${endColor}   "
-    echo -e "   }}}}}}}}}   \'.__      _  |  ${blue}/${endColor}    ${yellow}/  ' \/ __/ __/___${endColor}   ${blue}| ${endColor}  "
-    echo -e "   {{{{{{{{       /\`._  (_\ /  ${blue}<${endColor}    ${yellow}/ /_/_/\__/\______/${endColor}   ${blue}|${endColor} "
-    echo -e "    }}}}}}'      |    //___/    ${blue}\ ${endColor} ${yellow}/_/ Michael Clayton${endColor}    ${blue}| ${endColor} "
-    echo -e "    \`{{{{\`       |     '--'    ${blue}  \_______________________/ ${endColor}"
-    echo -e "     }}}'                                                    "
+    clear
+    ph="                      .                                          \n"
+	ph="$ph                     /|                                       \n"
+	ph="$ph                    /_|                                       \n"
+	ph="$ph               ,   /__|                                       \n"
+	ph="$ph              / \,,___:\'|                                    \n"
+	ph="$ph           ,{{| /}}}}/_.'                                     \n"
+	ph="$ph          }}}}\` \'{{\'  \'.                                  \n"
+	ph="$ph        {{{{{    _   ;, \                                     \n"
+	ph="$ph     ,}}}}}}    /o\`\  \` ;)                                  \n"
+	ph="$ph    {{{{{{   /           (                                    \n"
+	ph="$ph    }}}}}}   |            \       _______________________     \n"
+	ph="$ph   {{{{{{{{   \            \     /    __ _  ________     \    \n"
+	ph="$ph   }}}}}}}}}   \'.__      _  |   /    /  ' \/ __/ __/___   |  \n"
+	ph="$ph   {{{{{{{{       /\`._  (_\ /  <    / /_/_/\__/\______/   |  \n"
+	ph="$ph    }}}}}}'      |    //___/    \  /_/ Michael Clayton    |   \n"
+	ph="$ph    \`{{{{\`       |     '--'      \_______________________/  \n"
+	ph="$ph     }}}'                                                     \n"
+    ph="$ph                                                              \n"
+    rainbowtext "$ph"
+}
+
+# Get logs for a specified heroku app
+hlogs() {
+    APP_NAME=$1
+    if [ ! -z "$APP_NAME" ]; then
+        heroku logs -t --app $APP_NAME
+    else
+        echo "Error: No heroku app name specified."
+    fi
+}
+
+# Shows the diff changes of each stashed commit. Press [Q] to exit each stash
+showStashes() {
+	git stash list | awk -F: '{ print "\n\n\n\n"; print $0; print "\n\n"; system("git stash show -p " $1); }'
+}
+
+# Force replace a local branch with the remote branch
+replaceBranch() {
+    BRANCH_NAME=$1
+    if [ ! -z "$BRANCH_NAME" ]; then
+        echo "-- Deleting local branch $BRANCH_NAME..."
+        git branch -D $BRANCH_NAME
+        echo "-- Fetching origin branch $BRANCH_NAME..."
+        git fetch origin $BRANCH_NAME
+        echo "-- Checking out new branch $BRANCH_NAME..."
+        git checkout -b $BRANCH_NAME origin/$BRANCH_NAME
+    else
+        echo "Error: branch name specified."
+    fi
+}
+
+# Simple startup aliases
+startCassandra() {
+    sudo cassandra -f
+}
+startZookeeper() {
+    /usr/local/opt/kafka/bin/zookeeper-server-start.sh /usr/local/etc/kafka/zookeeper.properties
+}
+startKafka() {
+    /usr/local/opt/kafka/bin/kafka-server-start.sh /usr/local/etc/kafka/server.properties
+}
+stopKafka() {
+    /usr/local/opt/kafka/bin/kafka-server-stop.sh /usr/local/etc/kafka/server.properties
+}
+startRedis() {
+    redis-server
 }
 
 # Display the welcome splash screen
-#partyhorse
-welcome
+partyhorse
+#welcome
