@@ -69,5 +69,8 @@ call pathogen#helptags()
 "Enable airline powerline fonts
 let g:airline_powerline_fonts = 1
 
+"Display the status line always
+set laststatus=2
+
 "Map Ctrl+n to open nerdtree
 map <C-n> :NERDTreeToggle<CR>
