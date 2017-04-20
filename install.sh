@@ -24,6 +24,10 @@ success() {
     echo "-> $1 ✔"
 }
 
+fail() {
+    echo "-> $1 ✘"
+}
+
 promptNewSection() {
     echo
     echo "|=== $1 ===|"
@@ -31,9 +35,25 @@ promptNewSection() {
 }
 
 manualAction() {
-    echo "[MANUAL ACTION REQUIRED]: $1"
+    echo -e "[MANUAL ACTION REQUIRED]: $1"
     read -p "   => Press Enter To Continue:"
 }
+
+# Set up Xcode command line tools
+promptNewSection "XCODE COMMAND LINE TOOLS"
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    info "Installing Xcode Command Line Tools"
+    xcode-select --install
+    # Test to ensure successful install
+    if hash gcc 2>/dev/null; then
+        success "XCode CLT installed"
+    else
+        fail "XCode CLT failed to install"
+    fi
+else
+    # Skip this installation section
+    info "Skipping..."
+fi
 
 # Set up fonts
 promptNewSection "SETTING UP FONTS"
@@ -110,6 +130,42 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     success "supertab plugin added"
     git clone git://github.com/tpope/vim-fugitive.git ~/.vim/bundle/vim-fugitive
     success "vim-fugitive plugin added"
+else
+    # Skip this installation section
+    info "Skipping..."
+fi
+
+# Get vim plugins
+promptNewSection "PACKAGES"
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    info "Installing lolcat"
+    if hash lolcat 2>/dev/null; then
+        info "lolcat is already installed"
+    else
+        gem install lolcat
+    fi
+    # Test to ensure successful install
+    if hash lolcat 2>/dev/null; then
+        success "lolcat installed"
+    else
+        fail "lolcat failed to install"
+    fi
+else
+    # Skip this installation section
+    info "Skipping..."
+fi
+
+# Set up iTerm2
+promptNewSection "SETTING UP iTERM2"
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    info "Moving iTerm.app to Applications"
+    rm -rf /Applications/iTerm.app
+    cp -r ./iTerm2/iTerm.app /Applications/iTerm.app
+    success "iTerm.app added to Application"
+
+    info "Opening iTerm.app"
+    open /Applications/iTerm.app
+    manualAction "In iTerm, Go to: iTerm->Preferences->General and load preferences from a custom folder or URL.\n Select ./iTerm2/com.googlecode.iterm2.plist"
 else
     # Skip this installation section
     info "Skipping..."
