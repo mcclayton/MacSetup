@@ -135,25 +135,27 @@ else
     info "Skipping..."
 fi
 
-# Get vim plugins
-promptNewSection "PACKAGES"
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    info "Installing lolcat"
-    if hash lolcat 2>/dev/null; then
-        info "lolcat is already installed"
-    else
-        gem install lolcat
-    fi
-    # Test to ensure successful install
-    if hash lolcat 2>/dev/null; then
-        success "lolcat installed"
-    else
-        fail "lolcat failed to install"
-    fi
-else
-    # Skip this installation section
-    info "Skipping..."
-fi
+
+# Get packages
+#promptNewSection "PACKAGES"
+#if [[ $REPLY =~ ^[Yy]$ ]]; then
+#    info "Installing lolcat"
+#    if hash lolcat 2>/dev/null; then
+#        info "lolcat is already installed"
+#    else
+#        gem install lolcat
+#    fi
+#    # Test to ensure successful install
+#    if hash lolcat 2>/dev/null; then
+#        success "lolcat installed"
+#    else
+#        fail "lolcat failed to install"
+#    fi
+#else
+#    # Skip this installation section
+#    info "Skipping..."
+#fi
+
 
 # Set up iTerm2
 promptNewSection "SETTING UP iTERM2"
