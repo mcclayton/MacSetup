@@ -1,18 +1,15 @@
 #!/bin/bash
 
-# Intro
-echo " _____           _        _ _ "
-echo "|_   _|         | |      | | |"
-echo "  | |  _ __  ___| |_ __ _| | |"
-echo "  | | | '_ \/ __| __/ _\` | | |"
-echo " _| |_| | | \__ \ || (_| | | |"
-echo "|_____|_| |_|___/\__\__,_|_|_|"
-echo ""
+# HELPER FUNCTIONS
 
 prompt() {
     echo "   => $1 "
     read -p "      [Y/n] " -r
     echo
+}
+
+warn() {
+    echo "⚠ $1"
 }
 
 info() {
@@ -28,6 +25,16 @@ fail() {
     echo "-> $1 ✘"
 }
 
+assertInstallation() {
+    # $1 is command to assert existence in order to verify correct installation
+    # $2 is command to assert existence in order to verify correct installation
+    if hash $1 2>/dev/null; then
+        success "Successfully installed $2"
+    else
+        fail "Failed to install $2"
+    fi
+}
+
 promptNewSection() {
     echo
     echo "|=== $1 ===|"
@@ -39,17 +46,50 @@ manualAction() {
     read -p "   => Press Enter To Continue:"
 }
 
+
+
+# Intro
+echo " _____           _        _ _ "
+echo "|_   _|         | |      | | |"
+echo "  | |  _ __  ___| |_ __ _| | |"
+echo "  | | | '_ \/ __| __/ _\` | | |"
+echo " _| |_| | | \__ \ || (_| | | |"
+echo "|_____|_| |_|___/\__\__,_|_|_|"
+echo ""
+
+# Check to make sure script is not initially run as root.
+if [ "$EUID" -eq 0 ]
+  then
+  warn "Please do not run entire script as root."
+  info "Exiting..."
+  exit
+fi
+
 # Set up Xcode command line tools
 promptNewSection "XCODE COMMAND LINE TOOLS"
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     info "Installing Xcode Command Line Tools"
     xcode-select --install
     # Test to ensure successful install
-    if hash gcc 2>/dev/null; then
-        success "XCode CLT installed"
+    assertInstallation gcc "Xcode CLT"
+else
+    # Skip this installation section
+    info "Skipping..."
+fi
+
+# Set up homebrew
+promptNewSection "HOMEBREW PACKAGE MANAGER"
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    info "Installing Homebrew package manager"
+    # Install Brew if it isn't already
+    if hash brew 2>/dev/null; then
+        info "Brew is already installed"
     else
-        fail "XCode CLT failed to install"
+        ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     fi
+
+    # Test to ensure successful install
+    assertInstallation brew "homebrew"
 else
     # Skip this installation section
     info "Skipping..."
@@ -145,12 +185,8 @@ fi
 #    else
 #        gem install lolcat
 #    fi
-#    # Test to ensure successful install
-#    if hash lolcat 2>/dev/null; then
-#        success "lolcat installed"
-#    else
-#        fail "lolcat failed to install"
-#    fi
+#    # Test to ensure successful install'
+#    assertInstallation lolcat "lolcat"
 #else
 #    # Skip this installation section
 #    info "Skipping..."
