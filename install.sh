@@ -30,6 +30,26 @@ promptNewSection() {
     prompt "Proceed with section?"
 }
 
+manualAction() {
+    echo "[MANUAL ACTION REQUIRED]: $1"
+    read -p "   => Press Enter To Continue:"
+}
+
+# Set up fonts
+promptNewSection "SETTING UP FONTS"
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    info "Opening Inconsolata-g.otf font"
+    open ./fonts/Inconsolata-g.otf
+    manualAction "Press Install Font Button for Inconsolata-g.otf"
+
+    info "Opening Powerline Inconsolata-g font"
+    open ./fonts/'Inconsolata-g for Powerline.otf'
+    manualAction "Press Install Font Button for Inconsolata-g for Powerline.otf"
+else
+    # Skip this installation section
+    info "Skipping..."
+fi
+
 promptNewSection "SETTING UP TOP-LEVEL DOT FILES"
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     info "Replacing top-level dot files"
