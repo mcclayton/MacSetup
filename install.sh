@@ -197,16 +197,27 @@ fi
 
 # Get vim plugins
 promptNewSection "FETCHING VIM PLUGINS"
+
+repoName() {
+  basename "$1" | sed 's;.git;;g'
+}
+
 if [[ $REPLY =~ ^[Yy]$ ]]; then
+    vimPlugins=(
+      "git://github.com/vim-airline/vim-airline.git"
+      "git://github.com/scrooloose/nerdtree.git"
+      "git://github.com/ervandew/supertab.git"
+      "git://github.com/tpope/vim-fugitive.git"
+    )
+
     info "Cloning plugins"
-    git clone https://github.com/vim-airline/vim-airline.git ~/.vim/bundle/vim-airline
-    success "vim-airline plugin added"
-    git clone https://github.com/scrooloose/nerdtree.git ~/.vim/bundle/nerdtree
-    success "nerdtree plugin added"
-    git clone https://github.com/ervandew/supertab.git ~/.vim/bundle/supertab
-    success "supertab plugin added"
-    git clone git://github.com/tpope/vim-fugitive.git ~/.vim/bundle/vim-fugitive
-    success "vim-fugitive plugin added"
+
+    for pluginUrl in "${vimPlugins[@]}"; do
+        repoName=$(repoName "$pluginUrl")
+        cloneToPath="~/.vim/bundle/$repoName"
+        git clone "$pluginUrl" "~/.vim/bundle/$repoName"
+        success "$repoName plugin added to $cloneToPath"
+    done
 else
     # Skip this installation section
     info "Skipping..."
