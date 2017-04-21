@@ -24,6 +24,7 @@ prompt() {
 
 warn() {
     echo "$YELLOW ⚠ $1 $RESET_COLOR"
+    echo
 }
 
 info() {
@@ -33,10 +34,37 @@ info() {
 
 success() {
     echo -e "$GREEN ✔ $1 $RESET_COLOR"
+    echo
 }
 
 fail() {
     echo -e "$RED ✘ $1 $RESET_COLOR"
+    echo
+}
+
+# Gets the repo name given a full git url
+repoName() {
+    basename "$1" | sed 's;.git;;g'
+}
+
+# Backs up file $1 (if it exists) to location $2
+backupFile() {
+    if [ ! -f $1 ]; then
+        warn "$1 Does not exist, skipping backup"
+    else
+        cp $1 $2
+        success "Backed up $1 to $2"
+    fi
+}
+
+# Backs up file $1 (if it exists) to location $2
+backupDir() {
+    if [ ! -f $1 ]; then
+        warn "$1 Does not exist, skipping backup"
+    else
+        cp -r $1 $2
+        success "Backed up $1 to $2"
+    fi
 }
 
 assertInstallation() {
@@ -98,8 +126,9 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     info "Configuring git"
     # Backup files
     mkdir -p ~/dotfileBackups
-    cp ~/.gitconfig ~/dotfileBackups/.gitconfig
-    success "Backed up ~/.gitconfig to ~/dotfileBackups/.gitconfig"
+    backupFile ~/.gitconfig ~/dotfileBackups/.gitconfig
+
+    # Set .gitconfig
     cp ./gitconfig.txt ~/.gitconfig
     success "~/.gitconfig set"
     # Set Github Username and email
@@ -149,60 +178,56 @@ fi
 
 promptNewSection "SETTING UP TOP-LEVEL DOT FILES"
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    info "Replacing top-level dot files"
-    # Backup top-level dot files
-    mkdir -p ~/dotfileBackups
-    cp ~/.bashrc ~/dotfileBackups/.bashrc
-    success "Backed up ~/.bashrc to ~/dotfileBackups/.bashrc"
-    cp ~/.bash_profile ~/dotfileBackups/.bash_profile
-    success "Backed up ~/.bash_profile to ~/dotfileBackups/.bash_profile"
-    cp ~/.vimrc ~/dotfileBackups/.vimrc
-    success "Backed up ~/.vimrc to ~/dotfileBackups/.vimrc"
-    cp ~/.profile ~/dotfileBackups/.profile
-    success "Backed up ~/.profile to ~/dotfileBackups/.profile"
-
     # Set new top-level dot files
-    cp ./'Mac Dot Files'/bashrc.txt ~/.bashrc
-    success "~/.bashrc set"
-    cp ./'Mac Dot Files'/bash_profile.txt ~/.bash_profile
-    success "~/.bash_profile set"
-    cp ./'Mac Dot Files'/vimrc.txt ~/.vimrc
-    success "~/.vimrc set"
-    cp ./'Mac Dot Files'/profile.txt ~/.profile
-    success "~/.profile set"
+    topLevelDotFiles=(
+      "bashrc"
+      "bash_profile"
+      "profile"
+    )
+
+    info "Backing up top-level dot files"
+
+    # Backup Dot Files
+    for dotFileName in "${topLevelDotFiles[@]}"; do
+        backupFile ~/."$dotFileName" ~/dotfileBackups/."$dotFileName"
+    done
+
+    info "Setting top-level dot files"
+
+    # Set Dot Files
+    for dotFileName in "${topLevelDotFiles[@]}"; do
+        cp ./'Mac Dot Files'/"$dotFileName".txt ~/."$dotFileName"
+        success "~/.$dotFileName set"
+    done
 else
     # Skip this installation section
     info "Skipping..."
 fi
 
-# Set up .vim folder
-promptNewSection "SETTING UP .VIM FOLDER"
+# Set up vim
+promptNewSection "SETTING UP VIM"
 if [[ $REPLY =~ ^[Yy]$ ]]; then
+    # Set up .vim folder
     info "Setting up .vim folder"
-    # Backup files
+    # Backup .vim folder
     mkdir -p ~/dotfileBackups
     rm -rf ~/dotfileBackups/.vim
-    cp -r ~/.vim ~/dotfileBackups/.vim
-    info "Backed up ~/.vim to ~/dotfileBackups/.vim"
+    backupDir ~/.vim ~/dotfileBackups/.vim
 
     # Set .vim folder
     rm -rf ~/.vim
     cp -r ./vim ~/.vim
     success "~/.vim folder set"
-else
-    # Skip this installation section
-    info "Skipping..."
-fi
 
+    # Backup .vimrc
+    mkdir -p ~/dotfileBackups
+    backupFile ~/.vimrc ~/dotfileBackups/.vimrc
 
-# Get vim plugins
-promptNewSection "FETCHING VIM PLUGINS"
+    # Set .vimrc
+    cp ./'Mac Dot Files'/vimrc.txt ~/.vimrc
+    success "~/.vimrc set"
 
-repoName() {
-  basename "$1" | sed 's;.git;;g'
-}
-
-if [[ $REPLY =~ ^[Yy]$ ]]; then
+    # Clone all vim plugins
     vimPlugins=(
       "git://github.com/vim-airline/vim-airline.git"
       "git://github.com/scrooloose/nerdtree.git"
@@ -211,11 +236,11 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     )
 
     info "Cloning plugins"
-
     for pluginUrl in "${vimPlugins[@]}"; do
         repoName=$(repoName "$pluginUrl")
         cloneToPath="~/.vim/bundle/$repoName"
-        git clone "$pluginUrl" "~/.vim/bundle/$repoName"
+        rm -rf "$cloneToPath"
+        git clone "$pluginUrl" ~/".vim/bundle/$repoName"
         success "$repoName plugin added to $cloneToPath"
     done
 else
@@ -248,10 +273,12 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     cp -r ./Atom/Atom.app /Applications/Atom.app
     success "Atom.app added to Application"
     info "Configuring Atom IDE"
+
+    # Backup .atom directory
     mkdir -p ~/dotfileBackups
     rm -rf ~/dotfileBackups/.atom
-    cp -r ~/.atom ~/dotfileBackups/.atom
-    info "Backed up ~/.atom to ~/dotfileBackups/.atom"
+    backupDir ~/.atom ~/dotfileBackups/.atom
+
     cp ./Atom/config.cson ~/.atom/config.cson
     success "Atom config.cson set"
 
