@@ -96,6 +96,8 @@ fi
 promptNewSection "GIT"
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     info "Configuring git"
+    # Backup files
+    mkdir -p ~/dotfileBackups
     cp ~/.gitconfig ~/dotfileBackups/.gitconfig
     success "Backed up ~/.gitconfig to ~/dotfileBackups/.gitconfig"
     cp ./gitconfig.txt ~/.gitconfig
@@ -227,6 +229,36 @@ fi
 #    info "Skipping..."
 #fi
 
+# Set up Atom
+promptNewSection "ATOM IDE"
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    info "Moving Atom.app to Applications"
+    rm -rf /Atom/Atom.app
+    cp -r ./Atom/Atom.app /Applications/Atom.app
+    success "Atom.app added to Application"
+    info "Configuring Atom IDE"
+    mkdir -p ~/dotfileBackups
+    rm -rf ~/dotfileBackups/.atom
+    cp -r ~/.atom ~/dotfileBackups/.atom
+    info "Backed up ~/.atom to ~/dotfileBackups/.atom"
+    cp ./Atom/config.cson ~/.atom/config.cson
+    success "Atom config.cson set"
+
+    # Install Atom Packages
+    info "Installing Atom Packages"
+    if hash apm 2>/dev/null; then
+        # For every non-blank line
+        for packageNameAndVersion in `grep -v "^$" ./Atom/packages.list`; do
+            apm install $packageNameAndVersion
+        done
+    else
+        fail "Failed to install Atom Packages, apm does not exist"
+    fi
+
+else
+    # Skip this installation section
+    info "Skipping..."
+fi
 
 # Set up iTerm2
 promptNewSection "SETTING UP iTERM2"
@@ -249,9 +281,9 @@ promptNewSection "SETTING UP SPECTACLE WINDOW MANAGER"
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     info "Moving Spectacle.app to Applications"
     rm -rf /Applications/Spectacle.app
-    cp -r ./spectacle/Spectacle.app /Applications/Spectacle.app
+    cp -r ./Spectacle/Spectacle.app /Applications/Spectacle.app
     info "Setting up shortcut preferences"
-    cp ./spectacle/Shortcuts.json ~/Library/'Application Support'/Spectacle/Shortcuts.json
+    cp ./Spectacle/Shortcuts.json ~/Library/'Application Support'/Spectacle/Shortcuts.json
     success "Spectacle Shortcuts.json set"
     info "Opening Spectacle.app"
     open /Applications/Spectacle.app
