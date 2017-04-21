@@ -1,28 +1,42 @@
 #!/bin/bash
 
+# FONT COLORS
+RED=$(tput setaf 9)
+ORANGE=$(tput setaf 172)
+GREEN=$(tput setaf 2)
+BLUE=$(tput setaf 12)
+YELLOW=$(tput setaf 11)
+GRAY=$(tput setaf 8)
+RESET_COLOR=$(tput sgr0)
+
 # HELPER FUNCTIONS
 
-prompt() {
+promptYesNo() {
     echo "   => $1 "
     read -p "      [Y/n] " -r
     echo
 }
 
+prompt() {
+    IFS= read -r -p "   => $1 "
+    echo
+}
+
 warn() {
-    echo "⚠ $1"
+    echo "$YELLOW ⚠ $1 $RESET_COLOR"
 }
 
 info() {
-    echo "Info: $1"
+    echo -e "$GRAY ⓘ $1 $RESET_COLOR"
     echo
 }
 
 success() {
-    echo "-> $1 ✔"
+    echo -e "$GREEN ✔ $1 $RESET_COLOR"
 }
 
 fail() {
-    echo "-> $1 ✘"
+    echo -e "$RED ✘ $1 $RESET_COLOR"
 }
 
 assertInstallation() {
@@ -37,8 +51,8 @@ assertInstallation() {
 
 promptNewSection() {
     echo
-    echo "|=== $1 ===|"
-    prompt "Proceed with section?"
+    echo "$ORANGE[=== $1 ===] $RESET_COLOR"
+    promptYesNo "Proceed with section?"
 }
 
 manualAction() {
@@ -72,6 +86,27 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     xcode-select --install
     # Test to ensure successful install
     assertInstallation gcc "Xcode CLT"
+    assertInstallation git "Git"
+else
+    # Skip this installation section
+    info "Skipping..."
+fi
+
+# Set up Git
+promptNewSection "GIT"
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    info "Configuring git"
+    cp ~/.gitconfig ~/dotfileBackups/.gitconfig
+    success "Backed up ~/.gitconfig to ~/dotfileBackups/.gitconfig"
+    cp ./gitconfig.txt ~/.gitconfig
+    success "~/.gitconfig set"
+    # Set Github Username and email
+    prompt "What is your Github Username (i.e. \"First Last\")?"
+    git config --global user.name "$REPLY"
+    success "Username set to $REPLY"
+    prompt "What is your Github Email (i.e. \"me@mail.com\")?"
+    success "Email set to $REPLY"
+    git config --global user.email $REPLY
 else
     # Skip this installation section
     info "Skipping..."
@@ -225,3 +260,8 @@ else
     # Skip this installation section
     info "Skipping..."
 fi
+
+# Finish
+echo
+echo -e "$BLUE INSTALLATION COMPLETE.$RESET_COLOR"
+echo
