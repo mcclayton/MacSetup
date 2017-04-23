@@ -67,9 +67,19 @@ backupDir() {
     fi
 }
 
+# Install package $1 via the command $2.
+installPackage() {
+    info "Installing $1"
+    if hash $1 2>/dev/null; then
+        info "$1 is already installed"
+    else
+        $2
+    fi
+}
+
 assertInstallation() {
     # $1 is command to assert existence in order to verify correct installation
-    # $2 is command to assert existence in order to verify correct installation
+    # $2 is name of command
     if hash $1 2>/dev/null; then
         success "Successfully installed $2"
     else
@@ -149,13 +159,33 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     info "Installing Homebrew package manager"
     # Install Brew if it isn't already
     if hash brew 2>/dev/null; then
-        info "Brew is already installed"
+        info "Homebrew is already installed"
     else
         ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     fi
 
     # Test to ensure successful install
     assertInstallation brew "homebrew"
+
+    if hash brew 2>/dev/null; then
+        info "Updating homebrew"
+        brew update
+        info "Making homebrew healthy with brew doctor"
+        brew doctor
+    else
+        fail "Failed to update Homebrew because it is not installed"
+    fi
+else
+    # Skip this installation section
+    info "Skipping..."
+fi
+
+# Get packages
+promptNewSection "PACKAGES"
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    # Install lolcat
+    installPackage lolcat "gem install lolcat"
+    assertInstallation lolcat "lolcat"
 else
     # Skip this installation section
     info "Skipping..."
@@ -248,22 +278,6 @@ else
     info "Skipping..."
 fi
 
-
-# Get packages
-#promptNewSection "PACKAGES"
-#if [[ $REPLY =~ ^[Yy]$ ]]; then
-#    info "Installing lolcat"
-#    if hash lolcat 2>/dev/null; then
-#        info "lolcat is already installed"
-#    else
-#        gem install lolcat
-#    fi
-#    # Test to ensure successful install'
-#    assertInstallation lolcat "lolcat"
-#else
-#    # Skip this installation section
-#    info "Skipping..."
-#fi
 
 # Set up Atom
 promptNewSection "ATOM IDE"
