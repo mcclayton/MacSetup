@@ -293,6 +293,94 @@ else
     info "Skipping..."
 fi
 
+# Set up fonts
+promptNewSection "SETTING UP FONTS"
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    info "Opening Inconsolata-g.otf font"
+    open ./fonts/Inconsolata-g.otf
+    manualAction "Press Install Font Button for Inconsolata-g.otf"
+
+    info "Opening Powerline Inconsolata-g font"
+    open ./fonts/'Inconsolata-g for Powerline.otf'
+    manualAction "Press Install Font Button for Inconsolata-g for Powerline.otf"
+else
+    # Skip this installation section
+    info "Skipping..."
+fi
+
+promptNewSection "SETTING UP TOP-LEVEL DOT FILES"
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    # Set new top-level dot files
+    topLevelDotFiles=(
+      "bashrc"
+      "bash_profile"
+      "profile"
+    )
+
+    info "Backing up top-level dot files"
+
+    # Backup Dot Files
+    for dotFileName in "${topLevelDotFiles[@]}"; do
+        backupFile ~/."$dotFileName" ~/dotfileBackups/."$dotFileName"
+    done
+
+    info "Setting top-level dot files"
+
+    # Set Dot Files
+    for dotFileName in "${topLevelDotFiles[@]}"; do
+        cp ./'Mac Dot Files'/"$dotFileName".txt ~/."$dotFileName"
+        assertFileExists ~/."$dotFileName" "~/.$dotFileName set" "Failed to set ~/.$dotFileName"
+    done
+else
+    # Skip this installation section
+    info "Skipping..."
+fi
+
+# Set up vim
+promptNewSection "SETTING UP VIM"
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    # Set up .vim folder
+    info "Setting up .vim folder"
+    # Backup .vim folder
+    mkdir -p ~/dotfileBackups
+    rm -rf ~/dotfileBackups/.vim
+    backupDir ~/.vim ~/dotfileBackups/.vim
+
+    # Set .vim folder
+    rm -rf ~/.vim
+    cp -r ./vim ~/.vim
+    assertDirectoryExists ~/.vim "~/.vim directory set" "Failed to set ~/.vim directory"
+
+    # Backup .vimrc
+    mkdir -p ~/dotfileBackups
+    backupFile ~/.vimrc ~/dotfileBackups/.vimrc
+
+    # Set .vimrc
+    cp ./'Mac Dot Files'/vimrc.txt ~/.vimrc
+    assertFileExists ~/.vimrc "~/.vimrc set" "Failed to set ~/.vimrc"
+    success "~/.vimrc set"
+
+    # Clone all vim plugins
+    vimPlugins=(
+      "git://github.com/vim-airline/vim-airline.git"
+      "git://github.com/scrooloose/nerdtree.git"
+      "git://github.com/ervandew/supertab.git"
+      "git://github.com/tpope/vim-fugitive.git"
+    )
+
+    info "Cloning plugins"
+    for pluginUrl in "${vimPlugins[@]}"; do
+        repoName=$(repoName "$pluginUrl")
+        cloneToPath=~/".vim/bundle/$repoName"
+        rm -rf "$cloneToPath"
+        git clone "$pluginUrl" "$cloneToPath"
+        assertDirectoryExists "$cloneToPath" "$repoName plugin added to $cloneToPath" "Failed to add plugin $repoName to $cloneToPath"
+    done
+else
+    # Skip this installation section
+    info "Skipping..."
+fi
+
 # Set up homebrew
 promptNewSection "HOMEBREW PACKAGE MANAGER"
 if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -314,45 +402,6 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         brew doctor
     else
         fail "Failed to update Homebrew because it is not installed"
-    fi
-else
-    # Skip this installation section
-    info "Skipping..."
-fi
-
-# Get Applications
-promptNewSection "APPLICATIONS"
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-
-    # Can only install brew apps if brew is installed
-    if hash brew 2>/dev/null; then
-        # Install Flux
-        caskInstallAppPrompt "Flux.app" "flux"
-        # Install Postman
-        caskInstallAppPrompt "Postman.app" "postman"
-        # Install Spotify
-        caskInstallAppPrompt "Spotify.app" "spotify"
-        # Install Sublime
-        caskInstallAppPrompt "Sublime.app" "sublime"
-        # Install Spectacle
-        caskInstallAppPrompt "Spectacle.app" "spectacle" setupSpectacle
-        # Install and configure Atom
-        caskInstallAppPrompt "Atom.app" "atom" configureAtom
-        # Install Slack
-        caskInstallAppPrompt "Slack.app" "slack"
-
-        # Preserve white space by changing the Internal Field Separator
-        IFS='%'
-        # Install and configure Chrome
-        caskInstallAppPrompt "Google Chrome.app" "google-chrome"
-        # Reset the Internal Field Separator
-        unset IFS
-
-        # Cleanup downloads
-        info "Cleaning up application .zip and .dmg files"
-        brew cask cleanup
-    else
-        fail "Failed to install brew packages. Homebrew is not installed."
     fi
 else
     # Skip this installation section
@@ -469,89 +518,40 @@ else
     info "Skipping..."
 fi
 
-# Set up fonts
-promptNewSection "SETTING UP FONTS"
+# Get Applications
+promptNewSection "APPLICATIONS"
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    info "Opening Inconsolata-g.otf font"
-    open ./fonts/Inconsolata-g.otf
-    manualAction "Press Install Font Button for Inconsolata-g.otf"
 
-    info "Opening Powerline Inconsolata-g font"
-    open ./fonts/'Inconsolata-g for Powerline.otf'
-    manualAction "Press Install Font Button for Inconsolata-g for Powerline.otf"
-else
-    # Skip this installation section
-    info "Skipping..."
-fi
+    # Can only install brew apps if brew is installed
+    if hash brew 2>/dev/null; then
+        # Install Flux
+        caskInstallAppPrompt "Flux.app" "flux"
+        # Install Postman
+        caskInstallAppPrompt "Postman.app" "postman"
+        # Install Spotify
+        caskInstallAppPrompt "Spotify.app" "spotify"
+        # Install Sublime
+        caskInstallAppPrompt "Sublime.app" "sublime"
+        # Install Spectacle
+        caskInstallAppPrompt "Spectacle.app" "spectacle" setupSpectacle
+        # Install and configure Atom
+        caskInstallAppPrompt "Atom.app" "atom" configureAtom
+        # Install Slack
+        caskInstallAppPrompt "Slack.app" "slack"
 
-promptNewSection "SETTING UP TOP-LEVEL DOT FILES"
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    # Set new top-level dot files
-    topLevelDotFiles=(
-      "bashrc"
-      "bash_profile"
-      "profile"
-    )
+        # Preserve white space by changing the Internal Field Separator
+        IFS='%'
+        # Install and configure Chrome
+        caskInstallAppPrompt "Google Chrome.app" "google-chrome"
+        # Reset the Internal Field Separator
+        unset IFS
 
-    info "Backing up top-level dot files"
-
-    # Backup Dot Files
-    for dotFileName in "${topLevelDotFiles[@]}"; do
-        backupFile ~/."$dotFileName" ~/dotfileBackups/."$dotFileName"
-    done
-
-    info "Setting top-level dot files"
-
-    # Set Dot Files
-    for dotFileName in "${topLevelDotFiles[@]}"; do
-        cp ./'Mac Dot Files'/"$dotFileName".txt ~/."$dotFileName"
-        assertFileExists ~/."$dotFileName" "~/.$dotFileName set" "Failed to set ~/.$dotFileName"
-    done
-else
-    # Skip this installation section
-    info "Skipping..."
-fi
-
-# Set up vim
-promptNewSection "SETTING UP VIM"
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    # Set up .vim folder
-    info "Setting up .vim folder"
-    # Backup .vim folder
-    mkdir -p ~/dotfileBackups
-    rm -rf ~/dotfileBackups/.vim
-    backupDir ~/.vim ~/dotfileBackups/.vim
-
-    # Set .vim folder
-    rm -rf ~/.vim
-    cp -r ./vim ~/.vim
-    assertDirectoryExists ~/.vim "~/.vim directory set" "Failed to set ~/.vim directory"
-
-    # Backup .vimrc
-    mkdir -p ~/dotfileBackups
-    backupFile ~/.vimrc ~/dotfileBackups/.vimrc
-
-    # Set .vimrc
-    cp ./'Mac Dot Files'/vimrc.txt ~/.vimrc
-    assertFileExists ~/.vimrc "~/.vimrc set" "Failed to set ~/.vimrc"
-    success "~/.vimrc set"
-
-    # Clone all vim plugins
-    vimPlugins=(
-      "git://github.com/vim-airline/vim-airline.git"
-      "git://github.com/scrooloose/nerdtree.git"
-      "git://github.com/ervandew/supertab.git"
-      "git://github.com/tpope/vim-fugitive.git"
-    )
-
-    info "Cloning plugins"
-    for pluginUrl in "${vimPlugins[@]}"; do
-        repoName=$(repoName "$pluginUrl")
-        cloneToPath=~/".vim/bundle/$repoName"
-        rm -rf "$cloneToPath"
-        git clone "$pluginUrl" "$cloneToPath"
-        assertDirectoryExists "$cloneToPath" "$repoName plugin added to $cloneToPath" "Failed to add plugin $repoName to $cloneToPath"
-    done
+        # Cleanup downloads
+        info "Cleaning up application .zip and .dmg files"
+        brew cask cleanup
+    else
+        fail "Failed to install brew packages. Homebrew is not installed."
+    fi
 else
     # Skip this installation section
     info "Skipping..."
