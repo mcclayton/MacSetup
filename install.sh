@@ -55,13 +55,6 @@ fail() {
     echo
 }
 
-# Print out all failures stored in global FAILURES_ARRAY
-printFailures() {
-    for failure in "${FAILURES_ARRAY[@]}"; do
-        echo -e "    -> $failure"
-    done
-}
-
 # Gets the repo name given a full git url
 repoName() {
     # Get the name of the repo in format 'myRepo.git'
@@ -345,6 +338,17 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         caskInstallAppPrompt "Spectacle.app" "spectacle" setupSpectacle
         # Install and configure Atom
         caskInstallAppPrompt "Atom.app" "atom" configureAtom
+
+        # Preserve white space by changing the Internal Field Separator
+        IFS='%'
+        # Install and configure Chrome
+        caskInstallAppPrompt "Google Chrome.app" "google-chrome"
+        # Reset the Internal Field Separator
+        unset IFS
+
+        # Cleanup downloads
+        info "Cleaning up application .zip and .dmg files"
+        brew cask cleanup
     else
         fail "Failed to install brew packages. Homebrew is not installed."
     fi
@@ -374,6 +378,9 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         # Install gpg
         installPackage gpg "brew install gpg"
         assertPackageInstallation gpg "gpg"
+        # Install ack
+        installPackage ack "brew install ack"
+        assertPackageInstallation ack "ack"
         # Install yarn
         installPackage yarn "brew install yarn"
         assertPackageInstallation yarn "yarn"
@@ -573,6 +580,9 @@ if [ ${#FAILURES_ARRAY[@]} -eq 0 ]; then
     success "No failures occurred during install"
 else
     warn "The following failures occurred during install"
-    printFailures
+    # Print failures
+    for failure in "${FAILURES_ARRAY[@]}"; do
+        echo -e "    -> $failure"
+    done
 fi
 echo
