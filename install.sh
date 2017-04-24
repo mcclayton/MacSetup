@@ -330,6 +330,81 @@ else
     info "Skipping..."
 fi
 
+# Get NODE, NPM, and NVM
+promptNewSection "NODE, NPM, AND NVM"
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    # Can only install brew packages if brew is installed
+    if hash brew 2>/dev/null; then
+        # Install nvm
+        installPackage nvm "brew install nvm"
+
+        # Configure and source nvm
+        export NVM_DIR="$HOME/.nvm"
+        . "/usr/local/opt/nvm/nvm.sh"
+
+        # Assert correct installation
+        assertPackageInstallation nvm "nvm"
+
+        # Update nvm config in bash_profile if not already set
+        if grep -Fxq 'export NVM_DIR="$HOME/.nvm"' ~/.bash_profile; then
+            info "NVM is already configured in bash_profile."
+        else
+            info "Configuring NVM in bash_profile"
+            echo >> ~/.bash_profile
+            echo "# Set NVM Directory" >> ~/.bash_profile
+            echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bash_profile
+            info 'Added line "export NVM_DIR="$HOME/.nvm"" to ~/.bash_profile'
+        fi
+
+        # Source nvm.sh scrip
+        if grep -Fxq '. "/usr/local/opt/nvm/nvm.sh"' ~/.bash_profile; then
+            info "NVM shell script sourcing is already configured in bash_profile."
+        else
+            info "Configuring NVM shell script sourcing in bash_profile"
+            echo >> ~/.bash_profile
+            echo "# Source nvm.sh script" >> ~/.bash_profile
+            echo '. "/usr/local/opt/nvm/nvm.sh"' >> ~/.bash_profile
+            info 'Added line ". "/usr/local/opt/nvm/nvm.sh"" to ~/.bash_profile'
+        fi
+
+        # Make .nvmrc directory if necessary
+        if [ ! -d ~/.nvmrc ]; then
+            info "~/.nvmrc does not exist, creating it..."
+            mkdir ~/.nvmrc
+            success "Created ~/.nvmrc directory"
+        else
+            info "~/.nvmrc directory already exists, skipping creation..."
+        fi
+
+        # Install Node.js
+        info "Installing Node.js via nvm"
+        prompt "What version number of Node would like to install? (Leave blank for latest stable) "
+        NODE_VERSION=$REPLY
+        if [[ -z $NODE_VERSION ]]; then
+            # Install latest stable version
+            nvm install stable
+            NODE_VERSION="stable"
+        else
+            # Install user specified version
+            nvm install $NODE_VERSION
+        fi
+
+        # Assert correct installation
+        assertPackageInstallation node "node"
+        assertPackageInstallation npm "npm"
+
+        # Use Stable verion of node
+        nvm use $NODE_VERSION
+        nvm ls
+        success "Successfully using Version Node.js: `nvm current`"
+    else
+        fail "Failed to install brew packages. Homebrew is not installed."
+    fi
+else
+    # Skip this installation section
+    info "Skipping..."
+fi
+
 # Set up fonts
 promptNewSection "SETTING UP FONTS"
 if [[ $REPLY =~ ^[Yy]$ ]]; then
