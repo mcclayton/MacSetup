@@ -1,9 +1,0 @@
-'use babel';
-
-import __PackageName__View from '../lib/__package-name__-view';
-
-describe('__PackageName__View', () => {
-  it('has one valid test', () => {
-    expect('life').toBe('easy');
-  });
-});
