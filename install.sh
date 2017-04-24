@@ -39,9 +39,26 @@ success() {
     echo
 }
 
+# Keep track of all the errors for printing at the end of install
+FAILURES_ARRAY=()
 fail() {
-    echo -e "$RED ✘ $1 $RESET_COLOR"
+    # Preserve white space by changing the Internal Field Separator
+    IFS='%'
+    NEW_ERROR="$RED ✘ $1 $RESET_COLOR"
+    # Add error to array
+    FAILURES_ARRAY+=($NEW_ERROR)
+    # Print error
+    echo -e "$NEW_ERROR"
+    # Reset the Internal Field Separator
+    unset IFS
     echo
+}
+
+# Print out all failures stored in global FAILURES_ARRAY
+printFailures() {
+    for failure in "${FAILURES_ARRAY[@]}"; do
+        echo -e "    -> $failure"
+    done
 }
 
 # Gets the repo name given a full git url
@@ -122,6 +139,26 @@ caskInstallAppPrompt() {
     fi
 }
 
+# Assert $1 directory exists and display $2 success message if it does
+# or display $3 error message otherwise
+assertDirectoryExists() {
+    if [ -d $1 ]; then
+        success "$2"
+    else
+        fail "$3"
+    fi
+}
+
+# Assert $1 file exists and display $2 success message if it does
+# or display $3 error message otherwise
+assertFileExists() {
+    if [ -f $1 ]; then
+        success "$2"
+    else
+        fail "$3"
+    fi
+}
+
 assertPackageInstallation() {
     # $1 is command to assert existence in order to verify correct installation
     # $2 is name of command
@@ -166,8 +203,10 @@ configureAtom() {
         rm -rf ~/dotfileBackups/.atom
         backupDir ~/.atom ~/dotfileBackups/.atom
         # Set atom config file
+        mkdir -p ~/.atom
         cp ./Atom/config.cson ~/.atom/config.cson
-        success "Atom config.cson set"
+        # Assert config.csno set correctly
+        assertFileExists ~/.atom/config.cson "Atom config.cson set" "Failed to set Atom config.cson"
 
         # Install Atom Packages
         info "Installing Atom Packages"
@@ -190,7 +229,7 @@ setupSpectacle() {
     if [ -d "/Applications/Spectacle.app" ]; then
         info "Setting up shortcut preferences"
         cp ./Spectacle/Shortcuts.json ~/Library/'Application Support'/Spectacle/Shortcuts.json
-        success "Spectacle Shortcuts.json set"
+        assertFileExists ~/Library/'Application Support'/Spectacle/Shortcuts.json "Spectacle Shortcuts.json set" "Failed to set Spectacle Shortcuts.json"
         info "Opening Spectacle.app"
         open /Applications/Spectacle.app
     else
@@ -242,7 +281,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 
     # Set .gitconfig
     cp ./gitconfig.txt ~/.gitconfig
-    success "~/.gitconfig set"
+    assertFileExists ~/.gitconfig "~/.gitconfig set" "Failed to set ~/.gitconfig"
+
     # Set Github Username and email
     prompt "What is your Github Username (i.e. \"First Last\")?"
     git config --global user.name "$REPLY"
@@ -381,7 +421,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         if [ ! -d ~/.nvmrc ]; then
             info "~/.nvmrc does not exist, creating it..."
             mkdir ~/.nvmrc
-            success "Created ~/.nvmrc directory"
+            assertDirectoryExists ~/.nvmrc "~/.nvmrc set" "Failed to set ~/.nvmrc directory"
         else
             info "~/.nvmrc directory already exists, skipping creation..."
         fi
@@ -451,7 +491,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     # Set Dot Files
     for dotFileName in "${topLevelDotFiles[@]}"; do
         cp ./'Mac Dot Files'/"$dotFileName".txt ~/."$dotFileName"
-        success "~/.$dotFileName set"
+        assertFileExists ~/."$dotFileName" "~/.$dotFileName set" "Failed to set ~/.$dotFileName"
     done
 else
     # Skip this installation section
@@ -471,7 +511,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     # Set .vim folder
     rm -rf ~/.vim
     cp -r ./vim ~/.vim
-    success "~/.vim folder set"
+    assertDirectoryExists ~/.vim "~/.vim directory set" "Failed to set ~/.vim directory"
 
     # Backup .vimrc
     mkdir -p ~/dotfileBackups
@@ -479,6 +519,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 
     # Set .vimrc
     cp ./'Mac Dot Files'/vimrc.txt ~/.vimrc
+    assertFileExists ~/.vimrc "~/.vimrc set" "Failed to set ~/.vimrc"
     success "~/.vimrc set"
 
     # Clone all vim plugins
@@ -492,10 +533,10 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     info "Cloning plugins"
     for pluginUrl in "${vimPlugins[@]}"; do
         repoName=$(repoName "$pluginUrl")
-        cloneToPath="~/.vim/bundle/$repoName"
+        cloneToPath=~/".vim/bundle/$repoName"
         rm -rf "$cloneToPath"
-        git clone "$pluginUrl" ~/".vim/bundle/$repoName"
-        success "$repoName plugin added to $cloneToPath"
+        git clone "$pluginUrl" "$cloneToPath"
+        assertDirectoryExists "$cloneToPath" "$repoName plugin added to $cloneToPath" "Failed to add plugin $repoName to $cloneToPath"
     done
 else
     # Skip this installation section
@@ -509,7 +550,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     info "Moving iTerm.app to Applications"
     rm -rf /Applications/iTerm.app
     cp -r ./iTerm2/iTerm.app /Applications/iTerm.app
-    success "iTerm.app added to Application"
+    assertDirectoryExists /Applications/iTerm.app "iTerm.app added to Application" "Failed add iTerm.app to Application"
 
     info "Opening iTerm.app"
     open /Applications/iTerm.app
@@ -522,4 +563,11 @@ fi
 # Finish
 echo
 echo -e "$BLUE INSTALLATION COMPLETE.$RESET_COLOR"
+echo
+if [ ${#FAILURES_ARRAY[@]} -eq 0 ]; then
+    success "No failures occurred during install"
+else
+    warn "The following failures occurred during install"
+    printFailures
+fi
 echo
