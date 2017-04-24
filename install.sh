@@ -189,6 +189,14 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     # Install lolcat
     installPackage lolcat "gem install lolcat"
     assertInstallation lolcat "lolcat"
+
+    if hash brew 2>/dev/null; then
+        installPackage wget "brew install wget"
+        assertInstallation wget "wget"
+
+    else
+        fail "Failed to install brew packages. Homebrew is not installed."
+    fi
 else
     # Skip this installation section
     info "Skipping..."
