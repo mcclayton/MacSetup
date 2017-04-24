@@ -160,7 +160,7 @@ manualAction() {
 # Set up Atom
 configureAtom() {
     info "Configuring Atom IDE"
-    if brew cask ls atom $2 > /dev/null; then
+    if [ -d "/Applications/Atom.app" ]; then
         # Backup .atom directory
         mkdir -p ~/dotfileBackups
         rm -rf ~/dotfileBackups/.atom
@@ -187,7 +187,7 @@ configureAtom() {
 # Set up spectacle
 setupSpectacle() {
     info "Configuring Spectacle"
-    if brew cask ls --versions spectacle > /dev/null; then
+    if [ -d "/Applications/Spectacle.app" ]; then
         info "Setting up shortcut preferences"
         cp ./Spectacle/Shortcuts.json ~/Library/'Application Support'/Spectacle/Shortcuts.json
         success "Spectacle Shortcuts.json set"
