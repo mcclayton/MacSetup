@@ -21,6 +21,7 @@ promptYesNo() {
 
 prompt() {
     IFS= read -r -p "   => $1 "
+    unset IFS
     echo
 }
 
@@ -228,8 +229,12 @@ setupSpectacle() {
     info "Configuring Spectacle"
     if [ -d "/Applications/Spectacle.app" ]; then
         info "Setting up shortcut preferences"
+        # Preserve white space by changing the Internal Field Separator
+        IFS='%'
         cp ./Spectacle/Shortcuts.json ~/Library/'Application Support'/Spectacle/Shortcuts.json
         assertFileExists ~/Library/'Application Support'/Spectacle/Shortcuts.json "Spectacle Shortcuts.json set" "Failed to set Spectacle Shortcuts.json"
+        # Reset the Internal Field Separator
+        unset IFS
         info "Opening Spectacle.app"
         open /Applications/Spectacle.app
     else
