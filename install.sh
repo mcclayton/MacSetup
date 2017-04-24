@@ -9,7 +9,9 @@ YELLOW=$(tput setaf 11)
 GRAY=$(tput setaf 8)
 RESET_COLOR=$(tput sgr0)
 
-# HELPER FUNCTIONS
+####################
+# Helper Functions #
+####################
 
 promptYesNo() {
     echo "   => $1 "
@@ -53,17 +55,17 @@ repoName() {
 # Backs up file $1 (if it exists) to location $2
 backupFile() {
     if [ ! -f $1 ]; then
-        warn "$1 Does not exist, skipping backup"
+        warn "$1 Does not exist, skipping backup..."
     else
         cp $1 $2
         success "Backed up $1 to $2"
     fi
 }
 
-# Backs up file $1 (if it exists) to location $2
+# Backs up directory $1 (if it exists) to location $2
 backupDir() {
-    if [ ! -f $1 ]; then
-        warn "$1 Does not exist, skipping backup"
+    if [ ! -d $1 ]; then
+        warn "$1 Does not exist, skipping backup..."
     else
         cp -r $1 $2
         success "Backed up $1 to $2"
@@ -72,7 +74,7 @@ backupDir() {
 
 # Install package $1 via the command $2.
 installPackage() {
-    info "Installing $1"
+    info "Installing Package: $1"
     if hash $1 2>/dev/null; then
         info "$1 is already installed"
     else
@@ -80,13 +82,62 @@ installPackage() {
     fi
 }
 
-assertInstallation() {
+
+# Install application named $1 via the cask name $2 only if it does
+# not already exist at path /Applications/$1
+# Configure via command $3 if passed
+caskInstallAppPrompt() {
+    promptYesNo "Install application $1?"
+
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        # Install Application
+        info "Installing Application: $1"
+        if brew cask ls --versions $2 > /dev/null; then
+            warn "$1 is already installed. Prompting overwrite..."
+            promptYesNo "Do you want to $RED OVERWRITE $RESET_COLOR application $1?"
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                rm -rf "/Applications/$1"
+                # Run re-install command
+                brew cask reinstall $2
+                # Run Config Command if present
+                if [ ! -z "$3" ]; then
+                    $3
+                fi
+            else
+                info "Skipping overwrite..."
+            fi
+        else
+            # Run install command
+            brew cask install $2
+            # Run Config Command if present
+            if [ ! -z "$3" ]; then
+                $3
+            fi
+        fi
+        # Assert application is installed correctly
+        assertAppInstallation $1
+    else
+        # Skip this installation section
+        info "Skipping Installation..."
+    fi
+}
+
+assertPackageInstallation() {
     # $1 is command to assert existence in order to verify correct installation
     # $2 is name of command
     if hash $1 2>/dev/null; then
         success "Successfully installed $2"
     else
         fail "Failed to install $2"
+    fi
+}
+
+assertAppInstallation() {
+    # Assert application $1 exists at /Applications/$1
+    if [ -d "/Applications/$1" ]; then
+        success "Successfully installed $1 and added to Applications"
+    else
+        fail "Failed to install $1"
     fi
 }
 
@@ -102,6 +153,54 @@ manualAction() {
 }
 
 
+###############################
+# Application Setup Functions #
+###############################
+
+# Set up Atom
+configureAtom() {
+    info "Configuring Atom IDE"
+    if brew cask ls atom $2 > /dev/null; then
+        # Backup .atom directory
+        mkdir -p ~/dotfileBackups
+        rm -rf ~/dotfileBackups/.atom
+        backupDir ~/.atom ~/dotfileBackups/.atom
+        # Set atom config file
+        cp ./Atom/config.cson ~/.atom/config.cson
+        success "Atom config.cson set"
+
+        # Install Atom Packages
+        info "Installing Atom Packages"
+        if hash apm 2>/dev/null; then
+            # For every non-blank line
+            for packageNameAndVersion in `grep -v "^$" ./Atom/packages.list`; do
+                apm install $packageNameAndVersion
+            done
+        else
+            fail "Failed to install Atom Packages, apm does not exist"
+        fi
+    else
+        fail "Cannot configure Atom as it is not installed"
+    fi
+}
+
+# Set up spectacle
+setupSpectacle() {
+    info "Configuring Spectacle"
+    if brew cask ls --versions spectacle > /dev/null; then
+        info "Setting up shortcut preferences"
+        cp ./Spectacle/Shortcuts.json ~/Library/'Application Support'/Spectacle/Shortcuts.json
+        success "Spectacle Shortcuts.json set"
+        info "Opening Spectacle.app"
+        open /Applications/Spectacle.app
+    else
+        fail "Cannot configure Spectacle as it is not installed"
+    fi
+}
+
+########
+# Main #
+########
 
 # Intro
 echo " _____           _        _ _ "
@@ -126,8 +225,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     info "Installing Xcode Command Line Tools"
     xcode-select --install
     # Test to ensure successful install
-    assertInstallation gcc "Xcode CLT"
-    assertInstallation git "Git"
+    assertPackageInstallation gcc "Xcode CLT"
+    assertPackageInstallation git "Git"
 else
     # Skip this installation section
     info "Skipping..."
@@ -168,7 +267,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     fi
 
     # Test to ensure successful install
-    assertInstallation brew "homebrew"
+    assertPackageInstallation brew "homebrew"
 
     if hash brew 2>/dev/null; then
         info "Updating homebrew"
@@ -183,17 +282,46 @@ else
     info "Skipping..."
 fi
 
+# Get Applications
+promptNewSection "APPLICATIONS"
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+
+    # Can only install brew apps if brew is installed
+    if hash brew 2>/dev/null; then
+        # Install Flux
+        caskInstallAppPrompt "Flux.app" "flux"
+        # Install Postman
+        caskInstallAppPrompt "Postman.app" "postman"
+        # Install Spectacle
+        caskInstallAppPrompt "Spectacle.app" "spectacle" setupSpectacle
+        # Install and configure Atom
+        caskInstallAppPrompt "Atom.app" "atom" configureAtom
+    else
+        fail "Failed to install brew packages. Homebrew is not installed."
+    fi
+else
+    # Skip this installation section
+    info "Skipping..."
+fi
+
 # Get packages
 promptNewSection "PACKAGES"
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     # Install lolcat
     installPackage lolcat "gem install lolcat"
-    assertInstallation lolcat "lolcat"
+    assertPackageInstallation lolcat "lolcat"
 
+    # Can only install brew packages if brew is installed
     if hash brew 2>/dev/null; then
+        # Install wget
         installPackage wget "brew install wget"
-        assertInstallation wget "wget"
-
+        assertPackageInstallation wget "wget"
+        # Install curl
+        installPackage wget "brew install curl"
+        assertPackageInstallation curl "curl"
+        # Install tree
+        installPackage tree "brew install tree"
+        assertPackageInstallation tree "tree"
     else
         fail "Failed to install brew packages. Homebrew is not installed."
     fi
@@ -290,39 +418,6 @@ else
 fi
 
 
-# Set up Atom
-promptNewSection "ATOM IDE"
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    info "Moving Atom.app to Applications"
-    rm -rf /Atom/Atom.app
-    cp -r ./Atom/Atom.app /Applications/Atom.app
-    success "Atom.app added to Application"
-    info "Configuring Atom IDE"
-
-    # Backup .atom directory
-    mkdir -p ~/dotfileBackups
-    rm -rf ~/dotfileBackups/.atom
-    backupDir ~/.atom ~/dotfileBackups/.atom
-
-    cp ./Atom/config.cson ~/.atom/config.cson
-    success "Atom config.cson set"
-
-    # Install Atom Packages
-    info "Installing Atom Packages"
-    if hash apm 2>/dev/null; then
-        # For every non-blank line
-        for packageNameAndVersion in `grep -v "^$" ./Atom/packages.list`; do
-            apm install $packageNameAndVersion
-        done
-    else
-        fail "Failed to install Atom Packages, apm does not exist"
-    fi
-
-else
-    # Skip this installation section
-    info "Skipping..."
-fi
-
 # Set up iTerm2
 promptNewSection "SETTING UP iTERM2"
 if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -334,23 +429,6 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     info "Opening iTerm.app"
     open /Applications/iTerm.app
     manualAction "In iTerm, Go to: iTerm->Preferences->General and load preferences from a custom folder or URL.\n Select ./iTerm2/com.googlecode.iterm2.plist"
-else
-    # Skip this installation section
-    info "Skipping..."
-fi
-
-# Set up spectacle
-promptNewSection "SETTING UP SPECTACLE WINDOW MANAGER"
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    info "Moving Spectacle.app to Applications"
-    rm -rf /Applications/Spectacle.app
-    cp -r ./Spectacle/Spectacle.app /Applications/Spectacle.app
-    info "Setting up shortcut preferences"
-    cp ./Spectacle/Shortcuts.json ~/Library/'Application Support'/Spectacle/Shortcuts.json
-    success "Spectacle Shortcuts.json set"
-    info "Opening Spectacle.app"
-    open /Applications/Spectacle.app
-    success "Spectacle.app added to Application"
 else
     # Skip this installation section
     info "Skipping..."
