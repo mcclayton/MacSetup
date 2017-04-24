@@ -44,7 +44,10 @@ fail() {
 
 # Gets the repo name given a full git url
 repoName() {
-    basename "$1" | sed 's;.git;;g'
+    # Get the name of the repo in format 'myRepo.git'
+    basename=$(basename $1)
+    # Echo out repo name in format 'myRepo'
+    echo "${basename%.*}"
 }
 
 # Backs up file $1 (if it exists) to location $2
