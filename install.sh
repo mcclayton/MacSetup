@@ -338,6 +338,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         caskInstallAppPrompt "Spectacle.app" "spectacle" setupSpectacle
         # Install and configure Atom
         caskInstallAppPrompt "Atom.app" "atom" configureAtom
+        # Install Slack
+        caskInstallAppPrompt "Slack.app" "slack"
 
         # Preserve white space by changing the Internal Field Separator
         IFS='%'
