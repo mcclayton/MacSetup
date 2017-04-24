@@ -292,6 +292,10 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         caskInstallAppPrompt "Flux.app" "flux"
         # Install Postman
         caskInstallAppPrompt "Postman.app" "postman"
+        # Install Spotify
+        caskInstallAppPrompt "Spotify.app" "spotify"
+        # Install Sublime
+        caskInstallAppPrompt "Sublime.app" "sublime"
         # Install Spectacle
         caskInstallAppPrompt "Spectacle.app" "spectacle" setupSpectacle
         # Install and configure Atom
@@ -322,6 +326,12 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         # Install tree
         installPackage tree "brew install tree"
         assertPackageInstallation tree "tree"
+        # Install gpg
+        installPackage gpg "brew install gpg"
+        assertPackageInstallation gpg "gpg"
+        # Install yarn
+        installPackage yarn "brew install yarn"
+        assertPackageInstallation yarn "yarn"
     else
         fail "Failed to install brew packages. Homebrew is not installed."
     fi
