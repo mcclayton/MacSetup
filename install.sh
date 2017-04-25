@@ -213,7 +213,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         installPackage ack "brew install ack"
         assertPackageInstallation ack "ack"
         # Install yarn
-        installPackage yarn "brew install yarn"
+        installPackage yarn "brew install yarn" configureYarn
         assertPackageInstallation yarn "yarn"
     else
         fail "Failed to install brew packages. Homebrew is not installed."
@@ -246,10 +246,10 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
             echo >> ~/.bash_profile
             echo "# Set NVM Directory" >> ~/.bash_profile
             echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bash_profile
-            info 'Added line "export NVM_DIR="$HOME/.nvm"" to ~/.bash_profile'
+            success 'Added line "export NVM_DIR="$HOME/.nvm"" to ~/.bash_profile'
         fi
 
-        # Source nvm.sh scrip
+        # Source nvm.sh script
         if grep -Fxq '. "/usr/local/opt/nvm/nvm.sh"' ~/.bash_profile; then
             info "NVM shell script sourcing is already configured in bash_profile."
         else
@@ -286,8 +286,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         assertPackageInstallation node "node"
         assertPackageInstallation npm "npm"
 
-        # Use Stable verion of node
-        nvm use $NODE_VERSION
+        # Make the installed version the default version
+        nvm alias default $NODE_VERSION
         nvm ls
         success "Successfully using Version Node.js: `nvm current`"
     else
@@ -304,6 +304,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 
     # Can only install brew apps if brew is installed
     if hash brew 2>/dev/null; then
+        # Install Sip Color Picker
+        caskInstallAppPrompt "Sip.app" "sip"
         # Install Flux
         caskInstallAppPrompt "Flux.app" "flux"
         # Install Postman
@@ -343,7 +345,8 @@ fi
 
 # Finish
 echo
-echo -e "$BLUE INSTALLATION COMPLETE.$RESET_COLOR"
+echo -e "$BLUE                INSTALLATION COMPLETE.$RESET_COLOR"
+echo -e "$BLUE (May need to open new shell to experience all changes.)$RESET_COLOR"
 echo
 if [ ${#FAILURES_ARRAY[@]} -eq 0 ]; then
     success "No failures occurred during install"

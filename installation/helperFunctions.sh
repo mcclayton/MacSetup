@@ -82,12 +82,17 @@ backupDir() {
 }
 
 # Install package $1 via the command $2.
+# Configure via command $3 if passed
 installPackage() {
     info "Installing Package: $1"
     if hash $1 2>/dev/null; then
         info "$1 is already installed"
     else
         $2
+        # Run Config Command if present
+        if [ ! -z "$3" ]; then
+            $3
+        fi
     fi
 }
 

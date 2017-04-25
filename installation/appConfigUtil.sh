@@ -1,8 +1,28 @@
 #!/bin/bash
 
-###############################
-# Application Setup Functions #
-###############################
+#######################################
+# Package Configuration Functions #
+#######################################
+
+# Set up yarn
+configureYarn() {
+    if grep -Fxq 'export PATH="$PATH:'`yarn global bin`'"' ~/.bash_profile; then
+        info "yarn bin path already configured in bash_profile."
+    elif hash yarn 2>/dev/null; then
+        # Configure yarn bin path
+        info "Configuring yarn in bash_profile"
+        echo >> ~/.bash_profile
+        echo "# Add yarn bin to PATH" >> ~/.bash_profile
+        echo 'export PATH="$PATH:'`yarn global bin`'"' >> ~/.bash_profile
+        success 'Added line "export PATH="$PATH:'`yarn global bin`'"" to ~/.bash_profile'
+    else
+        fail "Cannot configure yarn as it is not installed"
+    fi
+}
+
+#######################################
+# Application Configuration Functions #
+#######################################
 
 # Set up Atom
 configureAtom() {
