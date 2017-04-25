@@ -312,19 +312,22 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         caskInstallAppPrompt "Spotify.app" "spotify"
         # Install Sublime
         caskInstallAppPrompt "Sublime.app" "sublime"
-        # Install Spectacle
-        caskInstallAppPrompt "Spectacle.app" "spectacle" configureSpectacle
-        # Install and configure Atom
-        caskInstallAppPrompt "Atom.app" "atom" configureAtom
         # Install Slack
         caskInstallAppPrompt "Slack.app" "slack"
-
         # Preserve white space by changing the Internal Field Separator
         IFS='%'
         # Install and configure Chrome
         caskInstallAppPrompt "Google Chrome.app" "google-chrome"
         # Reset the Internal Field Separator
         unset IFS
+
+        # Install applications that need configuring
+        # Install Spectacle
+        caskInstallAppPrompt "Spectacle.app" "spectacle" configureSpectacle
+        # Install and configure Atom
+        caskInstallAppPrompt "Atom.app" "atom" configureAtom
+        # Install and configure iTerm2
+        caskInstallAppPrompt "iTerm.app" "iterm2" configureITerm
 
         # Cleanup downloads
         info "Cleaning up application .zip and .dmg files"
@@ -337,22 +340,6 @@ else
     info "Skipping..."
 fi
 
-
-# Set up iTerm2
-promptNewSection "SETTING UP iTERM2"
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    info "Moving iTerm.app to Applications"
-    rm -rf /Applications/iTerm.app
-    cp -r ./iTerm2/iTerm.app /Applications/iTerm.app
-    assertDirectoryExists /Applications/iTerm.app "iTerm.app added to Application" "Failed add iTerm.app to Application"
-
-    info "Opening iTerm.app"
-    open /Applications/iTerm.app
-    manualAction "In iTerm, Go to: iTerm->Preferences->General and load preferences from a custom folder or URL.\n Select ./iTerm2/com.googlecode.iterm2.plist"
-else
-    # Skip this installation section
-    info "Skipping..."
-fi
 
 # Finish
 echo

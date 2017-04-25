@@ -50,3 +50,13 @@ configureSpectacle() {
         fail "Cannot configure Spectacle as it is not installed"
     fi
 }
+
+configureITerm() {
+    if [ -d "/Applications/iTerm.app" ]; then
+        info "Opening iTerm.app"
+        open /Applications/iTerm.app
+        manualAction "In iTerm, Go to: iTerm->Preferences->General and load preferences from a custom folder or URL.\n Select ./iTerm2/com.googlecode.iterm2.plist"
+    else
+        fail "Cannot configure iTerm as it is not installed"
+    fi
+}
