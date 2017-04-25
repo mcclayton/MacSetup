@@ -46,6 +46,13 @@ fail() {
     echo
 }
 
+# Print out all failures line by line in the FAILURES_ARRAY
+printFailures() {
+    for failure in "${FAILURES_ARRAY[@]}"; do
+        echo -e "    -> $failure"
+    done
+}
+
 # Gets the repo name given a full git url
 repoName() {
     # Get the name of the repo in format 'myRepo.git'

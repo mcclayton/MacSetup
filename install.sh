@@ -363,8 +363,6 @@ if [ ${#FAILURES_ARRAY[@]} -eq 0 ]; then
 else
     warn "The following failures occurred during install"
     # Print failures
-    for failure in "${FAILURES_ARRAY[@]}"; do
-        echo -e "    -> $failure"
-    done
+    printFailures
 fi
 echo
