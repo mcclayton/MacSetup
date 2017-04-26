@@ -73,9 +73,17 @@ configureSpectacle() {
 
 configureITerm() {
     if [ -d "/Applications/iTerm.app" ]; then
-        info "Opening iTerm.app"
-        open /Applications/iTerm.app
-        manualAction "In iTerm, Go to: iTerm->Preferences->General and load preferences from a custom folder or URL.\n Select ./iTerm2/com.googlecode.iterm2.plist"
+        # Delete cached preferences
+        info "Deleting cached iTerm preferences"
+        defaults delete com.googlecode.iterm2
+        # Copying over new configurations file
+        info "Setting iTerm configurations file in ~/Library/Preferences/"
+        cp ./iTerm2/com.googlecode.iterm2.plist ~/Library/Preferences/com.googlecode.iterm2.plist
+        # Reading in new config file
+        info "Reading in new configurations file"
+        `defaults read -app iTerm` 2>/dev/null
+        # Assert configuration file was copied over successfully
+        assertFileExists ~/Library/Preferences/"com.googlecode.iterm2.plist" "iTerm config file set correctly" "Failed to set iTerm config file"
     else
         fail "Cannot configure iTerm as it is not installed"
     fi
