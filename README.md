@@ -23,9 +23,13 @@ Enjoy!
 
 ## Mac installation
 
-To setup, configure, and install a curated list of applications for a developer environment: run the script
+For convenience, this installation script will set up a Mac with an opinionated fully configured development environment.
+It will configure and install dot files, applications, packages, et cetera.
+However, the script is designed to be interactive so users can still pick and choose what they want
+to install/configure.
+
 ```
 ./install.sh
 ```
 
-This will bring up an interactive installation process that will backup dot files, set the ones from this repo, install packages and applications, etc.
+This is script is designed to be safe and can be run multiple times.
