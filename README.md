@@ -21,5 +21,11 @@ Feel free to pick and choose what features you want.
 
 Enjoy!
 
-Note: Since the vim/bundles are git submodules, you will need to manually clone those into those folders.
-I will be creating an installation script or installation steps to make this easier in the future.
+## Mac installation
+
+To setup, configure, and install a curated list of applications for a developer environment: run the script
+```
+./install.sh
+```
+
+This will bring up an interactive installation process that will backup dot files, set the ones from this repo, install packages and applications, etc.
