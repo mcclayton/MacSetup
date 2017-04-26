@@ -34,4 +34,4 @@ to install/configure.
 ./install.sh
 ```
 
-This is script is designed to be safe and can be run multiple times.
+This script is designed to be safe and can be run multiple times.
