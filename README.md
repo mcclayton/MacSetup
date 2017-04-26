@@ -29,7 +29,8 @@ It will configure and install dot files, applications, packages, et cetera.
 However, the script is designed to be interactive so users can still pick and choose what they want
 to install/configure.
 
-```
+```bash
+# This script must be run from the containing directory.
 ./install.sh
 ```
 
