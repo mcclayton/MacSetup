@@ -24,7 +24,6 @@ Enjoy!
 ## Mac installation
 
 For convenience, this installation script will set up a Mac with an opinionated fully configured development environment.
-
 It will configure and install dot files, applications, packages, et cetera.
 
 However, the script is designed to be interactive so users can still pick and choose what they want
