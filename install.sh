@@ -20,12 +20,15 @@ source ./installation/appConfigUtil.sh
 ########
 
 # Intro
-echo " _____           _        _ _ "
-echo "|_   _|         | |      | | |"
-echo "  | |  _ __  ___| |_ __ _| | |"
-echo "  | | | '_ \/ __| __/ _\` | | |"
-echo " _| |_| | | \__ \ || (_| | | |"
-echo "|_____|_| |_|___/\__\__,_|_|_|"
+intro=""
+intro="$intro _____           _        _ _  \n"
+intro="$intro|_   _|         | |      | | | \n"
+intro="$intro  | |  _ __  ___| |_ __ _| | | \n"
+intro="$intro  | | | '_ \/ __| __/ _\` | | |\n"
+intro="$intro _| |_| | | \__ \ || (_| | | | \n"
+intro="$intro|_____|_| |_|___/\__\__,_|_|_| \n"
+
+printInRainbow "$intro"
 echo ""
 
 # Check to make sure script is not initially run as root.
@@ -316,6 +319,10 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         caskInstallAppPrompt "Sublime.app" "sublime"
         # Install Slack
         caskInstallAppPrompt "Slack.app" "slack"
+        # Install VirtualBox
+        caskInstallAppPrompt "VirtualBox.app" "virtualbox"
+        # Install Firefox
+        caskInstallAppPrompt "Firefox.app" "firefox"
         # Preserve white space by changing the Internal Field Separator
         IFS='%'
         # Install and configure Chrome
@@ -344,10 +351,17 @@ fi
 
 
 # Finish
+FINISHED=""
+FINISHED="$FINISHED ___ ___ _  _ ___ ___ _  _ ___ ___    \n"
+FINISHED="$FINISHED| __|_ _| \| |_ _/ __| || | __|   \   \n"
+FINISHED="$FINISHED| _| | || .\` || |\__ \ __ | _|| |) | \n"
+FINISHED="$FINISHED|_| |___|_|\_|___|___/_||_|___|___/   \n"
+printInRainbow "$FINISHED"
 echo
-echo -e "$BLUE                INSTALLATION COMPLETE.$RESET_COLOR"
-echo -e "$BLUE (May need to open new shell to experience all changes.)$RESET_COLOR"
+echo -e "$GRAY INSTALLATION COMPLETE.$RESET_COLOR"
+echo -e "$GRAY (May need to open new shell to experience all changes.)$RESET_COLOR"
 echo
+
 if [ ${#FAILURES_ARRAY[@]} -eq 0 ]; then
     success "No failures occurred during install"
 else

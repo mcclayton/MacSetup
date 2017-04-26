@@ -184,3 +184,11 @@ manualAction() {
     echo -e "[MANUAL ACTION REQUIRED]: $1"
     read -p "   => Press Enter To Continue:"
 }
+
+printInRainbow() {
+    if hash lolcat 2>/dev/null; then
+        printf "$1" | lolcat
+    else
+        printf "$1"
+    fi
+}
