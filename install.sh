@@ -315,8 +315,6 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         caskInstallAppPrompt "Postman.app" "postman"
         # Install Spotify
         caskInstallAppPrompt "Spotify.app" "spotify"
-        # Install Sublime
-        caskInstallAppPrompt "Sublime.app" "sublime"
         # Install Slack
         caskInstallAppPrompt "Slack.app" "slack"
         # Install VirtualBox
