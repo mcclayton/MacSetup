@@ -204,7 +204,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         installPackage wget "brew install wget"
         assertPackageInstallation wget "wget"
         # Install curl
-        installPackage wget "brew install curl"
+        installPackage curl "brew install curl"
         assertPackageInstallation curl "curl"
         # Install tree
         installPackage tree "brew install tree"
