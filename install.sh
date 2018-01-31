@@ -98,6 +98,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
       "bashrc"
       "bash_profile"
       "profile"
+      "utility_aliases"
     )
 
     info "Backing up top-level dot files"
@@ -111,7 +112,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 
     # Set Dot Files
     for dotFileName in "${topLevelDotFiles[@]}"; do
-        cp ./'Mac Dot Files'/"$dotFileName".txt ~/."$dotFileName"
+        cp ./'Mac Dot Files'/"$dotFileName".sh ~/."$dotFileName"
         assertFileExists ~/."$dotFileName" "~/.$dotFileName set" "Failed to set ~/.$dotFileName"
     done
 else
@@ -139,7 +140,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     backupFile ~/.vimrc ~/dotfileBackups/.vimrc
 
     # Set .vimrc
-    cp ./'Mac Dot Files'/vimrc.txt ~/.vimrc
+    cp ./'Mac Dot Files'/vimrc.sh ~/.vimrc
     assertFileExists ~/.vimrc "~/.vimrc set" "Failed to set ~/.vimrc"
     success "~/.vimrc set"
 

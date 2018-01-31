@@ -26,4 +26,3 @@ PAGER=less; export PAGER
 export CLICOLOR=1
 
 export LSCOLORS=GxFxCxDxBxegedabagaced
-
