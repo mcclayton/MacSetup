@@ -29,9 +29,14 @@ parse_git_branch() {
 if [ "$TERM" != "dumb" ]; then
 	# Nice pretty color prompt with the current host and our current directory
   INITIALS='MCC'
-  BOLT='⚡️'
+  BOLT='\342\232\241' # Lightning Bolt Emoji UTF-8
+  ARROW_SEPARATOR='      ↳'
   RED='\[\033[01;31m\]'; GRAY='\[\033[01;30m\]'; BLUE='\[\033[01;34m\]'; GREEN='\[\033[01;32m\]'
-  PS1="$BOLT  $GRAY$INITIALS:$BLUE\w$RED\$(parse_git_branch) $GREEN$ \[\e[0m\]"
+
+  PS1_LINE_1="$BOLT  $GRAY$INITIALS:$BLUE\w$RED\$(parse_git_branch)"
+  PS1_LINE_2="$GRAY$ARROW_SEPARATOR$GREEN  $ \[\e[0m\]"
+
+  PS1="$PS1_LINE_1\n$PS1_LINE_2"
 fi
 
 # Enable color support of ls and also add handy aliases
