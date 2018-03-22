@@ -1,4 +1,4 @@
-source ./.utility_aliases
+source ~/.utility_aliases
 
 # This file is processed on each interactive invocation of bash
 
