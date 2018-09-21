@@ -35,8 +35,13 @@ configureAtom() {
         # Set atom config file
         mkdir -p ~/.atom
         cp ./Atom/config.cson ~/.atom/config.cson
-        # Assert config.csno set correctly
+        # Assert config.cson set correctly
         assertFileExists ~/.atom/config.cson "Atom config.cson set" "Failed to set Atom config.cson"
+
+        # Set Atom snippets
+        cp ./Atom/snippets.cson ~/.atom/snippets.cson
+        # Assert config.cson set correctly
+        assertFileExists ~/.atom/snippets.cson "Atom snippets.cson set" "Failed to set Atom snippets.cson"
 
         # Install Atom Packages
         info "Installing Atom Packages"

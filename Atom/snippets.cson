@@ -1,0 +1,94 @@
+  '.source.js':
+    'JS: Spec File':
+      prefix: '_js:spec'
+      body: """
+        import sinon from 'sinon';
+
+        import ${1:myModule} from '../${2:myModule}';
+
+        describe('${1:myModule}', () => {
+          beforeEach(() => {
+            // setup each test here (or use before() for all)
+          });
+
+          afterEach(() => {
+            // tear down each test here (or use after() for all)
+          });
+
+          it('should be defined', () => {
+            expect(myModule).to.not.be.undefined;
+          })
+        });
+      """
+
+    'React: Spec File':
+      prefix: '_jsx:spec'
+      body: """
+        import React from 'react';
+        import { shallow, mount } from 'enzyme';
+        import sinon from 'sinon';
+
+        import ${1:MyComponent} from '../${2:MyComponent}';
+
+        describe('<${1:MyComponent}/>', () => {
+          beforeEach(() => {
+            // setup each test here (or use before() for all)
+          });
+
+          afterEach(() => {
+            // tear down each test here (or use after() for all)
+          });
+
+          describe('Shallow Rendering', () => {
+            it('shallow renders the component', () => {
+              const wrapper = shallow(
+                <${3:MyComponent} />
+              );
+              expect(wrapper.exists()).toBe(true);
+            });
+          });
+
+          describe('Full Rendering', () => {
+            it('mounts the component', () => {
+              const wrapper = mount(
+                <${3:MyComponent} />
+              );
+              expect(wrapper.exists()).toBe(true);
+            });
+          })
+        });
+      """
+
+    'React: Functional Component File':
+      prefix: '_jsx:functional'
+      body: """
+        import React from 'react';
+        import PT from 'prop-types';
+
+        const ${1:MyComponent} = ({ ...props }) => (
+          <div {...props}/>
+        );
+
+        ${1:MyComponent}.propTypes = {};
+        ${1:MyComponent}.defaultProps = {};
+
+        export default ${1:MyComponent};
+      """
+
+    'React: Class Component File':
+      prefix: '_jsx:class'
+      body: """
+        import React, Component from 'react';
+        import PT from 'prop-types';
+
+        class ${1:MyComponent} extends Component {
+          render() {
+            <div {...this.props}/>
+          }
+        }
+
+        ${1:MyComponent}.propTypes = {};
+        ${1:MyComponent}.defaultProps = {};
+
+        export default ${1:MyComponent};
+      """
