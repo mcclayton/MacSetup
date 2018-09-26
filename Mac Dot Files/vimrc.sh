@@ -74,3 +74,6 @@ set laststatus=2
 
 "Map Ctrl+n to open nerdtree
 map <C-n> :NERDTreeToggle<CR>
+
+"Map Ctrl+t to open fzf Fuzzy Finding
+map <C-T> :FZF<cr>

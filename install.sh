@@ -150,6 +150,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
       "git://github.com/scrooloose/nerdtree.git"
       "git://github.com/ervandew/supertab.git"
       "git://github.com/tpope/vim-fugitive.git"
+      "git://github.com/junegunn/fzf.git"
     )
 
     info "Cloning plugins"
@@ -158,6 +159,12 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         cloneToPath=~/".vim/bundle/$repoName"
         rm -rf "$cloneToPath"
         git clone "$pluginUrl" "$cloneToPath"
+        # Invoke installation script if exists (i.e. for fzf)
+        installPath="$cloneToPath/install"
+        if [ -f $installPath ]; then
+          echo -e "\n\nInvoking installation for $repoName\n"
+          $installPath
+        fi
         assertDirectoryExists "$cloneToPath" "$repoName plugin added to $cloneToPath" "Failed to add plugin $repoName to $cloneToPath"
     done
 else
