@@ -1,94 +1,183 @@
-  '.source.js':
-    'JS: Spec File':
-      prefix: '_js:spec'
-      body: """
-        import sinon from 'sinon';
+'.source.js':
+  'JS: Spec File':
+    prefix: '_js:spec'
+    body: """
+      import sinon from 'sinon';
 
-        import ${1:myModule} from '../${2:myModule}';
+      import ${1:myModule} from '../${2:myModule}';
 
-        describe('${1:myModule}', () => {
-          beforeEach(() => {
-            // setup each test here (or use before() for all)
-          });
-
-          afterEach(() => {
-            // tear down each test here (or use after() for all)
-          });
-
-          it('should be defined', () => {
-            expect(myModule).to.not.be.undefined;
-          })
+      describe('${1:myModule}', () => {
+        beforeEach(() => {
+          // setup each test here (or use before() for all)
         });
-      """
 
-    'React: Spec File':
-      prefix: '_jsx:spec'
-      body: """
-        import React from 'react';
-        import { shallow, mount } from 'enzyme';
-        import sinon from 'sinon';
-
-        import ${1:MyComponent} from '../${2:MyComponent}';
-
-        describe('<${1:MyComponent}/>', () => {
-          beforeEach(() => {
-            // setup each test here (or use before() for all)
-          });
-
-          afterEach(() => {
-            // tear down each test here (or use after() for all)
-          });
-
-          describe('Shallow Rendering', () => {
-            it('shallow renders the component', () => {
-              const wrapper = shallow(
-                <${3:MyComponent} />
-              );
-              expect(wrapper.exists()).toBe(true);
-            });
-          });
-
-          describe('Full Rendering', () => {
-            it('mounts the component', () => {
-              const wrapper = mount(
-                <${3:MyComponent} />
-              );
-              expect(wrapper.exists()).toBe(true);
-            });
-          })
+        afterEach(() => {
+          // tear down each test here (or use after() for all)
         });
-      """
 
-    'React: Functional Component File':
-      prefix: '_jsx:functional'
-      body: """
-        import React from 'react';
-        import PT from 'prop-types';
+        it('should be defined', () => {
+          expect(myModule).to.not.be.undefined;
+        })
+      });
+    """
 
-        const ${1:MyComponent} = ({ ...props }) => (
-          <div {...props}/>
-        );
+  'React: Spec File':
+    prefix: '_jsx:spec'
+    body: """
+      import React from 'react';
+      import { shallow, mount } from 'enzyme';
+      import sinon from 'sinon';
 
-        ${1:MyComponent}.propTypes = {};
-        ${1:MyComponent}.defaultProps = {};
+      import ${1:MyComponent} from '../${2:MyComponent}';
 
-        export default ${1:MyComponent};
-      """
+      describe('<${1:MyComponent}/>', () => {
+        beforeEach(() => {
+          // setup each test here (or use before() for all)
+        });
 
-    'React: Class Component File':
-      prefix: '_jsx:class'
-      body: """
-        import React, Component from 'react';
-        import PT from 'prop-types';
+        afterEach(() => {
+          // tear down each test here (or use after() for all)
+        });
 
-        class ${1:MyComponent} extends Component {
-          render() {
-            <div {...this.props}/>
-          }
+        describe('Shallow Rendering', () => {
+          it('shallow renders the component', () => {
+            const wrapper = shallow(
+              <${3:MyComponent} />
+            );
+            expect(wrapper.exists()).toBe(true);
+          });
+        });
+
+        describe('Full Rendering', () => {
+          it('mounts the component', () => {
+            const wrapper = mount(
+              <${3:MyComponent} />
+            );
+            expect(wrapper.exists()).toBe(true);
+          });
+        })
+      });
+    """
+
+  'React: Functional Component File':
+    prefix: '_jsx:functional'
+    body: """
+      import React from 'react';
+      import PT from 'prop-types';
+
+      const ${1:MyComponent} = ({ ...props }) => (
+        <div {...props}/>
+      );
+
+      ${1:MyComponent}.propTypes = {};
+      ${1:MyComponent}.defaultProps = {};
+
+      export default ${1:MyComponent};
+    """
+
+  'React: Class Component File':
+    prefix: '_jsx:class'
+    body: """
+      import React, Component from 'react';
+      import PT from 'prop-types';
+
+      class ${1:MyComponent} extends Component {
+        render() {
+          <div {...this.props}/>
         }
+      }
 
-        ${1:MyComponent}.propTypes = {};
-        ${1:MyComponent}.defaultProps = {};
+      ${1:MyComponent}.propTypes = {};
+      ${1:MyComponent}.defaultProps = {};
 
-        export default ${1:MyComponent};
-      """
+      export default ${1:MyComponent};
+    """
+
+'.source.shell':
+  'Bash: Template':
+    prefix: '_bash:template:full'
+    body: """
+      #!/usr/bin/env bash
+
+      # DESC: Usage help
+      # ARGS: None
+      # OUTS: None
+      function script_usage() {
+        cat << EOF
+        Usage:
+          -h|--help                  Displays this help
+          -v|--verbose               Displays verbose output
+      EOF
+      }
+
+      # DESC: Parameter parser
+      # ARGS: $@ (optional): Arguments provided to the script
+      # OUTS: Variables indicating command-line parameters and options
+      function parse_params() {
+        local param
+        if [ "$#" == "0" ]
+        then
+          script_usage
+        fi
+
+        while [[ $# -gt 0 ]]; do
+          param="\\$1"
+          shift
+          case $param in
+            -h|--help)
+                script_usage
+                exit 0
+                ;;
+            -v|--verbose)
+                verbose=true
+                ;;
+            *)
+              echo "Invalid parameter '$param' was provided. Exiting..."
+              exit 0
+              ;;
+          esac
+        done
+      }
+
+      # DESC: Main control flow
+      # ARGS: $@ (optional): Arguments provided to the script
+      # OUTS: None
+      function main() {
+        parse_params "$@"
+
+        if [ $verbose ]
+        then
+          echo "Verbose mode enabled..."
+        fi
+      }
+
+      # Call main function with arguments
+      main "$@"
+    """
+
+  'Bash: Plain Template':
+    prefix: '_bash:template:plain'
+    body: """
+      #!/usr/bin/env bash
+
+    """
+
+  'Bash: Function':
+    prefix: '_bash:function'
+    body: """
+      # TODO: description
+      # @param  The first parameter
+      # @return
+      #
+      function_name() {
+        local param_name="$1"; shift
+        echo "TODO !"
+      }
+    """
+
+  'Bash: Get Directory Of Script Itself':
+    prefix: '_bash:self_dir'
+    body: """
+      # Path to directory containing this script
+      SELF_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+    """
