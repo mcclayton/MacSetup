@@ -7,7 +7,7 @@
                                         |_|
 ```
 
-**🚀 Complete Mac Development Environment Setup 🚀**
+**🚀 Complete Automated Mac Development Environment Setup 🚀**
 
 ## About
 This repository contains the [install script](https://github.com/mcclayton/DotFiles/blob/master/install.sh) which, when run, will completely
