@@ -48,7 +48,7 @@ function main {
       backupFile ~/.gitconfig ~/dotfileBackups/.gitconfig
 
       # Set .gitconfig
-      cp ./gitconfig.txt ~/.gitconfig
+      cp "$(scriptDirectory)/gitconfig.txt" ~/.gitconfig
       assertFileExists ~/.gitconfig "~/.gitconfig set" "Failed to set ~/.gitconfig"
 
       # Set Github Username and email
@@ -67,11 +67,11 @@ function main {
   promptNewSection "SETTING UP FONTS"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
       info "Opening Inconsolata-g.otf font"
-      open ./fonts/Inconsolata-g.otf
+      open "$(scriptDirectory)/fonts/Inconsolata-g.otf"
       manualAction "Press Install Font Button for Inconsolata-g.otf"
 
       info "Opening Powerline Inconsolata-g font"
-      open ./fonts/'Inconsolata-g for Powerline.otf'
+      open "$(scriptDirectory)/fonts/'Inconsolata-g for Powerline.otf'"
       manualAction "Press Install Font Button for Inconsolata-g for Powerline.otf"
   else
       # Skip this installation section
@@ -99,7 +99,7 @@ function main {
 
       # Set Dot Files
       for dotFileName in "${topLevelDotFiles[@]}"; do
-          cp ./'Mac Dot Files'/"$dotFileName".sh ~/."$dotFileName"
+          cp "$(scriptDirectory)"/'Mac Dot Files'/"$dotFileName".sh ~/."$dotFileName"
           assertFileExists ~/."$dotFileName" "~/.$dotFileName set" "Failed to set ~/.$dotFileName"
       done
   else
@@ -119,7 +119,7 @@ function main {
 
       # Set .vim folder
       rm -rf ~/.vim
-      cp -r ./vim ~/.vim
+      cp -r "$(scriptDirectory)/vim" ~/.vim
       assertDirectoryExists ~/.vim "~/.vim directory set" "Failed to set ~/.vim directory"
 
       # Backup .vimrc
@@ -127,7 +127,7 @@ function main {
       backupFile ~/.vimrc ~/dotfileBackups/.vimrc
 
       # Set .vimrc
-      cp ./'Mac Dot Files'/vimrc.sh ~/.vimrc
+      cp "$(scriptDirectory)"/'Mac Dot Files'/vimrc.sh ~/.vimrc
       assertFileExists ~/.vimrc "~/.vimrc set" "Failed to set ~/.vimrc"
       success "~/.vimrc set"
 
