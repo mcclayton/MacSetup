@@ -1,37 +1,25 @@
-DotFiles
-========
-
 ```
- ____        _     _____ _ _
-|  _ \  ___ | |_  |  ___(_) | ___  ___
-| | | |/ _ \| __| | |_  | | |/ _ \/ __|
-| |_| | (_) | |_  |  _| | | |  __/\__ \
-|____/ \___/ \__| |_|   |_|_|\___||___/
+ __  __              ____       _
+|  \/  | __ _  ___  / ___|  ___| |_ _   _ _ __
+| |\/| |/ _` |/ __| \___ \ / _ \ __| | | | '_ \
+| |  | | (_| | (__   ___) |  __/ |_| |_| | |_) |
+|_|  |_|\__,_|\___| |____/ \___|\__|\__,_| .__/
+                                        |_|
 ```
 
-#### Important: these configuration files are intended for Terminal Emulators with 256 color support. ####
+## About
+This repository contains the script `./install.sh` which, when run, will completely
+set up a Macintosh machine configured to [Michael Clayton's](https://github.com/mcclayton)
+preferred and opinionated development environment. It will configure and install dot files, applications, packages, et cetera.
 
-My configuration files: (.bashrc, .profile, .vimrc)
-
-These configuration files are simple (no extra fluff), useful, and commented for your convenience.  
-
-Configuration files are tailored for Macintosh or Unix/Linux Machines.
-
-Feel free to pick and choose what features you want.
-
-Enjoy!
-
-## Mac installation
-
-For convenience, this installation script will set up a Mac with an opinionated fully configured development environment.
-It will configure and install dot files, applications, packages, et cetera.
-
-However, the script is designed to be interactive so users can still pick and choose what they want
-to install/configure.
-
-```bash
-# This script must be run from the containing directory.
-./install.sh
-```
+The script is designed to be interactive so users can still pick and choose what they want
+to install/configure, however, you may still want to look through individual Dot Files and
+pick/choose what you want at a more granular level.
 
 This script is designed to be safe and can be run multiple times.
+
+## Usage
+```bash
+# Simply run:
+./install.sh
+```

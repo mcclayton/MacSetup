@@ -1,19 +1,17 @@
 #!/bin/bash
 
+# Prints path to directory containing this script
+function scriptDirectory {
+  local self_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+  echo "$self_dir"
+}
+
+# Bring in constants
+source "$(scriptDirectory)/installation/constants.sh"
 # Bring in the helper functions
-source ./installation/helperFunctions.sh
-
+source "$(scriptDirectory)/installation/helperFunctions.sh"
 # Bring in the application configuration util
-source ./installation/appConfigUtil.sh
-
-# FONT COLORS
-RED=$(tput setaf 9)
-ORANGE=$(tput setaf 172)
-GREEN=$(tput setaf 2)
-BLUE=$(tput setaf 12)
-YELLOW=$(tput setaf 11)
-GRAY=$(tput setaf 8)
-RESET_COLOR=$(tput sgr0)
+source "$(scriptDirectory)/installation/appConfigUtil.sh"
 
 # Main Function
 function main {
@@ -335,7 +333,7 @@ function main {
 
           # Cleanup downloads
           info "Cleaning up application .zip and .dmg files"
-          brew cask cleanup
+          brew cleanup
       else
           fail "Failed to install brew packages. Homebrew is not installed."
       fi

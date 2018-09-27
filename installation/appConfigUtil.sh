@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#######################################
+###################################
 # Package Configuration Functions #
-#######################################
+###################################
 
 # Set up yarn
 configureYarn() {
@@ -34,12 +34,12 @@ configureAtom() {
         backupDir ~/.atom ~/dotfileBackups/.atom
         # Set atom config file
         mkdir -p ~/.atom
-        cp ./Atom/config.cson ~/.atom/config.cson
+        cp "$(scriptDirectory)/Atom/config.cson" ~/.atom/config.cson
         # Assert config.cson set correctly
         assertFileExists ~/.atom/config.cson "Atom config.cson set" "Failed to set Atom config.cson"
 
         # Set Atom snippets
-        cp ./Atom/snippets.cson ~/.atom/snippets.cson
+        cp "$(scriptDirectory)/Atom/snippets.cson" ~/.atom/snippets.cson
         # Assert config.cson set correctly
         assertFileExists ~/.atom/snippets.cson "Atom snippets.cson set" "Failed to set Atom snippets.cson"
 
@@ -47,7 +47,7 @@ configureAtom() {
         info "Installing Atom Packages"
         if hash apm 2>/dev/null; then
             # For every non-blank line
-            for packageNameAndVersion in `grep -v "^$" ./Atom/packages.list`; do
+            for packageNameAndVersion in `grep -v "^$" "$(scriptDirectory)/Atom/packages.list"`; do
                 apm install $packageNameAndVersion
             done
         else
@@ -66,7 +66,7 @@ configureSpectacle() {
         # Preserve white space by changing the Internal Field Separator
         IFS='%'
         mkdir -p ~/Library/'Application Support'/Spectacle/Shortcuts.json
-        cp ./Spectacle/Shortcuts.json ~/Library/'Application Support'/Spectacle/Shortcuts.json
+        cp "$(scriptDirectory)/Spectacle/Shortcuts.json" ~/Library/'Application Support'/Spectacle/Shortcuts.json
         assertFileExists ~/Library/'Application Support'/Spectacle/Shortcuts.json "Spectacle Shortcuts.json set" "Failed to set Spectacle Shortcuts.json"
         # Reset the Internal Field Separator
         unset IFS
@@ -84,7 +84,7 @@ configureITerm() {
         defaults delete com.googlecode.iterm2
         # Copying over new configurations file
         info "Setting iTerm configurations file in ~/Library/Preferences/"
-        cp ./iTerm2/com.googlecode.iterm2.plist ~/Library/Preferences/com.googlecode.iterm2.plist
+        cp "$(scriptDirectory)/iTerm2/com.googlecode.iterm2.plist" ~/Library/Preferences/com.googlecode.iterm2.plist
         # Reading in new config file
         info "Reading in new configurations file"
         `defaults read -app iTerm` 2>/dev/null
