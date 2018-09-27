@@ -10,7 +10,7 @@
 **🚀 Complete Automated Mac Development Environment Setup 🚀**
 
 ## About
-This repository contains the [install script](https://github.com/mcclayton/DotFiles/blob/master/install.sh) which, when run, will completely
+This repository contains an [install script](https://github.com/mcclayton/DotFiles/blob/master/install.sh) which, when run, will completely
 set up a Macintosh machine configured to [Michael Clayton](https://github.com/mcclayton)'s preferred and opinionated development environment.
 It will configure and install dot files, applications, packages, et cetera.
 
@@ -25,3 +25,5 @@ Simply run the [install script](https://github.com/mcclayton/DotFiles/blob/maste
 ```bash
 ./install.sh
 ```
+
+![Screenshot](./images/screenshot.png)
