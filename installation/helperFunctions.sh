@@ -4,6 +4,48 @@
 # Helper Functions #
 ####################
 
+function finish {
+  # Finish
+  echo
+  IFS='' read -r -d '' FINISH_MESSAGE <<'EOF'
+ ___ ___ _  _ ___ ___ _  _ ___ ___
+| __|_ _| \| |_ _/ __| || | __|   \
+| _| | || .` || |\__ \ __ | _|| |) |
+|_| |___|_|\_|___|___/_||_|___|___/
+EOF
+
+  printInRainbow "$FINISH_MESSAGE"
+  echo
+  echo -e "$GRAY INSTALLATION COMPLETE.$RESET_COLOR"
+  echo -e "$GRAY (May need to open new shell to experience all changes.)$RESET_COLOR"
+  echo
+
+  if [ ${#FAILURES_ARRAY[@]} -eq 0 ]; then
+      success "No failures occurred during install"
+  else
+      warn "The following failures occurred during install"
+      # Print failures
+      printFailures
+  fi
+  echo
+  exit 0
+}
+
+function printIntro {
+  # Intro
+  echo
+  IFS='' read -r -d '' INSTALL_MESSAGE <<'EOF'
+ _____           _        _ _
+|_   _|         | |      | | |
+  | |  _ __  ___| |_ __ _| | |
+  | | | '_ \/ __| __/ _` | | |
+ _| |_| | | \__ \ || (_| | | |
+|_____|_| |_|___/\__\__,_|_|_|
+EOF
+  printInRainbow "$INSTALL_MESSAGE"
+  echo
+}
+
 promptYesNo() {
     echo "   => $1 "
     read -p "      [Y/n] " -r
