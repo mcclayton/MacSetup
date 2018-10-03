@@ -78,7 +78,7 @@
   'React: Class Component File':
     prefix: '_jsx:class'
     body: """
-      import React, Component from 'react';
+      import React, { Component } from 'react';
       import PT from 'prop-types';
 
       class ${1:MyComponent} extends Component {
