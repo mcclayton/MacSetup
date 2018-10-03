@@ -72,7 +72,7 @@ let g:airline_powerline_fonts = 1
 "Display the status line always
 set laststatus=2
 
-"Map Ctrl+n to toogle GitGutter
+"Map Ctrl+n to toggle GitGutter
 map <C-g> :GitGutterToggle<CR>
 
 "Map Ctrl+n to toggle nerdtree
