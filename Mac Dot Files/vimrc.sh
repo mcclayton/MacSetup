@@ -72,7 +72,10 @@ let g:airline_powerline_fonts = 1
 "Display the status line always
 set laststatus=2
 
-"Map Ctrl+n to open nerdtree
+"Map Ctrl+n to toggle GitGutter
+map <C-g> :GitGutterToggle<CR>
+
+"Map Ctrl+n to toggle nerdtree
 map <C-n> :NERDTreeToggle<CR>
 
 "Map Ctrl+t to open fzf Fuzzy Finding
