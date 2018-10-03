@@ -137,6 +137,7 @@ function main {
         "git://github.com/scrooloose/nerdtree.git"
         "git://github.com/ervandew/supertab.git"
         "git://github.com/tpope/vim-fugitive.git"
+        "git://github.com/airblade/vim-gitgutter.git"
         "git://github.com/junegunn/fzf.git"
       )
 
