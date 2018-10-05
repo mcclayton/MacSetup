@@ -1,0 +1,18 @@
+{
+    "editor.fontSize": 14,
+    "editor.fontFamily": "Inconsolata-g, Menlo, Monaco, 'Courier New', monospace",
+    "editor.renderLineHighlight": "line",
+    "atomKeymap.promptV3Features": true,
+    "editor.multiCursorModifier": "ctrlCmd",
+    "editor.formatOnPaste": true,
+    "editor.minimap.showSlider": "always",
+    "editor.fontWeight": "bold",
+    "workbench.colorTheme": "Visual Studio Light",
+    "editor.renderWhitespace": "all",
+    "editor.overviewRulerBorder": false,
+    "editor.rulers": [
+        80
+    ],
+    "trailing-spaces.trimOnSave": true,
+    "files.insertFinalNewline": true
+}
