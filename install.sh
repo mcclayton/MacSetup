@@ -303,6 +303,8 @@ function main {
 
       # Can only install brew apps if brew is installed
       if hash brew 2>/dev/null; then
+          # Install Visual Studio Code
+          caskInstallAppPrompt "Visual Studio Code.app" "visual-studio-code"
           # Install Sip Color Picker
           caskInstallAppPrompt "Sip.app" "sip"
           # Install Flux

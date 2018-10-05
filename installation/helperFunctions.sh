@@ -170,7 +170,7 @@ caskInstallAppPrompt() {
             fi
         fi
         # Assert application is installed correctly
-        assertAppInstallation $1
+        assertAppInstallation "$1"
     else
         # Skip this installation section
         info "Skipping Installation..."
