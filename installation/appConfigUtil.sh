@@ -24,6 +24,30 @@ configureYarn() {
 # Application Configuration Functions #
 #######################################
 
+# Set up VSCode
+configureVSCode() {
+    info "Configuring VSCode IDE"
+    if [ -d "/Applications/Visual Studio Code.app" ]; then
+        # Backup .vscode directory
+        mkdir -p ~/dotfileBackups
+        rm -rf ~/dotfileBackups/.vscode
+        backupDir ~/.vscode ~/dotfileBackups/.vscode
+
+        # Install VSCode Packages
+        info "Installing VSCode Packages"
+        if hash code 2>/dev/null; then
+            # For every non-blank line
+            for extension in `grep -v "^$" "$(scriptDirectory)/VSCode/extensions.list"`; do
+                code --install-extension $extension
+            done
+        else
+            fail "Failed to install VSCode Extensions, 'code' command does not exist"
+        fi
+    else
+        fail "Cannot configure VSCode as it is not installed"
+    fi
+}
+
 # Set up Atom
 configureAtom() {
     info "Configuring Atom IDE"
