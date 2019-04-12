@@ -214,6 +214,9 @@ function main {
           # Install yarn
           installPackage yarn "brew install yarn" configureYarn
           assertPackageInstallation yarn "yarn"
+          # Install htop
+          installPackage htop "brew install htop"
+          assertPackageInstallation htop "htop"
       else
           fail "Failed to install brew packages. Homebrew is not installed."
       fi

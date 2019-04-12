@@ -4,6 +4,15 @@ findProcessOnPort() {
   lsof -n -i4TCP:$PORT | grep LISTEN
 }
 
+# Use htop if exists, else top
+top() {
+  if hash htop 2>/dev/null; then
+    htop
+  else
+    top
+  fi
+}
+
 # Open up the network tab of a github project. First argument is the Github org. or user
 network() {
   REPO_NAME=$(basename `git rev-parse --show-toplevel`)
