@@ -8,3 +8,5 @@ ms-vscode.atom-keybindings
 rebornix.ruby
 shardulm94.trailing-spaces
 wix.vscode-import-cost
+christian-kohler.path-intellisense
+christian-kohler.npm-intellisense
