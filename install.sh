@@ -306,6 +306,8 @@ function main {
 
       # Can only install brew apps if brew is installed
       if hash brew 2>/dev/null; then
+          # Install Caffeine
+          caskInstallAppPrompt "Caffeine.app" "caffeine"
           # Install Sip Color Picker
           caskInstallAppPrompt "Sip.app" "sip"
           # Install Flux
