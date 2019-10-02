@@ -1,0 +1,19 @@
+version: 2
+jobs:
+  test:
+    docker:
+      - image: circleci/node:8.10
+    environment:
+    working_directory: ~/MacSetup
+    steps:
+      - checkout
+      - run:
+          name: Test Script Invocation
+          # Ensure the script can be successfully invoked
+          # but then immediately quit
+          command: printf 'n\n' | ./install.sh
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - test
