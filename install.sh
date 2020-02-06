@@ -78,6 +78,17 @@ function main {
       info "Skipping..."
   fi
 
+    # Set up fonts
+  promptNewSection "SETTING UP SCREENSAVERS"
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+      info "Opening Aerial.saver"
+      open "$(scriptDirectory)/screensavers/Aerial.saver"
+      manualAction "Follow MacOSX prompts to install Aerial.saver"
+  else
+      # Skip this installation section
+      info "Skipping..."
+  fi
+
   promptNewSection "SETTING UP TOP-LEVEL DOT FILES"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
       # Set new top-level dot files
