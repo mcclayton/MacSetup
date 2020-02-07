@@ -333,6 +333,10 @@ function main {
           caskInstallAppPrompt "VirtualBox.app" "virtualbox"
           # Install Firefox
           caskInstallAppPrompt "Firefox.app" "firefox"
+          # Install Gimp
+          caskInstallAppPrompt "Gimp.app" "gimp"
+          # Install Docker
+          caskInstallAppPrompt "Docker.app" "docker"
           # Preserve white space by changing the Internal Field Separator
           IFS='%'
           # Install and configure Chrome
