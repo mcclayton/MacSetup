@@ -228,6 +228,9 @@ function main {
           # Install htop
           installPackage htop "brew install htop"
           assertPackageInstallation htop "htop"
+          # Install bat
+          installPackage bat "brew install bat"
+          assertPackageInstallation bat "bat"
       else
           fail "Failed to install brew packages. Homebrew is not installed."
       fi

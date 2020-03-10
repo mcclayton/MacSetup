@@ -51,6 +51,9 @@ if [ -x /usr/bin/dircolors ]; then
   alias egrep='egrep --color=auto'
 fi
 
+# Show trailing slashes for directories
+alias ls='ls -p'
+
 # Some more ls aliases
 alias ll='ls -l'
 alias la='ls -A'
