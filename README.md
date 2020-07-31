@@ -7,6 +7,8 @@
                                         |_|
 ```
 
+[![mcclayton](https://circleci.com/gh/mcclayton/MacSetup.svg?style=svg)](https://github.com/mcclayton/MacSetup)
+
 **🚀 Complete Automated Mac Development Environment Setup 🚀**
 
 ## About
