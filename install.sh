@@ -228,6 +228,9 @@ function main {
           # Install htop
           installPackage htop "brew install htop"
           assertPackageInstallation htop "htop"
+          # Install htop
+          installPackage ytop "brew tap cjbassi/ytop && brew install ytop"
+          assertPackageInstallation ytop "ytop"
           # Install bat
           installPackage bat "brew install bat"
           assertPackageInstallation bat "bat"

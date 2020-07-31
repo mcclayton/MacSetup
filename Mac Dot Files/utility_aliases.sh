@@ -4,9 +4,11 @@ findProcessOnPort() {
   lsof -n -i4TCP:$PORT | grep LISTEN
 }
 
-# Use htop if exists, else top
+# Use ytop, else, htop, else top
 top() {
-  if hash htop 2>/dev/null; then
+  if hash ytop 2>/dev/null; then
+    ytop
+  elif hash htop 2>/dev/null; then
     htop
   else
     top

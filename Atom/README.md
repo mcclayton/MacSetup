@@ -1,4 +1,4 @@
-To update the packages.list file, run the `updatePackageList.sh`
+To update the packages.list file, run the `updatePackageList.sh` script.
 The main `install.sh` script will use this packages.list file for
 installing Atom packages.
 
