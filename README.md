@@ -12,6 +12,7 @@
 **🚀 Complete Automated Mac Development Environment Setup 🚀**
 
 ## About
+
 This repository contains an [install script](https://github.com/mcclayton/DotFiles/blob/master/install.sh) which, when run, will completely
 set up a Macintosh machine configured to [Michael Clayton](https://github.com/mcclayton)'s preferred and opinionated development environment.
 It will configure and install dot files, applications, packages, et cetera.
@@ -23,21 +24,33 @@ pick/choose what you want at a more granular level.
 This script is designed to be safe and can be run multiple times.
 
 ## Usage
+
 Simply run the [install script](https://github.com/mcclayton/DotFiles/blob/master/install.sh) with:
+
 ```bash
 ./install.sh
 ```
 
 ## Docker
 
+The installation script can be tested from within a docker container:
+
 #### Build the image:
+
 ```
 docker build -t macsetup .
 ```
 
 #### Run the container interactively:
-```
+
+```bash
 docker container run -it macsetup /bin/bash
+```
+
+then run
+
+```bash
+./install.sh
 ```
 
 ![Screenshot](./images/screenshot.png)
