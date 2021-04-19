@@ -110,7 +110,7 @@ function main {
 
       # Set Dot Files
       for dotFileName in "${topLevelDotFiles[@]}"; do
-          cp "$(scriptDirectory)"/'Mac Dot Files'/"$dotFileName".sh ~/."$dotFileName"
+          cp "$(scriptDirectory)"/Mac_Dot_Files/"$dotFileName".sh ~/."$dotFileName"
           assertFileExists ~/."$dotFileName" "~/.$dotFileName set" "Failed to set ~/.$dotFileName"
       done
   else
@@ -138,7 +138,7 @@ function main {
       backupFile ~/.vimrc ~/dotfileBackups/.vimrc
 
       # Set .vimrc
-      cp "$(scriptDirectory)"/'Mac Dot Files'/vimrc.sh ~/.vimrc
+      cp "$(scriptDirectory)"/Mac_Dot_Files/vimrc.sh ~/.vimrc
       assertFileExists ~/.vimrc "~/.vimrc set" "Failed to set ~/.vimrc"
       success "~/.vimrc set"
 
