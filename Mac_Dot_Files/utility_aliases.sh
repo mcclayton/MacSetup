@@ -15,15 +15,6 @@ top() {
   fi
 }
 
-# Use ytop, else, htop, else top
-cat() {
-  if hash bat 2>/dev/null; then
-    bat -p
-  else
-    top
-  fi
-}
-
 # Open up the network tab of a github project. First argument is the Github org. or user
 network() {
   REPO_NAME=$(basename `git rev-parse --show-toplevel`)
