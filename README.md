@@ -28,4 +28,16 @@ Simply run the [install script](https://github.com/mcclayton/DotFiles/blob/maste
 ./install.sh
 ```
 
+## Docker
+
+#### Build the image:
+```
+docker build -t macsetup .
+```
+
+#### Run the container interactively:
+```
+docker container run -it macsetup /bin/bash
+```
+
 ![Screenshot](./images/screenshot.png)
