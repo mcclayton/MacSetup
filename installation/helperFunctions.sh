@@ -202,6 +202,22 @@ assertFileExists() {
     fi
 }
 
+isMacOs() {
+  unameOut="$(uname -s)"
+  case "${unameOut}" in
+    Linux*)     machine=Linux;;
+    Darwin*)    machine=Mac;;
+    CYGWIN*)    machine=Cygwin;;
+    MINGW*)     machine=MinGw;;
+    *)          machine="UNKNOWN:${unameOut}"
+  esac
+  if [ "$machine" = "Mac" ]; then
+    true
+  else
+    false
+  fi
+}
+
 assertPackageInstallation() {
     # $1 is command to assert existence in order to verify correct installation
     # $2 is name of command

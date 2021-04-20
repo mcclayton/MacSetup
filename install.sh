@@ -29,43 +29,44 @@ function main {
   # Set up Xcode command line tools
   promptNewSection "XCODE COMMAND LINE TOOLS"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-      info "Installing Xcode Command Line Tools"
-      xcode-select --install
-      # Test to ensure successful install
-      assertPackageInstallation gcc "Xcode CLT"
-      assertPackageInstallation git "Git"
+    info "Installing Xcode Command Line Tools"
+    xcode-select --install
+    # Test to ensure successful install
+    assertPackageInstallation gcc "Xcode CLT"
+    assertPackageInstallation git "Git"
   else
-      # Skip this installation section
-      info "Skipping..."
+    # Skip this installation section
+    info "Skipping..."
   fi
 
   # Set up Git
   promptNewSection "GIT"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-      info "Configuring git"
-      # Backup files
-      mkdir -p ~/dotfileBackups
-      backupFile ~/.gitconfig ~/dotfileBackups/.gitconfig
+    info "Configuring git"
+    # Backup files
+    mkdir -p ~/dotfileBackups
+    backupFile ~/.gitconfig ~/dotfileBackups/.gitconfig
 
-      # Set .gitconfig
-      cp "$(scriptDirectory)/gitconfig.txt" ~/.gitconfig
-      assertFileExists ~/.gitconfig "~/.gitconfig set" "Failed to set ~/.gitconfig"
+    # Set .gitconfig
+    cp "$(scriptDirectory)/gitconfig.txt" ~/.gitconfig
+    assertFileExists ~/.gitconfig "~/.gitconfig set" "Failed to set ~/.gitconfig"
 
-      # Set Github Username and email
-      prompt "What is your Github Username (i.e. \"First Last\")?"
-      git config --global user.name "$REPLY"
-      success "Username set to $REPLY"
-      prompt "What is your Github Email (i.e. \"me@mail.com\")?"
-      success "Email set to $REPLY"
-      git config --global user.email $REPLY
+    # Set Github Username and email
+    prompt "What is your Github Username (i.e. \"First Last\")?"
+    git config --global user.name "$REPLY"
+    success "Username set to $REPLY"
+    prompt "What is your Github Email (i.e. \"me@mail.com\")?"
+    success "Email set to $REPLY"
+    git config --global user.email $REPLY
   else
-      # Skip this installation section
-      info "Skipping..."
+    # Skip this installation section
+    info "Skipping..."
   fi
 
   # Set up fonts
   promptNewSection "SETTING UP FONTS"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
+    if isMacOs; then
       info "Opening Inconsolata-g.otf font"
       open "$(scriptDirectory)/fonts/Inconsolata-g.otf"
       manualAction "Press Install Font Button for Inconsolata-g.otf"
@@ -73,99 +74,106 @@ function main {
       info "Opening Powerline Inconsolata-g font"
       open "$(scriptDirectory)/fonts/'Inconsolata-g for Powerline.otf'"
       manualAction "Press Install Font Button for Inconsolata-g for Powerline.otf"
+    else
+      warn "This is a MacOS specific step, skipping due to invalid OS..."
+    fi
   else
-      # Skip this installation section
-      info "Skipping..."
+    # Skip this installation section
+    info "Skipping..."
   fi
 
     # Set up fonts
   promptNewSection "SETTING UP SCREENSAVERS"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
+    if isMacOs; then
       info "Opening Aerial.saver"
       open "$(scriptDirectory)/screensavers/Aerial.saver"
       manualAction "Follow MacOSX prompts to install Aerial.saver"
+    else
+      warn "This is a MacOS specific step, skipping due to invalid OS..."
+    fi
   else
-      # Skip this installation section
-      info "Skipping..."
+    # Skip this installation section
+    info "Skipping..."
   fi
 
   promptNewSection "SETTING UP TOP-LEVEL DOT FILES"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-      # Set new top-level dot files
-      topLevelDotFiles=(
-        "bashrc"
-        "bash_profile"
-        "profile"
-        "utility_aliases"
-      )
+    # Set new top-level dot files
+    topLevelDotFiles=(
+      "bashrc"
+      "bash_profile"
+      "profile"
+      "utility_aliases"
+    )
 
-      info "Backing up top-level dot files"
+    info "Backing up top-level dot files"
 
-      # Backup Dot Files
-      for dotFileName in "${topLevelDotFiles[@]}"; do
-          backupFile ~/."$dotFileName" ~/dotfileBackups/."$dotFileName"
-      done
+    # Backup Dot Files
+    for dotFileName in "${topLevelDotFiles[@]}"; do
+      backupFile ~/."$dotFileName" ~/dotfileBackups/."$dotFileName"
+    done
 
-      info "Setting top-level dot files"
+    info "Setting top-level dot files"
 
-      # Set Dot Files
-      for dotFileName in "${topLevelDotFiles[@]}"; do
-          cp "$(scriptDirectory)"/Mac_Dot_Files/"$dotFileName".sh ~/."$dotFileName"
-          assertFileExists ~/."$dotFileName" "~/.$dotFileName set" "Failed to set ~/.$dotFileName"
-      done
+    # Set Dot Files
+    for dotFileName in "${topLevelDotFiles[@]}"; do
+      cp "$(scriptDirectory)"/Mac_Dot_Files/"$dotFileName".sh ~/."$dotFileName"
+      assertFileExists ~/."$dotFileName" "~/.$dotFileName set" "Failed to set ~/.$dotFileName"
+    done
   else
-      # Skip this installation section
-      info "Skipping..."
+    # Skip this installation section
+    info "Skipping..."
   fi
 
   # Set up vim
   promptNewSection "SETTING UP VIM"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-      # Set up .vim folder
-      info "Setting up .vim folder"
-      # Backup .vim folder
-      mkdir -p ~/dotfileBackups
-      rm -rf ~/dotfileBackups/.vim
-      backupDir ~/.vim ~/dotfileBackups/.vim
+    # Set up .vim folder
+    info "Setting up .vim folder"
+    # Backup .vim folder
+    mkdir -p ~/dotfileBackups
+    rm -rf ~/dotfileBackups/.vim
+    backupDir ~/.vim ~/dotfileBackups/.vim
 
-      # Set .vim folder
-      rm -rf ~/.vim
-      cp -r "$(scriptDirectory)/vim" ~/.vim
-      assertDirectoryExists ~/.vim "~/.vim directory set" "Failed to set ~/.vim directory"
+    # Set .vim folder
+    rm -rf ~/.vim
+    cp -r "$(scriptDirectory)/vim" ~/.vim
+    assertDirectoryExists ~/.vim "~/.vim directory set" "Failed to set ~/.vim directory"
 
-      # Backup .vimrc
-      mkdir -p ~/dotfileBackups
-      backupFile ~/.vimrc ~/dotfileBackups/.vimrc
+    # Backup .vimrc
+    mkdir -p ~/dotfileBackups
+    backupFile ~/.vimrc ~/dotfileBackups/.vimrc
 
-      # Set .vimrc
-      cp "$(scriptDirectory)"/Mac_Dot_Files/vimrc.sh ~/.vimrc
-      assertFileExists ~/.vimrc "~/.vimrc set" "Failed to set ~/.vimrc"
-      success "~/.vimrc set"
+    # Set .vimrc
+    cp "$(scriptDirectory)"/Mac_Dot_Files/vimrc.sh ~/.vimrc
+    assertFileExists ~/.vimrc "~/.vimrc set" "Failed to set ~/.vimrc"
+    success "~/.vimrc set"
 
-      # Clone all vim plugins
-      vimPlugins=(
-        "git://github.com/vim-airline/vim-airline.git"
-        "git://github.com/scrooloose/nerdtree.git"
-        "git://github.com/ervandew/supertab.git"
-        "git://github.com/tpope/vim-fugitive.git"
-        "git://github.com/airblade/vim-gitgutter.git"
-        "git://github.com/junegunn/fzf.git"
-      )
+    # Clone all vim plugins
+    vimPlugins=(
+      "git://github.com/vim-airline/vim-airline.git"
+      "git://github.com/scrooloose/nerdtree.git"
+      "git://github.com/ervandew/supertab.git"
+      "git://github.com/tpope/vim-fugitive.git"
+      "git://github.com/airblade/vim-gitgutter.git"
+      "git://github.com/junegunn/fzf.git"
+    )
 
-      info "Cloning plugins"
-      for pluginUrl in "${vimPlugins[@]}"; do
-          repoName=$(repoName "$pluginUrl")
-          cloneToPath=~/".vim/bundle/$repoName"
-          rm -rf "$cloneToPath"
-          git clone "$pluginUrl" "$cloneToPath"
-          # Invoke installation script if exists (i.e. for fzf)
-          installPath="$cloneToPath/install"
-          if [ -f $installPath ]; then
-            echo -e "\n\nInvoking installation for $repoName\n"
-            $installPath
-          fi
-          assertDirectoryExists "$cloneToPath" "$repoName plugin added to $cloneToPath" "Failed to add plugin $repoName to $cloneToPath"
-      done
+    info "Cloning plugins"
+    for pluginUrl in "${vimPlugins[@]}"; do
+      repoName=$(repoName "$pluginUrl")
+      cloneToPath=~/".vim/bundle/$repoName"
+      rm -rf "$cloneToPath"
+      git clone "$pluginUrl" "$cloneToPath"
+      # Invoke installation script if exists (i.e. for fzf)
+      installPath="$cloneToPath/install"
+      if [ -f $installPath ]; then
+        echo -e "\n\nInvoking installation for $repoName\n"
+        $installPath
+      fi
+      assertDirectoryExists "$cloneToPath" "$repoName plugin added to $cloneToPath" "Failed to add plugin $repoName to $cloneToPath"
+    done
   else
       # Skip this installation section
       info "Skipping..."
@@ -231,10 +239,10 @@ function main {
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         fi
 
+        manualAction "If Homebrew installed successfully, please follow Homebrew's above instructions (in another tab) to add it to your path."
+        source ~/.bash_profile
+
         # Test to ensure successful install
-        # TODO: Even on successful installation, homebrew needs to be sourced correctly
-        # for this check to work and for subsequent calls to homebrew to succeed
-        manualAction "If successfully installed, please follow Homebrew's instructions -- you may need to restart this script."
         assertPackageInstallation brew "homebrew"
 
         if hash brew 2>/dev/null; then
@@ -256,102 +264,104 @@ function main {
   # Get packages
   promptNewSection "PACKAGES"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-      # Install lolcat
-      installPackage lolcat "gem install lolcat"
-      assertPackageInstallation lolcat "lolcat"
+    # Install lolcat
+    installPackage lolcat "gem install lolcat"
+    assertPackageInstallation lolcat "lolcat"
 
-      # Can only install brew packages if brew is installed
-      if hash brew 2>/dev/null; then
-          # Install wget
-          installPackage wget "brew install wget"
-          assertPackageInstallation wget "wget"
-          # Install curl
-          installPackage curl "brew install curl"
-          assertPackageInstallation curl "curl"
-          # Install tree
-          installPackage tree "brew install tree"
-          assertPackageInstallation tree "tree"
-          # Install gpg
-          installPackage gpg "brew install gpg"
-          assertPackageInstallation gpg "gpg"
-          # Install ack
-          installPackage ack "brew install ack"
-          assertPackageInstallation ack "ack"
-          # Install yarn
-          installPackage yarn "brew install yarn" configureYarn
-          assertPackageInstallation yarn "yarn"
-          # Install htop
-          installPackage htop "brew install htop"
-          assertPackageInstallation htop "htop"
-          # Install ytop
-          installPackage ytop "brew tap cjbassi/ytop && brew install ytop"
-          assertPackageInstallation ytop "ytop"
-          # Install bat
-          installPackage bat "brew install bat"
-          assertPackageInstallation bat "bat"
-          # Install
-          installPackage icu4c "brew install icu4c"
-          assertPackageInstallation icu4c "icu4c"
-      else
-          fail "Failed to install brew packages. Homebrew is not installed."
-      fi
+    # Can only install brew packages if brew is installed
+    if hash brew 2>/dev/null; then
+      # Install wget
+      installPackage wget "brew install wget"
+      assertPackageInstallation wget "wget"
+      # Install curl
+      installPackage curl "brew install curl"
+      assertPackageInstallation curl "curl"
+      # Install tree
+      installPackage tree "brew install tree"
+      assertPackageInstallation tree "tree"
+      # Install gpg
+      installPackage gpg "brew install gpg"
+      assertPackageInstallation gpg "gpg"
+      # Install ack
+      installPackage ack "brew install ack"
+      assertPackageInstallation ack "ack"
+      # Install yarn
+      installPackage yarn "brew install yarn" configureYarn
+      assertPackageInstallation yarn "yarn"
+      # Install htop
+      installPackage htop "brew install htop"
+      assertPackageInstallation htop "htop"
+      # Install ytop
+      installPackage ytop "(brew tap cjbassi\/ytop) && (brew install ytop)"
+      assertPackageInstallation ytop "ytop"
+      # Install bat
+      installPackage bat "brew install bat"
+      assertPackageInstallation bat "bat"
+      # Install
+      installPackage icu4c "brew install icu4c"
+      assertPackageInstallation icuinfo "icu4c"
+    else
+      fail "Failed to install brew packages. Homebrew is not installed."
+    fi
   else
-      # Skip this installation section
-      info "Skipping..."
+    # Skip this installation section
+    info "Skipping..."
   fi
 
   # Get Applications
   promptNewSection "APPLICATIONS"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
 
+    if isMacOs; then
       # Can only install brew apps if brew is installed
       if hash brew 2>/dev/null; then
-          # Install Caffeine
-          caskInstallAppPrompt "Caffeine.app" "caffeine"
-          # Install Sip Color Picker
-          caskInstallAppPrompt "Sip.app" "sip"
-          # Install Flux
-          caskInstallAppPrompt "Flux.app" "flux"
-          # Install Postman
-          caskInstallAppPrompt "Postman.app" "postman"
-          # Install Spotify
-          caskInstallAppPrompt "Spotify.app" "spotify"
-          # Install Slack
-          caskInstallAppPrompt "Slack.app" "slack"
-          # Install VirtualBox
-          caskInstallAppPrompt "VirtualBox.app" "virtualbox"
-          # Install Firefox
-          caskInstallAppPrompt "Firefox.app" "firefox"
-          # Install Gimp
-          caskInstallAppPrompt "Gimp.app" "gimp"
-          # Install Docker
-          caskInstallAppPrompt "Docker.app" "docker"
-          # Preserve white space by changing the Internal Field Separator
-          IFS='%'
-          # Install and configure Chrome
-          caskInstallAppPrompt "Google Chrome.app" "google-chrome"
-          # Reset the Internal Field Separator
-          unset IFS
+        # Install Caffeine
+        caskInstallAppPrompt "Caffeine.app" "caffeine"
+        # Install Sip Color Picker
+        caskInstallAppPrompt "Sip.app" "sip"
+        # Install Flux
+        caskInstallAppPrompt "Flux.app" "flux"
+        # Install Postman
+        caskInstallAppPrompt "Postman.app" "postman"
+        # Install Spotify
+        caskInstallAppPrompt "Spotify.app" "spotify"
+        # Install Slack
+        caskInstallAppPrompt "Slack.app" "slack"
+        # Install VirtualBox
+        caskInstallAppPrompt "VirtualBox.app" "virtualbox"
+        # Install Firefox
+        caskInstallAppPrompt "Firefox.app" "firefox"
+        # Install Gimp
+        caskInstallAppPrompt "Gimp.app" "gimp"
+        # Install Docker
+        caskInstallAppPrompt "Docker.app" "docker"
+        # Preserve white space by changing the Internal Field Separator
+        IFS='%'
+        # Install and configure Chrome
+        caskInstallAppPrompt "Google Chrome.app" "google-chrome"
+        # Reset the Internal Field Separator
+        unset IFS
 
-          # Install applications that need configuring
-          # Install Spectacle
-          caskInstallAppPrompt "Spectacle.app" "spectacle" configureSpectacle
-          # Install Visual Studio Code
-          caskInstallAppPrompt "Visual Studio Code.app" "visual-studio-code" configureVSCode
-          # Install and configure Atom
-          caskInstallAppPrompt "Atom.app" "atom" configureAtom
-          # Install and configure iTerm2
-          caskInstallAppPrompt "iTerm.app" "iterm2" configureITerm
+        # Install applications that need configuring
+        # Install Spectacle
+        caskInstallAppPrompt "Spectacle.app" "spectacle" configureSpectacle
+        # Install Visual Studio Code
+        caskInstallAppPrompt "Visual Studio Code.app" "visual-studio-code" configureVSCode
+        # Install and configure iTerm2
+        caskInstallAppPrompt "iTerm.app" "iterm2" configureITerm
 
-          # Cleanup downloads
-          info "Cleaning up application .zip and .dmg files"
-          brew cleanup
+        # Cleanup downloads
+        info "Cleaning up application .zip and .dmg files"
+        brew cleanup
       else
-          fail "Failed to install brew packages. Homebrew is not installed."
+        fail "Failed to install brew packages. Homebrew is not installed."
       fi
+    else
+      warn "This is a MacOS specific step, skipping due to invalid OS..."
+    fi
   else
-      # Skip this installation section
-      info "Skipping..."
+    # Skip this installation section
+    info "Skipping..."
   fi
 
   finish
