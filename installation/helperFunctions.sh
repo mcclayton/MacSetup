@@ -22,6 +22,11 @@ EOF
 
   if [ ${#FAILURES_ARRAY[@]} -eq 0 ]; then
       success "No failures occurred during install"
+
+      promptYesNo "Would you like to open a new shell to experience the new changes?"
+      if [[ $REPLY =~ ^[Yy]$ ]]; then
+        exec bash
+      fi
   else
       warn "The following failures occurred during install"
       # Print failures

@@ -44,7 +44,7 @@ docker build -t macsetup .
 #### Run the container interactively:
 
 ```bash
-docker container run -it macsetup /bin/bash
+docker container run --rm -it macsetup /bin/bash
 ```
 
 then run
