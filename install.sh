@@ -29,11 +29,15 @@ function main {
   # Set up Xcode command line tools
   promptNewSection "XCODE COMMAND LINE TOOLS"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-    info "Installing Xcode Command Line Tools"
-    xcode-select --install
-    # Test to ensure successful install
-    assertPackageInstallation gcc "Xcode CLT"
-    assertPackageInstallation git "Git"
+    if isMacOs; then
+      info "Installing Xcode Command Line Tools"
+      xcode-select --install
+      # Test to ensure successful install
+      assertPackageInstallation gcc "Xcode CLT"
+      assertPackageInstallation git "Git"
+    else
+      warn "This is a MacOS specific step, skipping due to invalid OS..."
+    fi
   else
     # Skip this installation section
     info "Skipping..."
@@ -292,7 +296,7 @@ function main {
       installPackage htop "brew install htop"
       assertPackageInstallation htop "htop"
       # Install ytop
-      installPackage ytop "(brew tap cjbassi\/ytop) && (brew install ytop)"
+      installPackage ytop `brew tap cjbassi/ytop ; brew install ytop`
       assertPackageInstallation ytop "ytop"
       # Install bat
       installPackage bat "brew install bat"
