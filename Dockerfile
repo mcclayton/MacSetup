@@ -31,7 +31,6 @@ RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
 
 ADD install.sh        $APP_HOME/install.sh
-ADD Atom              $APP_HOME/Atom
 ADD fonts             $APP_HOME/fonts
 ADD installation      $APP_HOME/installation
 ADD iTerm2            $APP_HOME/iTerm2
