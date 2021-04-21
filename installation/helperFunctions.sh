@@ -22,6 +22,11 @@ EOF
 
   if [ ${#FAILURES_ARRAY[@]} -eq 0 ]; then
       success "No failures occurred during install"
+
+      promptYesNo "Would you like to open a new shell to experience the new changes?"
+      if [[ $REPLY =~ ^[Yy]$ ]]; then
+        exec bash
+      fi
   else
       warn "The following failures occurred during install"
       # Print failures
@@ -195,6 +200,22 @@ assertFileExists() {
     else
         fail "$3"
     fi
+}
+
+isMacOs() {
+  unameOut="$(uname -s)"
+  case "${unameOut}" in
+    Linux*)     machine=Linux;;
+    Darwin*)    machine=Mac;;
+    CYGWIN*)    machine=Cygwin;;
+    MINGW*)     machine=MinGw;;
+    *)          machine="UNKNOWN:${unameOut}"
+  esac
+  if [ "$machine" = "Mac" ]; then
+    true
+  else
+    false
+  fi
 }
 
 assertPackageInstallation() {
