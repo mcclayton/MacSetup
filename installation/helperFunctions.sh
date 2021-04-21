@@ -13,6 +13,11 @@ function cmdExists {
   fi
 }
 
+function currShell {
+  local curr_shell=$(finger $USER | grep 'Shell:*' | cut -f3 -d ":")
+  echo "$curr_shell"
+}
+
 function finish {
   # Finish
   echo
@@ -34,7 +39,7 @@ EOF
 
       promptYesNo "Would you like to open a new shell to experience the new changes?"
       if [[ $REPLY =~ ^[Yy]$ ]]; then
-        exec bash
+        exec $(currShell)
       fi
   else
       warn "The following failures occurred during install"
