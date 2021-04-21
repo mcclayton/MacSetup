@@ -8,7 +8,7 @@
 configureYarn() {
     if grep -Fxq 'export PATH="$PATH:'`yarn global bin`'"' ~/.bash_profile; then
         info "yarn bin path already configured in bash_profile."
-    elif hash yarn 2>/dev/null; then
+    elif cmdExists yarn; then
         # Configure yarn bin path
         info "Configuring yarn in bash_profile"
         echo >> ~/.bash_profile
@@ -35,7 +35,7 @@ configureVSCode() {
 
         # Install VSCode Packages
         info "Installing VSCode Packages"
-        if hash code 2>/dev/null; then
+        if cmdExists code; then
             # For every non-blank line
             for extension in `grep -v "^$" "$(scriptDirectory)/VSCode/extensions.list"`; do
                 code --install-extension $extension
@@ -45,40 +45,6 @@ configureVSCode() {
         fi
     else
         fail "Cannot configure VSCode as it is not installed"
-    fi
-}
-
-# Set up Atom
-configureAtom() {
-    info "Configuring Atom IDE"
-    if [ -d "/Applications/Atom.app" ]; then
-        # Backup .atom directory
-        mkdir -p ~/dotfileBackups
-        rm -rf ~/dotfileBackups/.atom
-        backupDir ~/.atom ~/dotfileBackups/.atom
-        # Set atom config file
-        mkdir -p ~/.atom
-        cp "$(scriptDirectory)/Atom/config.cson" ~/.atom/config.cson
-        # Assert config.cson set correctly
-        assertFileExists ~/.atom/config.cson "Atom config.cson set" "Failed to set Atom config.cson"
-
-        # Set Atom snippets
-        cp "$(scriptDirectory)/Atom/snippets.cson" ~/.atom/snippets.cson
-        # Assert config.cson set correctly
-        assertFileExists ~/.atom/snippets.cson "Atom snippets.cson set" "Failed to set Atom snippets.cson"
-
-        # Install Atom Packages
-        info "Installing Atom Packages"
-        if hash apm 2>/dev/null; then
-            # For every non-blank line
-            for packageNameAndVersion in `grep -v "^$" "$(scriptDirectory)/Atom/packages.list"`; do
-                apm install $packageNameAndVersion
-            done
-        else
-            fail "Failed to install Atom Packages, apm does not exist"
-        fi
-    else
-        fail "Cannot configure Atom as it is not installed"
     fi
 }
 

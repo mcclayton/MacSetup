@@ -27,7 +27,7 @@ function main {
   fi
 
   # Set up Xcode command line tools
-  promptNewSection "XCODE COMMAND LINE TOOLS"
+  promptNewSection "XCODE COMMAND LINE TOOLS + GIT"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     if isMacOs; then
       info "Installing Xcode Command Line Tools"
@@ -235,9 +235,9 @@ function main {
   promptNewSection "HOMEBREW PACKAGE MANAGER"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
       info "Installing Homebrew package manager"
-      if hash ruby 2>/dev/null; then
+      if cmdExists ruby; then
         # Install Brew if it isn't already
-        if hash brew 2>/dev/null; then
+        if cmdExists brew; then
           info "Homebrew is already installed"
         else
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -249,7 +249,7 @@ function main {
         # Test to ensure successful install
         assertPackageInstallation brew "homebrew"
 
-        if hash brew 2>/dev/null; then
+        if cmdExists brew; then
           info "Updating homebrew"
           brew update
           info "Making homebrew healthy with brew doctor"
@@ -273,7 +273,7 @@ function main {
     assertPackageInstallation lolcat "lolcat"
 
     # Can only install brew packages if brew is installed
-    if hash brew 2>/dev/null; then
+    if cmdExists brew; then
       # Install wget
       installPackage wget "brew install wget"
       assertPackageInstallation wget "wget"
@@ -318,7 +318,7 @@ function main {
 
     if isMacOs; then
       # Can only install brew apps if brew is installed
-      if hash brew 2>/dev/null; then
+      if cmdExists brew; then
         # Install Caffeine
         caskInstallAppPrompt "Caffeine.app" "caffeine"
         # Install Sip Color Picker

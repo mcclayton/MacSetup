@@ -4,11 +4,20 @@ findProcessOnPort() {
   lsof -n -i4TCP:$PORT | grep LISTEN
 }
 
+# Returns whether or not a command exists
+cmdExists() {
+  if hash $1 2>/dev/null; then
+    true
+  else
+    false
+  fi
+}
+
 # Use ytop, else, htop, else top
 top() {
-  if hash ytop 2>/dev/null; then
+  if cmdExists ytop; then
     ytop
-  elif hash htop 2>/dev/null; then
+  elif cmdExists htop; then
     htop
   else
     top
@@ -81,7 +90,7 @@ startRedis() {
 
 # Fuzzy File Preview/Open
 fo() (
-  if hash bat 2>/dev/null; then
+  if cmdExists bat; then
     IFS=$'\n' out=("$(fzf-tmux --preview 'bat --style=numbers --color=always {} | head -500' --query="$1" --exit-0 --expect=ctrl-o,ctrl-e)")
   else
     IFS=$'\n' out=("$(fzf-tmux --preview 'cat {} | head -500' --query="$1" --exit-0 --expect=ctrl-o,ctrl-e)")
@@ -99,4 +108,22 @@ fd() {
   dir=$(find ${1:-.} -path '*/\.*' -prune \
                   -o -type d -print 2> /dev/null | fzf +m) &&
   cd "$dir"
+}
+
+# Display text in rainbow if lolcat installed, else regular text
+rainbowtext() {
+  if cmdExists lolcat; then
+    printf "$1" | lolcat
+  else
+    printf "$1"
+  fi
+}
+
+# Override diff tool with git's as it looks better
+diff() {
+  if cmdExists git; then
+    git diff "$@"
+  else
+    echo "! The 'diff' tool has been overriden with an alias that uses 'git diff'. Please remove the alias or install git."
+  fi
 }

@@ -4,6 +4,15 @@
 # Helper Functions #
 ####################
 
+# Returns whether or not a command exists
+function cmdExists {
+  if hash $1 2>/dev/null; then
+    true
+  else
+    false
+  fi
+}
+
 function finish {
   # Finish
   echo
@@ -132,7 +141,7 @@ backupDir() {
 # Configure via command $3 if passed
 installPackage() {
     info "Installing Package: $1"
-    if hash $1 2>/dev/null; then
+    if cmdExists $1; then
         info "$1 is already installed"
     else
         $2
@@ -221,7 +230,7 @@ isMacOs() {
 assertPackageInstallation() {
     # $1 is command to assert existence in order to verify correct installation
     # $2 is name of command
-    if hash $1 2>/dev/null; then
+    if cmdExists $1; then
         success "Successfully installed $2"
     else
         fail "Failed to install $2"
@@ -249,7 +258,7 @@ manualAction() {
 }
 
 printInRainbow() {
-    if hash lolcat 2>/dev/null; then
+    if cmdExists lolcat; then
         printf "$1" | lolcat
     else
         printf "$1"
