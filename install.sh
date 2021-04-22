@@ -107,6 +107,8 @@ function main {
       "bashrc"
       "bash_profile"
       "profile"
+      "zshrc"
+      "zprofile"
       "utility_aliases"
     )
 
@@ -194,18 +196,13 @@ function main {
     assertPackageInstallation asdf "asdf"
     cd "$currDir"
 
-    info "Configuring asdf version manager in .bash_profile"
-    echo >> ~/.bash_profile
-    echo "# asdf version manager" >> ~/.bash_profile
-    echo '. $HOME/.asdf/asdf.sh' >> ~/.bash_profile
-    echo '. $HOME/.asdf/completions/asdf.bash' >> ~/.bash_profile
-    success 'Added asdf configuration to ~/.bash_profile'
+    info "Configuring asdf version manager in .bash_profile and .zprofile"
 
-    info "Configuring asdf version manager in .zshrc"
-    echo >> ~/.bash_profile
-    echo "# asdf version manager" >> ~/.bash_profile
-    echo '. $HOME/.asdf/asdf.sh' >> ~/.bash_profile
-    success 'Added asdf configuration to ~/.zshrc'
+    addLineToFiles "" ~/.bash_profile ~/.zprofile
+    addLineToFiles "# asdf version manager" ~/.bash_profile ~/.zprofile
+    addLineToFiles '. $HOME/.asdf/asdf.sh' ~/.bash_profile ~/.zprofile
+    addLineToFiles '. $HOME/.asdf/completions/asdf.bash' ~/.bash_profile ~/.zprofile
+    success 'Added asdf configuration to ~/.bash_profile and ~/.zprofile'
 
     info "Adding Ruby Plugin..."
     asdf plugin-add ruby https://github.com/asdf-vm/asdf-ruby.git
@@ -390,27 +387,6 @@ function main {
   # Set up ZSH
   promptNewSection "SET UP ZSH"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-    # Set new top-level dot files
-    topLevelDotFiles=(
-      "zshrc"
-      "zprofile"
-    )
-
-    info "Backing up top-level dot files"
-
-    # Backup Dot Files
-    for dotFileName in "${topLevelDotFiles[@]}"; do
-      backupFile ~/."$dotFileName" "$dotFileName"
-    done
-
-    info "Setting top-level dot files"
-
-    # Set Dot Files
-    for dotFileName in "${topLevelDotFiles[@]}"; do
-      cp "$(scriptDirectory)"/Mac_Dot_Files/"$dotFileName".sh ~/."$dotFileName"
-      assertFileExists ~/."$dotFileName" "~/.$dotFileName set" "Failed to set ~/.$dotFileName"
-    done
-
     # Backup .oh-my-zsh folder
     info "Backing up .oh-my-zsh folder"
     backupDir ~/.oh-my-zsh oh-my-zsh

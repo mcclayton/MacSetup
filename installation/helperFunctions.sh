@@ -4,8 +4,6 @@
 # Helper Functions #
 ####################
 
-BACKUP_DIRECTORY=~/mac_setup_backups
-
 # Returns whether or not a command exists
 function cmdExists {
   if hash $1 2>/dev/null; then
@@ -43,17 +41,16 @@ EOF
 
   if [ ${#FAILURES_ARRAY[@]} -eq 0 ]; then
       success "No failures occurred during install"
-
-      promptYesNo "Would you like to open a new shell to experience the new changes?"
-      if [[ $REPLY =~ ^[Yy]$ ]]; then
-        exec $(currShell)
-      fi
   else
       warn "The following failures occurred during install"
       # Print failures
       printFailures
   fi
   echo
+  promptYesNo "Would you like to open a new shell to experience the new changes?"
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    exec $(currShell)
+  fi
   exit 0
 }
 
@@ -154,6 +151,19 @@ backupFile() {
       fail "Failed to backup file $1 to $new_file"
     fi
   fi
+}
+
+addLineToFiles() {
+  local text=$1
+  local files_arr=("${@:2}")
+  for file in "${files_arr[@]}"; do
+    if [[ $text =~ ^\# ]]; then
+      # Add to initial comments that this section was added by MacSetup
+      echo "$text (Added by MacSetup)" >> $file
+    else
+      echo $text >> $file
+    fi
+  done
 }
 
 # Backs up directory $1 (if it exists) to location $BACKUP_DIRECTORY/$2

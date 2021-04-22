@@ -7,16 +7,17 @@
 # Set up yarn
 configureYarn() {
     if grep -Fxq 'export PATH="$PATH:'`yarn global bin`'"' ~/.bash_profile; then
-        info "yarn bin path already configured in bash_profile."
+      info "yarn bin path already configured in bash_profile."
     elif cmdExists yarn; then
-        # Configure yarn bin path
-        info "Configuring yarn in bash_profile"
-        echo >> ~/.bash_profile
-        echo "# Add yarn bin to PATH" >> ~/.bash_profile
-        echo 'export PATH="$PATH:'`yarn global bin`'"' >> ~/.bash_profile
-        success 'Added line "export PATH="$PATH:'`yarn global bin`'"" to ~/.bash_profile'
+      # Configure yarn bin path
+      info "Configuring yarn in .bash_profile and .zprofile"
+      addLineToFiles "" ~/.bash_profile ~/.zprofile
+      addLineToFiles "# Add yarn bin to PATH" ~/.bash_profile ~/.zprofile
+      addLineToFiles 'export PATH="$PATH:'`yarn global bin`'"' ~/.bash_profile ~/.zprofile
+
+      success 'Added line "export PATH="$PATH:'`yarn global bin`'"" to ~/.bash_profile and ~/.zprofile'
     else
-        fail "Cannot configure yarn as it is not installed"
+      fail "Cannot configure yarn as it is not installed"
     fi
 }
 
