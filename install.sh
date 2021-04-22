@@ -26,51 +26,6 @@ function main {
     exit
   fi
 
-  promptNewSection "CHANGE DEFAULT SHELL"
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    PS3='   => Please enter the number corresponding to your shell choice: '
-    options=()
-    if cmdExists bash; then
-      if [ $(currShell) != $(which bash) ]; then
-        options+=("Bash")
-      fi
-    fi
-    if cmdExists zsh; then
-      if [ $(currShell) != $(which zsh) ]; then
-        options+=("Zsh")
-      fi
-    fi
-    options+=("Cancel")
-    select opt in "${options[@]}"
-    do
-      case $opt in
-        "Bash")
-          chsh -s $(which bash)
-          if [ $(currShell) == $(which bash) ]; then
-            success "Default shell has been updated to bash"
-          else
-            fail "Failed to update default shell to bash"
-          fi
-          break
-          ;;
-        "Zsh")
-          chsh -s $(which zsh)
-          if [ $(currShell ) == $(which zsh) ]; then
-            success "Default shell has been updated to zsh"
-          else
-            fail "Failed to update default shell to zsh"
-          fi
-          break
-          ;;
-        "Cancel")
-          info "Kepping current default shell. Skipping..."
-          break
-          ;;
-        *) echo "Invalid option $REPLY";;
-        esac
-    done
-  fi
-
   # Set up Xcode command line tools
   promptNewSection "XCODE COMMAND LINE TOOLS + GIT"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -93,8 +48,7 @@ function main {
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     info "Configuring git"
     # Backup files
-    mkdir -p ~/dotfileBackups
-    backupFile ~/.gitconfig ~/dotfileBackups/.gitconfig
+    backupFile ~/.gitconfig gitconfig
 
     # Set .gitconfig
     cp "$(scriptDirectory)/gitconfig.txt" ~/.gitconfig
@@ -160,7 +114,7 @@ function main {
 
     # Backup Dot Files
     for dotFileName in "${topLevelDotFiles[@]}"; do
-      backupFile ~/."$dotFileName" ~/dotfileBackups/."$dotFileName"
+      backupFile ~/."$dotFileName" "$dotFileName"
     done
 
     info "Setting top-level dot files"
@@ -181,9 +135,7 @@ function main {
     # Set up .vim folder
     info "Setting up .vim folder"
     # Backup .vim folder
-    mkdir -p ~/dotfileBackups
-    rm -rf ~/dotfileBackups/.vim
-    backupDir ~/.vim ~/dotfileBackups/.vim
+    backupDir ~/.vim vim
 
     # Set .vim folder
     rm -rf ~/.vim
@@ -191,8 +143,7 @@ function main {
     assertDirectoryExists ~/.vim "~/.vim directory set" "Failed to set ~/.vim directory"
 
     # Backup .vimrc
-    mkdir -p ~/dotfileBackups
-    backupFile ~/.vimrc ~/dotfileBackups/.vimrc
+    backupFile ~/.vimrc vimrc
 
     # Set .vimrc
     cp "$(scriptDirectory)"/Mac_Dot_Files/vimrc.sh ~/.vimrc
@@ -224,8 +175,8 @@ function main {
       assertDirectoryExists "$cloneToPath" "$repoName plugin added to $cloneToPath" "Failed to add plugin $repoName to $cloneToPath"
     done
   else
-      # Skip this installation section
-      info "Skipping..."
+    # Skip this installation section
+    info "Skipping..."
   fi
 
   # Set up asdf and tools (Postgres, Ruby, Node)
@@ -261,7 +212,7 @@ function main {
     asdf plugin-add nodejs
 
     info "Backing up ~/.tool-versions"
-    backupFile ~/.tool-versions ~/dotfileBackups/.tool-versions
+    backupFile ~/.tool-versions tool-versions
 
     cp "$(scriptDirectory)"/.tool-versions ~/.tool-versions
     assertFileExists ~/.tool-versions "~/.tool-versions set" "Failed to set ~/.tool-versions"
@@ -274,6 +225,9 @@ function main {
       assertPackageInstallation node "node"
       assertPackageInstallation postgres "postgres"
     fi
+  else
+    # Skip this installation section
+    info "Skipping..."
   fi
 
   # Set up homebrew
@@ -407,6 +361,75 @@ function main {
       fi
     else
       warn "This is a MacOS specific step, skipping due to invalid OS..."
+    fi
+  else
+    # Skip this installation section
+    info "Skipping..."
+  fi
+
+  # Get ZSH
+  promptNewSection "Z Shell (Zsh)"
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    # Can only install brew packages if brew is installed
+    if cmdExists brew; then
+      # Install zsh
+      installPackage zsh "brew install zsh"
+      assertPackageInstallation zsh "zsh"
+      # TODO: Configure zsh
+    else
+      fail "Failed to install zsh. Homebrew is required to install."
+    fi
+  else
+    # Skip this installation section
+    info "Skipping..."
+  fi
+
+  promptNewSection "CHANGE DEFAULT SHELL"
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    PS3='   => Please enter the number corresponding to your shell choice: '
+    options=()
+    if cmdExists bash; then
+      if [ $(currShell) != $(which bash) ]; then
+        options+=("Bash")
+      fi
+    fi
+    if cmdExists zsh; then
+      if [ $(currShell) != $(which zsh) ]; then
+        options+=("Zsh")
+      fi
+    fi
+    if ! (( ${#options[@]} > 0 )); then
+      warn "No other shells were found other than the current default. Skipping..."
+    else
+      options+=("Cancel")
+      select opt in "${options[@]}"
+      do
+        case $opt in
+          "Bash")
+            chsh -s $(which bash)
+            if [ $(currShell) == $(which bash) ]; then
+              success "Default shell has been updated to bash"
+            else
+              fail "Failed to update default shell to bash"
+            fi
+            break
+            ;;
+          "Zsh")
+            chsh -s $(which zsh)
+            if [ $(currShell ) == $(which zsh) ]; then
+              success "Default shell has been updated to zsh"
+            else
+              fail "Failed to update default shell to zsh"
+            fi
+            break
+            ;;
+          "Cancel")
+            info "Kepping current default shell. Skipping..."
+            break
+            ;;
+          *) echo "Invalid option $REPLY";;
+          esac
+      done
     fi
   else
     # Skip this installation section

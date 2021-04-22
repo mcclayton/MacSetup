@@ -4,6 +4,8 @@
 # Helper Functions #
 ####################
 
+BACKUP_DIRECTORY=~/mac_setup_backups
+
 # Returns whether or not a command exists
 function cmdExists {
   if hash $1 2>/dev/null; then
@@ -14,8 +16,13 @@ function cmdExists {
 }
 
 function currShell {
-  local curr_shell=$(finger $USER | grep 'Shell:*' | cut -f3 -d ":")
-  echo "$curr_shell"
+  if cmdExists finger; then
+    local curr_shell=$(finger $USER | grep 'Shell:*' | cut -f3 -d ":")
+    echo "$curr_shell"
+  else
+    local curr_shell=$(grep ^$(id -un): /etc/passwd | cut -d : -f 7-)
+    echo "$curr_shell"
+  fi
 }
 
 function finish {
@@ -122,24 +129,58 @@ repoName() {
     echo "${basename%.*}"
 }
 
-# Backs up file $1 (if it exists) to location $2
+# Backs up file $1 (if it exists) to location $BACKUP_DIRECTORY/$2
 backupFile() {
-    if [ ! -f $1 ]; then
-        warn "$1 Does not exist, skipping backup..."
-    else
-        cp $1 $2
-        success "Backed up $1 to $2"
+  local original_path=$1
+  local new_file_name=$2
+
+  mkdir -p $BACKUP_DIRECTORY
+
+  if [ ! -f $original_path ]; then
+    warn "$original_path Does not exist, skipping backup..."
+  else
+    local date_folder="$(date +'%m_%d_%Y')"
+    local suffix="__$(date +'%s')"
+    local new_file="$BACKUP_DIRECTORY/$date_folder/$new_file_name$suffix"
+    # Ensure base directory exists
+    if [ ! -d $new_file ]; then
+      mkdir -p $new_file
     fi
+
+    cp $1 $new_file
+    if [ -a $new_file ]; then
+      success "Backed up $1 to $new_file"
+    else
+      fail "Failed to backup file $1 to $new_file"
+    fi
+  fi
 }
 
-# Backs up directory $1 (if it exists) to location $2
+# Backs up directory $1 (if it exists) to location $BACKUP_DIRECTORY/$2
 backupDir() {
-    if [ ! -d $1 ]; then
-        warn "$1 Does not exist, skipping backup..."
-    else
-        cp -r $1 $2
-        success "Backed up $1 to $2"
+  local original_path=$1
+  local new_directory_name=$2
+
+  mkdir -p $BACKUP_DIRECTORY
+
+  if [ ! -d $original_path ]; then
+    warn "$original_path Does not exist, skipping backup..."
+  else
+    local date_folder="$(date +'%m_%d_%Y')"
+    local suffix="__$(date +'%s')"
+    local new_dir="$BACKUP_DIRECTORY/$date_folder/$new_directory_name$suffix"
+    # Ensure base directory exists
+    if [ ! -d $new_dir ]; then
+      mkdir -p $new_dir
     fi
+
+    cp -r $1 $new_dir
+    if [ -d $new_dir ]; then
+      success "Backed up directory $1 to $new_dir"
+    else
+      fail "Failed to backup directory $1 to $new_dir"
+    fi
+  fi
 }
 
 # Install package $1 via the command $2.
