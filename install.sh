@@ -201,7 +201,7 @@ function main {
     addLineToFiles "" ~/.bash_profile ~/.zprofile
     addLineToFiles "# asdf version manager" ~/.bash_profile ~/.zprofile
     addLineToFiles '. $HOME/.asdf/asdf.sh' ~/.bash_profile ~/.zprofile
-    addLineToFiles '. $HOME/.asdf/completions/asdf.bash' ~/.bash_profile ~/.zprofile
+    addLineToFiles '. $HOME/.asdf/completions/asdf.bash' ~/.bash_profile # This line does not apply to .zprofile
     success 'Added asdf configuration to ~/.bash_profile and ~/.zprofile'
 
     info "Adding Ruby Plugin..."
