@@ -133,19 +133,22 @@ function main {
   promptNewSection "SETTING UP VIM"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     # Set up .vim folder
-    info "Setting up .vim folder"
+    info "Backing up .vim folder"
     # Backup .vim folder
     backupDir ~/.vim vim
 
     # Set .vim folder
+    info "Setting up .vim folder"
     rm -rf ~/.vim
     cp -r "$(scriptDirectory)/vim" ~/.vim
     assertDirectoryExists ~/.vim "~/.vim directory set" "Failed to set ~/.vim directory"
 
     # Backup .vimrc
+    info "Backing up .vimrc"
     backupFile ~/.vimrc vimrc
 
     # Set .vimrc
+    info "Setting up .vimrc"
     cp "$(scriptDirectory)"/Mac_Dot_Files/vimrc.sh ~/.vimrc
     assertFileExists ~/.vimrc "~/.vimrc set" "Failed to set ~/.vimrc"
     success "~/.vimrc set"
@@ -160,7 +163,7 @@ function main {
       "git://github.com/junegunn/fzf.git"
     )
 
-    info "Cloning plugins"
+    info "Cloning vim plugins"
     for pluginUrl in "${vimPlugins[@]}"; do
       repoName=$(repoName "$pluginUrl")
       cloneToPath=~/".vim/bundle/$repoName"
@@ -368,7 +371,7 @@ function main {
   fi
 
   # Get ZSH
-  promptNewSection "Z Shell (Zsh)"
+  promptNewSection "INSTALL ZSH"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     # Can only install brew packages if brew is installed
     if cmdExists brew; then
@@ -379,6 +382,52 @@ function main {
     else
       fail "Failed to install zsh. Homebrew is required to install."
     fi
+  else
+    # Skip this installation section
+    info "Skipping..."
+  fi
+
+  # Set up ZSH
+  promptNewSection "SET UP ZSH"
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    # Backup .zshrc
+    info "Backing up .zshrc"
+    backupFile ~/.zshrc zshrc
+
+    # Set .zshrc
+    info "Setting up .zshrc"
+    cp "$(scriptDirectory)"/Mac_Dot_Files/zshrc.sh ~/.zshrc
+    assertFileExists ~/.zshrc "~/.zshrc set" "Failed to set ~/.zshrc"
+
+    # Backup .oh-my-zsh folder
+    info "Backing up .oh-my-zsh folder"
+    backupDir ~/.oh-my-zsh oh-my-zsh
+
+    # Set .oh-my-zsh folder
+    info "Setting up .oh-my-zsh folder"
+    rm -rf ~/.oh-my-zsh
+    cp -r "$(scriptDirectory)/oh-my-zsh" ~/.oh-my-zsh
+    assertDirectoryExists ~/.oh-my-zsh "~/.oh-my-zsh directory set" "Failed to set ~/.oh-my-zsh directory"
+
+    # Clone all oh-my-zsh plugins
+    zshPlugins=(
+      "git://github.com/zsh-users/zsh-autosuggestions"
+    )
+
+    info "Cloning custom oh-my-zsh plugins"
+    for pluginUrl in "${zshPlugins[@]}"; do
+      repoName=$(repoName "$pluginUrl")
+      cloneToPath=~/".oh-my-zsh/custom/plugins/$repoName"
+      rm -rf "$cloneToPath"
+      git clone "$pluginUrl" "$cloneToPath"
+      # Invoke installation script if exists
+      installPath="$cloneToPath/install"
+      if [ -f $installPath ]; then
+        echo -e "\n\nInvoking installation for $repoName\n"
+        $installPath
+      fi
+      assertDirectoryExists "$cloneToPath" "$repoName plugin added to $cloneToPath" "Failed to add plugin $repoName to $cloneToPath"
+    done
   else
     # Skip this installation section
     info "Skipping..."
