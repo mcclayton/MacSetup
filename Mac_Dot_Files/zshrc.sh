@@ -88,19 +88,20 @@ export PATH="/usr/local/sbin:$PATH"
 # Load .bashrc if it exists
 test -f ~/.bashrc && source ~/.bashrc
 
-# Source fzf for current shell
 if [[ $(echo $ZSH_VERSION) ]]; then
+  # Source fzf for current shell
   [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-fi
 
-if [ "$TERM" != "dumb" ]; then
-  # Nice pretty color prompt with the current host and our current directory
-  INITIALS='MCC'
-  BOLT='⚡️'
-  ARROW_SEPARATOR='      ↳'
-  RED='%F{9}'; GRAY='%F{8}'; BLUE='%F{blue}'; GREEN='%F{green}'
+  # Set the prompt
+  if [ "$TERM" != "dumb" ]; then
+    # Nice pretty color prompt with the current host and our current directory
+    INITIALS='MCC'
+    BOLT='⚡️'
+    ARROW_SEPARATOR='      ↳'
+    RED='%F{9}'; GRAY='%F{8}'; BLUE='%F{blue}'; GREEN='%F{green}'
 
-  PS1_LINE_1="$BOLT  $GRAY$INITIALS:$BLUE%~$RED\$(parse_git_branch)"
-  PS1_LINE_2="$GRAY$ARROW_SEPARATOR$GREEN  $ %{$reset_color%}"
-  PS1="%B$PS1_LINE_1"$'\n'"$PS1_LINE_2%"
+    PS1_LINE_1="$BOLT  $GRAY$INITIALS:$BLUE%~$RED\$(parse_git_branch)"
+    PS1_LINE_2="$GRAY$ARROW_SEPARATOR$GREEN  $ %{$reset_color%}"
+    PS1="%B$PS1_LINE_1"$'\n'"$PS1_LINE_2%"
+  fi
 fi

@@ -44,7 +44,7 @@ function main {
   fi
 
   # Set up Git
-  promptNewSection "GIT"
+  promptNewSection "CONFIGURE GIT"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     info "Configuring git"
     # Backup files
@@ -390,14 +390,26 @@ function main {
   # Set up ZSH
   promptNewSection "SET UP ZSH"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-    # Backup .zshrc
-    info "Backing up .zshrc"
-    backupFile ~/.zshrc zshrc
+    # Set new top-level dot files
+    topLevelDotFiles=(
+      "zshrc"
+      "zprofile"
+    )
 
-    # Set .zshrc
-    info "Setting up .zshrc"
-    cp "$(scriptDirectory)"/Mac_Dot_Files/zshrc.sh ~/.zshrc
-    assertFileExists ~/.zshrc "~/.zshrc set" "Failed to set ~/.zshrc"
+    info "Backing up top-level dot files"
+
+    # Backup Dot Files
+    for dotFileName in "${topLevelDotFiles[@]}"; do
+      backupFile ~/."$dotFileName" "$dotFileName"
+    done
+
+    info "Setting top-level dot files"
+
+    # Set Dot Files
+    for dotFileName in "${topLevelDotFiles[@]}"; do
+      cp "$(scriptDirectory)"/Mac_Dot_Files/"$dotFileName".sh ~/."$dotFileName"
+      assertFileExists ~/."$dotFileName" "~/.$dotFileName set" "Failed to set ~/.$dotFileName"
+    done
 
     # Backup .oh-my-zsh folder
     info "Backing up .oh-my-zsh folder"

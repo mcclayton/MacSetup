@@ -9,12 +9,12 @@
 umask 027
 
 if [ "${BASH}" ]; then		# we're bash
-	[ -f $HOME/.bashrc ] && . $HOME/.bashrc
+  [ -f $HOME/.bashrc ] && . $HOME/.bashrc
 elif [ `basename "${SHELL}"` = ksh ]; then	# we're ksh
-	ENV=$HOME/.kshrc; export ENV
-	[ -f $ENV ] && . $ENV
-else				# assume good ol' sh
-	PS1="`shorthostname` $ "
+  ENV=$HOME/.kshrc; export ENV
+  [ -f $ENV ] && . $ENV
+else # assume good ol' sh
+  PS1="`shorthostname` $ "
 fi
 
 ENTOMB=yes; export ENTOMB
