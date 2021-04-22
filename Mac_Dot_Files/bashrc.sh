@@ -19,16 +19,18 @@ fi
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
 
-# Append to the history file, don't overwrite it
-shopt -s histappend
-
 # For setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=10000
 HISTFILESIZE=20000
 
-# Check the window size after each command and, if necessary,
-# Update the values of LINES and COLUMNS.
-shopt -s checkwinsize
+if cmdExists shopt; then
+  # Append to the history file, don't overwrite it
+  shopt -s histappend
+
+  # Check the window size after each command and, if necessary,
+  # Update the values of LINES and COLUMNS.
+  shopt -s checkwinsize
+fi
 
 # Git branch in prompt.
 parse_git_branch() {
@@ -75,6 +77,7 @@ alias la='ls -A'
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
   . /etc/bash_completion
 fi
+[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
 
 # Set autocompletion to ignore case
 set completion-ignore-case on

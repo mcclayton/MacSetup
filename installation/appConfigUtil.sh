@@ -29,9 +29,7 @@ configureVSCode() {
     info "Configuring VSCode IDE"
     if [ -d "/Applications/Visual Studio Code.app" ]; then
         # Backup .vscode directory
-        mkdir -p ~/dotfileBackups
-        rm -rf ~/dotfileBackups/.vscode
-        backupDir ~/.vscode ~/dotfileBackups/.vscode
+        backupDir ~/.vscode vscode
 
         # Install VSCode Packages
         info "Installing VSCode Packages"
