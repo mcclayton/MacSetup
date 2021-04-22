@@ -74,8 +74,10 @@ alias la='ls -A'
 # Enable programmable completion features (you don't need to enable
 # This, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # Sources /etc/bash.bashrc).
-if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
-  . /etc/bash_completion
+if cmdExists shopt; then
+  if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+    . /etc/bash_completion
+  fi
 fi
 [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
 

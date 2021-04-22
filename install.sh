@@ -434,6 +434,7 @@ function main {
   fi
 
   promptNewSection "CHANGE DEFAULT SHELL"
+  info "Current default shell is: $(currShell)"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     PS3='   => Please enter the number corresponding to your shell choice: '
     options=()
@@ -450,7 +451,7 @@ function main {
     if ! (( ${#options[@]} > 0 )); then
       warn "No other shells were found other than the current default. Skipping..."
     else
-      options+=("Cancel")
+      options+=("Cancel / Keep Current Default")
       select opt in "${options[@]}"
       do
         case $opt in
@@ -472,8 +473,8 @@ function main {
             fi
             break
             ;;
-          "Cancel")
-            info "Kepping current default shell. Skipping..."
+          "Cancel / Keep Current Default")
+            info "Keeping current default shell. Skipping..."
             break
             ;;
           *) echo "Invalid option $REPLY";;

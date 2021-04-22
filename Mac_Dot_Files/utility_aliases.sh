@@ -120,7 +120,7 @@ rainbowtext() {
 }
 
 # Override diff tool with git's as it looks better
-diff() {
+function diff {
   if cmdExists git; then
     git diff "$@"
   else
