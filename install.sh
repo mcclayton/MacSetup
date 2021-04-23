@@ -46,21 +46,37 @@ function main {
   # Set up Git
   promptNewSection "CONFIGURE GIT"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-    info "Configuring git"
-    # Backup files
-    backupFile ~/.gitconfig gitconfig
+    if cmdExists git; then
+      info "Configuring git"
+      # Backup files
+      backupFile ~/.gitconfig gitconfig
 
-    # Set .gitconfig
-    cp "$(scriptDirectory)/gitconfig.txt" ~/.gitconfig
-    assertFileExists ~/.gitconfig "~/.gitconfig set" "Failed to set ~/.gitconfig"
+      # Set .gitconfig
+      cp "$(scriptDirectory)/gitconfig.txt" ~/.gitconfig
+      assertFileExists ~/.gitconfig "~/.gitconfig set" "Failed to set ~/.gitconfig"
 
-    # Set Github Username and email
-    prompt "What is your Github Username (i.e. \"First Last\")?"
-    git config --global user.name "$REPLY"
-    success "Username set to $REPLY"
-    prompt "What is your Github Email (i.e. \"me@mail.com\")?"
-    success "Email set to $REPLY"
-    git config --global user.email $REPLY
+      # Backup global .gitignore
+      info "Backing up global .gitignore"
+      backupFile ~/.gitignore gitignore
+
+      # Set Global Gitignore
+      info "Setting global .gitignore"
+      cp "$(scriptDirectory)"/Mac_Dot_Files/gitignore.sh ~/.gitignore
+      assertFileExists ~/.gitignore "~/.gitignore set" "Failed to set ~/.gitignore"
+
+      # Assign global gitignore in global gitconfig
+      git config --global core.excludesfile ~/.gitignore
+
+      # Set Github Username and email
+      prompt "What is your Github Username (i.e. \"First Last\")?"
+      git config --global user.name "$REPLY"
+      success "Username set to $REPLY"
+      prompt "What is your Github Email (i.e. \"me@mail.com\")?"
+      success "Email set to $REPLY"
+      git config --global user.email $REPLY
+    else
+      fail "Failed to configure Git because it is not installed"
+    fi
   else
     # Skip this installation section
     info "Skipping..."
@@ -197,7 +213,6 @@ function main {
     cd "$currDir"
 
     info "Configuring asdf version manager in .bash_profile and .zprofile"
-
     addLineToFiles "" ~/.bash_profile ~/.zprofile
     addLineToFiles "# asdf version manager" ~/.bash_profile ~/.zprofile
     addLineToFiles '. $HOME/.asdf/asdf.sh' ~/.bash_profile ~/.zprofile
@@ -253,6 +268,13 @@ function main {
           brew update
           info "Making homebrew healthy with brew doctor"
           brew doctor
+
+          info "Adding Homebrew to \$PATH in .bash_profile and .zprofile"
+          addLineToFiles "" ~/.bash_profile ~/.zprofile
+          addLineToFiles "# Homebrew Package Manager" ~/.bash_profile ~/.zprofile
+          addLineToFiles 'eval "$($(brew --prefix)/bin/brew shellenv)"' >> /home/appuser/.zprofile
+          eval "$($(brew --prefix)/bin/brew shellenv)"
+          success 'Added Homebrew to \$PATH in ~/.bash_profile and ~/.zprofile'
         else
           fail "Failed to update Homebrew because it is not installed"
         fi
@@ -300,7 +322,7 @@ function main {
       # Install bat
       installPackage bat "brew install bat"
       assertPackageInstallation bat "bat"
-      # Install
+      # Install icu4c
       installPackage icu4c "brew install icu4c"
       assertPackageInstallation icuinfo "icu4c"
     else
