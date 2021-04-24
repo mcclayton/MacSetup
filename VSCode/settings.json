@@ -10,15 +10,13 @@
   "workbench.colorTheme": "Atom One Dark",
   "editor.renderWhitespace": "all",
   "editor.overviewRulerBorder": false,
-  "editor.rulers": [
-    80
-  ],
+  "editor.rulers": [80],
   "trailing-spaces.trimOnSave": true,
   "files.insertFinalNewline": true,
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
   "editor.detectIndentation": false,
-  "window.zoomLevel": 0,
+  "window.zoomLevel": 1,
   "files.trimTrailingWhitespace": true,
   "ruby.intellisense": "rubyLocate",
   "ruby.useBundler": true,
@@ -32,5 +30,18 @@
   "[ruby]": {
     "editor.formatOnSave": false
   },
-  "editor.formatOnSave": true
+  "workbench.startupEditor": "newUntitledFile",
+  "eslint.alwaysShowStatus": true,
+  "eslint.runtime": "",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "eslint.packageManager": "yarn",
+  "eslint.validate": [
+    "html",
+    "javascript",
+    "typescript",
+    "javascriptreact",
+    "typescriptreact"
+  ],
+  "eslint.workingDirectories": []
 }
