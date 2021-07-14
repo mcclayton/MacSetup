@@ -66,7 +66,18 @@ function printIntro {
 |_____|_| |_|___/\__\__,_|_|_|
 EOF
   printInRainbow "$INSTALL_MESSAGE"
+  sandboxIntro
   echo
+}
+
+sandboxIntro() {
+  if [ "$SANDBOX" = true ] ; then
+    echo
+    echo "✨ Running In [SANDBOX] Mode ✨"
+    echo "    | Changes made from script will not persist and"
+    echo "    | are made in a dockerized sandbox environment."
+    echo "    | Note: Not all steps are available in sandbox."
+  fi
 }
 
 promptYesNo() {
