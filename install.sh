@@ -487,7 +487,7 @@ function main {
             info "Keeping current default shell. Skipping..."
             break
             ;;
-          *) echo "Invalid option $REPLY";;
+          *) warn "Invalid option $REPLY";;
           esac
       done
     fi

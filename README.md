@@ -25,32 +25,23 @@ This script is designed to be safe and can be run multiple times.
 
 ## Usage
 
-Simply run the [install script](https://github.com/mcclayton/DotFiles/blob/master/install.sh) with:
+Simply run the [install script](https://github.com/mcclayton/DotFiles/blob/master/install.sh) via the command:
 
 ```bash
-./install.sh
+$ ./start.sh
 ```
 
-## Docker
-
-The installation script can be tested from within a docker container:
-
-#### Build the image:
-
+This will present the user with a choice to run the installer in one of two modes.
 ```
-docker build -t macsetup .
+1) Sandbox (Docker)
+2) Current Machine
+3) Quit
+    => Choose Execution Environment:
 ```
 
-#### Run the container interactively:
-
-```bash
-docker container run --rm -it macsetup /bin/bash
-```
-
-then run
-
-```bash
-./install.sh
-```
+1. **Sandbox Environment**
+      Installation/Setup changes are made in a dockerized sandbox environment and will not affect the current actual machine.
+2. **Current Machine**
+      Installation/Setup changes made in this environment will modify and affect the current actual machine.
 
 ![Screenshot](./images/screenshot.png)
