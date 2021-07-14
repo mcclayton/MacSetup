@@ -29,14 +29,16 @@ Simply run the [install script](https://github.com/mcclayton/DotFiles/blob/maste
 
 ```bash
 $ ./start.sh
-
-# 1) Sandbox (Docker)
-# 2) Current Machine
-# 3) Quit
-#    => Choose Execution Environment:
 ```
 
 This will present the user with a choice to run the installer in one of two modes.
+```
+1) Sandbox (Docker)
+2) Current Machine
+3) Quit
+    => Choose Execution Environment:
+```
+
 1. **Sandbox Environment**
       Installation/Setup changes are made in a dockerized sandbox environment and will not affect the current actual machine.
 2. **Current Machine**
