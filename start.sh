@@ -25,13 +25,6 @@ function machineInstall() {
 }
 
 ### Main ###
-echo
-echo " =============================================================================================================================================="
-echo "| Sandbox Environment: Installation/Setup changes are made in a dockerized sandbox environment and will not effect the current actual machine. |"
-echo "| Current Machine: Installation/Setup changes made in this environment will modify and effect the current actual machine.                      |"
-echo " =============================================================================================================================================="
-echo
-
 PS3='   => Choose Execution Environment: '
 options=("Sandbox (Docker)" "Current Machine" "Quit")
 select opt in "${options[@]}"
