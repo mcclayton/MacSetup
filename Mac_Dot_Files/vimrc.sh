@@ -18,12 +18,15 @@ syntax on
 "Set the colorscheme to vividchalk (Must be in the '~/.vim/colors/' directory
 colorscheme vividchalk
 
+"Use colors optimized for dark background
+set background=dark
+
 "Set the coloring of the line numbers
 highlight LineNr ctermfg=240 ctermbg=233
 
 "Highlight the current line
 set cursorline
-highlight CursorLine cterm=bold ctermbg=233
+highlight CursorLine cterm=bold ctermbg=237
 highlight CursorLineNR ctermfg=242
 
 "Set the number of undos allowed
