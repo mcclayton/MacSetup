@@ -45,11 +45,12 @@ ADD gitconfig.txt     $APP_HOME/gitconfig.txt
 ADD .tool-versions    $APP_HOME/.tool-versions
 
 # Create a user 'sandbox_user' to test running outside of root
-RUN groupadd -g 999 sandbox_user && \
-    useradd --create-home --shell /bin/bash -r -u 999 -g sandbox_user sandbox_user
-RUN usermod -aG sudo sandbox_user
-RUN usermod -p "" sandbox_user
-USER sandbox_user
+ENV NEW_USER sandbox_user
+RUN groupadd -g 999 $NEW_USER && \
+    useradd --create-home --shell /bin/bash -r -u 999 -g $NEW_USER $NEW_USER
+RUN usermod -aG sudo $NEW_USER
+RUN usermod -p "" $NEW_USER
+USER $NEW_USER
 
 ENV SANDBOX true
 
