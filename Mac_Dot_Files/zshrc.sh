@@ -4,6 +4,8 @@
 # Path to your oh-my-zsh installation.
 export ZSH=~/.oh-my-zsh
 
+# Make EOL marker empty string instead of '%'
+PROMPT_EOL_MARK=''
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
