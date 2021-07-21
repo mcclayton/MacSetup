@@ -22,12 +22,12 @@ colorscheme vividchalk
 set background=dark
 
 "Set the coloring of the line numbers
-highlight LineNr ctermfg=240 ctermbg=233
+highlight LineNr ctermfg=51 ctermbg=NONE
 
 "Highlight the current line
 set cursorline
-highlight CursorLine cterm=bold ctermbg=237
-highlight CursorLineNR ctermfg=242
+highlight CursorLine cterm=bold ctermbg=18
+highlight CursorLineNR cterm=bold ctermfg=17 ctermbg=154
 
 "Set the number of undos allowed
 set undolevels=1000
