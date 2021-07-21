@@ -13,17 +13,6 @@ cmdExists() {
   fi
 }
 
-# Use ytop, else, htop, else top
-top() {
-  if cmdExists ytop; then
-    ytop
-  elif cmdExists htop; then
-    htop
-  else
-    top
-  fi
-}
-
 # Open up the network tab of a github project. First argument is the Github org. or user
 network() {
   REPO_NAME=$(basename `git rev-parse --show-toplevel`)
@@ -38,6 +27,15 @@ hlogs() {
     heroku logs -t --app $APP_NAME
   else
     echo "Error: No heroku app name specified."
+  fi
+}
+
+# Display text in rainbow if lolcat installed, else regular text
+rainbowtext() {
+  if cmdExists lolcat; then
+    printf "$1" | lolcat
+  else
+    printf "$1"
   fi
 }
 
@@ -110,20 +108,60 @@ fd() {
   cd "$dir"
 }
 
-# Display text in rainbow if lolcat installed, else regular text
-rainbowtext() {
-  if cmdExists lolcat; then
-    printf "$1" | lolcat
+##################################################
+# Override Unix tools with enhanced replacements #
+##################################################
+
+# Use ytop, else, htop, else top
+top() {
+  if cmdExists ytop; then
+    ytop
+  elif cmdExists htop; then
+    htop
   else
-    printf "$1"
+    # Invoke original command
+    command top
   fi
 }
 
-# Override diff tool with git's as it looks better
+# Use delta, git diff, else diff for diffing
 function diff {
-  if cmdExists git; then
+  if cmdExists delta; then
+    delta "$@"
+  elif cmdExists git; then
     git diff "$@"
   else
-    echo "! The 'diff' tool has been overriden with an alias that uses 'git diff'. Please remove the alias or install git."
+    # Invoke original command
+    command diff "$@"
+  fi
+}
+
+# Override cat tool with bat's as it looks better
+function cat {
+  if cmdExists bat; then
+    bat --style=plain "$@"
+  else
+    # Invoke original command
+    command cat "$@"
+  fi
+}
+
+# Override ps tool with procs' as it looks better
+function ps {
+  if cmdExists procs; then
+    procs "$@"
+  else
+    # Invoke original command
+    command ps "$@"
+  fi
+}
+
+# Override ls tool with lsd as it looks better
+function ls {
+  if cmdExists lsd; then
+    lsd "$@"
+  else
+    # Invoke original command
+    command ls "$@"
   fi
 }

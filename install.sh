@@ -93,6 +93,10 @@ function main {
       info "Opening Powerline Inconsolata-g font"
       open "$(scriptDirectory)/fonts/'Inconsolata-g for Powerline.otf'"
       manualAction "Press Install Font Button for Inconsolata-g for Powerline.otf"
+
+      info "Opening Inconsolata Nerd Font Icons.otf"
+      open "$(scriptDirectory)/fonts/'Inconsolata Nerd Font Icons.otf'"
+      manualAction "Press Install Font Button for Inconsolata Nerd Font Icons.otf"
     else
       warn "This is a MacOS specific step, skipping due to invalid OS..."
     fi
@@ -272,7 +276,7 @@ function main {
           info "Adding Homebrew to \$PATH in .bash_profile and .zprofile"
           addLineToFiles "" ~/.bash_profile ~/.zprofile
           addLineToFiles "# Homebrew Package Manager" ~/.bash_profile ~/.zprofile
-          addLineToFiles 'eval "$($(brew --prefix)/bin/brew shellenv)"' >> /home/appuser/.zprofile
+          addLineToFiles 'eval "$($(brew --prefix)/bin/brew shellenv)"' >> ~/.zprofile
           eval "$($(brew --prefix)/bin/brew shellenv)"
           success 'Added Homebrew to \$PATH in ~/.bash_profile and ~/.zprofile'
         else
@@ -313,15 +317,24 @@ function main {
       # Install yarn
       installPackage yarn "brew install yarn" configureYarn
       assertPackageInstallation yarn "yarn"
-      # Install htop
-      installPackage htop "brew install htop"
-      assertPackageInstallation htop "htop"
+      # Install delta
+      installPackage delta "brew install git-delta"
+      assertPackageInstallation delta "delta (Better 'diff' Command)"
       # Install ytop
       installPackage ytop `brew tap cjbassi/ytop ; brew install ytop`
-      assertPackageInstallation ytop "ytop"
+      assertPackageInstallation ytop "ytop (Better 'top' Command)"
+      # Install htop
+      installPackage htop "brew install htop"
+      assertPackageInstallation htop "htop (Alternative 'top' Command)"
       # Install bat
       installPackage bat "brew install bat"
-      assertPackageInstallation bat "bat"
+      assertPackageInstallation bat "bat (Better 'cat' Command)"
+      # Install procs
+      installPackage procs "brew install procs"
+      assertPackageInstallation procs "procs (Better 'ps' Command)"
+      # Install lsd
+      installPackage lsd "brew install lsd"
+      assertPackageInstallation lsd "lsd (Better 'ls' Command)"
       # Install icu4c
       installPackage icu4c "brew install icu4c"
       assertPackageInstallation icuinfo "icu4c"
