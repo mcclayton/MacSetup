@@ -50,7 +50,7 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 # Show trailing slashes for directories
-alias ls='ls -p'
+alias ls='ls -F'
 
 # Some more ls aliases
 alias ll='ls -l'
@@ -98,7 +98,7 @@ fi
 # Define an alias for a horse wearing a party hat. Why not?
 partyhorse() {
   clear
-  IFS='' read -r -d '' PARTY_HOURSE <<'EOF'
+  IFS='' read -r -d '' PARTY_HORSE <<'EOF'
                       .
                      /|
                     /_|
@@ -118,7 +118,7 @@ partyhorse() {
      }}}'
 
 EOF
-  rainbowtext "$PARTY_HOURSE"
+  rainbowtext "$PARTY_HORSE"
 }
 
 # Display the welcome splash screen
