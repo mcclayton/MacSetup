@@ -168,7 +168,9 @@ function ps {
 
 # Override ls tool with lsd as it looks better
 function ls {
-  if cmdExists lsd; then
+  if [ "$DISABLE_NERD_FONT_ICONS" = true ]; then
+    command ls "$@"
+  elif cmdExists lsd; then
     lsd "$@"
   else
     # Invoke original command

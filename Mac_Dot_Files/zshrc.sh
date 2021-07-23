@@ -97,13 +97,21 @@ if [[ $(echo $ZSH_VERSION) ]]; then
   # Set the prompt
   if [ "$TERM" != "dumb" ]; then
     # Nice pretty color prompt with the current host and our current directory
+    RED='%F{9}'; GRAY='%F{8}'; BLUE='%F{blue}'; GREEN='%F{green}'
     INITIALS='MCC'
     BOLT='⚡️'
     ARROW_SEPARATOR='      ↳'
-    RED='%F{9}'; GRAY='%F{8}'; BLUE='%F{blue}'; GREEN='%F{green}'
+    HEARTS="$RED  "
+    HEARTS_ARROW_SEPARATOR='       ↳'
 
-    PS1_LINE_1="$BOLT  $GRAY$INITIALS:$BLUE%~$RED\$(parse_git_branch)"
-    PS1_LINE_2="$GRAY$ARROW_SEPARATOR$GREEN  $ %{$reset_color%}"
+    if [ "$DISABLE_NERD_FONT_ICONS" = true ]; then
+      PS1_LINE_1="$BOLT  $GRAY$INITIALS:$BLUE%~$RED\$(parse_git_branch)"
+      PS1_LINE_2="$GRAY$ARROW_SEPARATOR$GREEN  $ %{$reset_color%}"
+    else
+      PS1_LINE_1="$HEARTS  $GRAY$INITIALS:$BLUE%~$RED\$(parse_git_branch)"
+      PS1_LINE_2="$GRAY$HEARTS_ARROW_SEPARATOR$GREEN  $ %{$reset_color%}"
+    fi
+
     PS1="%B$PS1_LINE_1"$'\n'"$PS1_LINE_2%"
   fi
 fi

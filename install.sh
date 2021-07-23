@@ -130,6 +130,7 @@ function main {
       "zshrc"
       "zprofile"
       "utility_aliases"
+      "config_vars"
     )
 
     info "Backing up top-level dot files"
