@@ -44,4 +44,6 @@ This will present the user with a choice to run the installer in one of two mode
 2. **Current Machine**
       Installation/Setup changes made in this environment will modify and affect the current actual machine.
 
-![Screenshot](./images/screenshot.png)
+## Demo
+
+![Demo](./public/demo.gif)
