@@ -8,8 +8,6 @@
   default = simple
 [color]
   ui = auto
-[protocol]
-  version = 2
 [pull]
   rebase = false
 
