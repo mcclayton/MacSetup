@@ -216,8 +216,20 @@ function main {
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       fi
 
-      manualAction "If Homebrew installed successfully, please follow Homebrew's above instructions (in another tab) to add it to your path."
-      source ~/.bash_profile
+      if [ "$SANDBOX" = true ]; then
+        SEPARATOR="    |"
+        echo -e "If Homebrew installed successfully, please follow Homebrew's above instructions (in another tab) to add it to your path."
+        echo -e "${SEPARATOR} [SANDBOX] To open the sandbox in another tab"
+        echo -e "${SEPARATOR} 1. Find the runnning containers with the command:"
+        echo -e "${SEPARATOR} \`docker container ls\`\n${SEPARATOR}"
+        echo -e "${SEPARATOR} 2. Exec Into the current sandox using the command:"
+        echo -e "${SEPARATOR} \`docker exec -it <SANDBOX_CONTAINER_ID> /bin/bash\`"
+        manualAction "Follow the steps above to ensure Homebrew is loaded into the environment."
+      else
+        manualAction "If Homebrew installed successfully, please follow Homebrew's above instructions (in another tab) to add it to your path."
+      fi
+
+      source ~/.profile
 
       # Test to ensure successful install
       assertPackageInstallation brew "homebrew"

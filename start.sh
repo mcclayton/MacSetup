@@ -12,15 +12,19 @@ source "$(scriptDirectory)/installation/constants.sh"
 source "$(scriptDirectory)/installation/helperFunctions.sh"
 
 sandboxInstall() {
-  info "Setting up dockerized sandbox environment..."
-  docker build -t macsetup .
-  success "Built docker image for sandbox environment."
-  info "Starting sandbox environment..."
-  docker container run --rm -it -h sandbox macsetup /bin/bash -c "./install.sh"
+  if cmdExists docker; then
+    info "Setting up dockerized sandbox environment..."
+    docker build -t macsetup .
+    success "Built docker image for sandbox environment."
+    info "Starting sandbox environment..."
+    docker container run --rm -it -h sandbox macsetup /bin/bash -c "./install.sh"
+  else
+    fail "Failed to run in Sandbox mode. Docker cli is not installed."
+  fi
 }
 
 function machineInstall() {
-  echo "Using current machine environment..."
+  info "Using current machine environment..."
   ./install.sh
 }
 
