@@ -205,86 +205,37 @@ function main {
     info "Skipping..."
   fi
 
-  # Set up asdf and tools (Postgres, Ruby, Node)
-  promptNewSection "ASDF Version Manager + (Postgres & Ruby & Node)"
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    local currDir="$(scriptDirectory)";
-    git clone https://github.com/asdf-vm/asdf.git ~/.asdf
-    cd ~/.asdf
-    git checkout "$(git describe --abbrev=0 --tags)"
-
-    source $HOME/.asdf/asdf.sh
-    assertPackageInstallation asdf "asdf"
-    cd "$currDir"
-
-    info "Configuring asdf version manager in .bash_profile and .zprofile"
-    addLineToFiles "" ~/.bash_profile ~/.zprofile
-    addLineToFiles "# asdf version manager" ~/.bash_profile ~/.zprofile
-    addLineToFiles '. $HOME/.asdf/asdf.sh' ~/.bash_profile ~/.zprofile
-    addLineToFiles '. $HOME/.asdf/completions/asdf.bash' ~/.bash_profile # This line does not apply to .zprofile
-    success 'Added asdf configuration to ~/.bash_profile and ~/.zprofile'
-
-    info "Adding Ruby Plugin..."
-    asdf plugin-add ruby https://github.com/asdf-vm/asdf-ruby.git
-    info "Adding Postgres Plugin..."
-    asdf plugin-add postgres
-    info "Adding Node Plugin..."
-    asdf plugin-add nodejs
-
-    info "Backing up ~/.tool-versions"
-    backupFile ~/.tool-versions tool-versions
-
-    cp "$(scriptDirectory)"/.tool-versions ~/.tool-versions
-    assertFileExists ~/.tool-versions "~/.tool-versions set" "Failed to set ~/.tool-versions"
-
-    promptYesNo "Would you like to install tools in ~/.tool-versions? (This will take a while)"$'\n'"---TOOLS---"$'\n'"$(cat ~/.tool-versions)"$'\n'"-----------"$
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-      info "Installing Tools in .tool-versions"
-      asdf install
-      assertPackageInstallation ruby "ruby"
-      assertPackageInstallation node "node"
-      assertPackageInstallation postgres "postgres"
-    fi
-  else
-    # Skip this installation section
-    info "Skipping..."
-  fi
-
   # Set up homebrew
   promptNewSection "HOMEBREW PACKAGE MANAGER"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
       info "Installing Homebrew package manager"
-      if cmdExists ruby; then
-        # Install Brew if it isn't already
-        if cmdExists brew; then
-          info "Homebrew is already installed"
-        else
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        fi
-
-        manualAction "If Homebrew installed successfully, please follow Homebrew's above instructions (in another tab) to add it to your path."
-        source ~/.bash_profile
-
-        # Test to ensure successful install
-        assertPackageInstallation brew "homebrew"
-
-        if cmdExists brew; then
-          info "Updating homebrew"
-          brew update
-          info "Making homebrew healthy with brew doctor"
-          brew doctor
-
-          info "Adding Homebrew to \$PATH in .bash_profile and .zprofile"
-          addLineToFiles "" ~/.bash_profile ~/.zprofile
-          addLineToFiles "# Homebrew Package Manager" ~/.bash_profile ~/.zprofile
-          addLineToFiles 'eval "$($(brew --prefix)/bin/brew shellenv)"' >> ~/.zprofile
-          eval "$($(brew --prefix)/bin/brew shellenv)"
-          success 'Added Homebrew to \$PATH in ~/.bash_profile and ~/.zprofile'
-        else
-          fail "Failed to update Homebrew because it is not installed"
-        fi
+      # Install Brew if it isn't already
+      if cmdExists brew; then
+        info "Homebrew is already installed"
       else
-        fail "Ruby is required first to install homebrew."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      fi
+
+      manualAction "If Homebrew installed successfully, please follow Homebrew's above instructions (in another tab) to add it to your path."
+      source ~/.bash_profile
+
+      # Test to ensure successful install
+      assertPackageInstallation brew "homebrew"
+
+      if cmdExists brew; then
+        info "Updating homebrew"
+        brew update
+        info "Making homebrew healthy with brew doctor"
+        brew doctor
+
+        info "Adding Homebrew to \$PATH in .bash_profile and .zprofile"
+        addLineToFiles "" ~/.bash_profile ~/.zprofile
+        addLineToFiles "# Homebrew Package Manager" ~/.bash_profile ~/.zprofile
+        addLineToFiles 'eval "$($(brew --prefix)/bin/brew shellenv)"' >> ~/.zprofile
+        eval "$($(brew --prefix)/bin/brew shellenv)"
+        success 'Added Homebrew to \$PATH in ~/.bash_profile and ~/.zprofile'
+      else
+        fail "Failed to update Homebrew because it is not installed"
       fi
   else
     # Skip this installation section
@@ -294,12 +245,11 @@ function main {
   # Get packages
   promptNewSection "PACKAGES"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-    # Install lolcat
-    installPackage lolcat "gem install lolcat"
-    assertPackageInstallation lolcat "lolcat"
-
     # Can only install brew packages if brew is installed
     if cmdExists brew; then
+      # Install lolcat
+      installPackage lolcat "brew install lolcat"
+      assertPackageInstallation lolcat "lolcat"
       # Install wget
       installPackage wget "brew install wget"
       assertPackageInstallation wget "wget"
@@ -339,6 +289,9 @@ function main {
       # Install icu4c
       installPackage icu4c "brew install icu4c"
       assertPackageInstallation icuinfo "icu4c"
+      # Install gcc
+      installPackage gcc "brew install gcc"
+      assertPackageInstallation gcc "gcc"
     else
       fail "Failed to install brew packages. Homebrew is not installed."
     fi
@@ -397,6 +350,51 @@ function main {
       fi
     else
       warn "This is a MacOS specific step, skipping due to invalid OS..."
+    fi
+  else
+    # Skip this installation section
+    info "Skipping..."
+  fi
+
+    # Set up asdf and tools (Postgres, Ruby, Node)
+  promptNewSection "ASDF Version Manager + (Postgres & Ruby & Node)"
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    local currDir="$(scriptDirectory)";
+    git clone https://github.com/asdf-vm/asdf.git ~/.asdf
+    cd ~/.asdf
+    git checkout "$(git describe --abbrev=0 --tags)"
+
+    source $HOME/.asdf/asdf.sh
+    assertPackageInstallation asdf "asdf"
+    cd "$currDir"
+
+    info "Configuring asdf version manager in .bash_profile and .zprofile"
+    addLineToFiles "" ~/.bash_profile ~/.zprofile
+    addLineToFiles "# asdf version manager" ~/.bash_profile ~/.zprofile
+    addLineToFiles '. $HOME/.asdf/asdf.sh' ~/.bash_profile ~/.zprofile
+    addLineToFiles '. $HOME/.asdf/completions/asdf.bash' ~/.bash_profile # This line does not apply to .zprofile
+    success 'Added asdf configuration to ~/.bash_profile and ~/.zprofile'
+
+    info "Adding Ruby Plugin..."
+    asdf plugin-add ruby https://github.com/asdf-vm/asdf-ruby.git
+    info "Adding Postgres Plugin..."
+    asdf plugin-add postgres
+    info "Adding Node Plugin..."
+    asdf plugin-add nodejs
+
+    info "Backing up ~/.tool-versions"
+    backupFile ~/.tool-versions tool-versions
+
+    cp "$(scriptDirectory)"/.tool-versions ~/.tool-versions
+    assertFileExists ~/.tool-versions "~/.tool-versions set" "Failed to set ~/.tool-versions"
+
+    promptYesNo "Would you like to install tools in ~/.tool-versions? (This will take a while)"$'\n'"---TOOLS---"$'\n'"$(cat ~/.tool-versions)"$'\n'"-----------"$
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      info "Installing Tools in .tool-versions"
+      asdf install
+      assertPackageInstallation ruby "ruby"
+      assertPackageInstallation node "node"
+      assertPackageInstallation postgres "postgres"
     fi
   else
     # Skip this installation section
