@@ -4,6 +4,15 @@
 # Helper Functions #
 ####################
 
+function ensureNotRoot {
+  if [ "$EUID" -eq 0 ]
+    then
+    warn "Please do not run entire script as root."
+    info "Exiting..."
+    exit
+  fi
+}
+
 # Returns whether or not a command exists
 function cmdExists {
   if hash $1 2>/dev/null; then
@@ -40,11 +49,11 @@ EOF
   echo
 
   if [ ${#FAILURES_ARRAY[@]} -eq 0 ]; then
-      success "No failures occurred during install"
+    success "No failures occurred during install"
   else
-      warn "The following failures occurred during install"
-      # Print failures
-      printFailures
+    warn "The following failures occurred during install"
+    # Print failures
+    printFailures
   fi
   echo
   promptYesNo "Would you like to open a new shell to experience the new changes?"
@@ -81,60 +90,60 @@ sandboxIntro() {
 }
 
 promptYesNo() {
-    echo "   => $1 "
-    read -p "      [Y/n] " -r
-    echo
+  echo "   => $1 "
+  read -p "      [Y/n] " -r
+  echo
 }
 
 prompt() {
-    IFS= read -r -p "   => $1 "
-    unset IFS
-    echo
+  IFS= read -r -p "   => $1 "
+  unset IFS
+  echo
 }
 
 warn() {
-    echo "$YELLOW ⚠ $1 $RESET_COLOR"
-    echo
+  echo "$YELLOW ⚠ $1 $RESET_COLOR"
+  echo
 }
 
 info() {
-    echo -e "$GRAY ⓘ $1 $RESET_COLOR"
-    echo
+  echo -e "$GRAY ⓘ $1 $RESET_COLOR"
+  echo
 }
 
 success() {
-    echo -e "$GREEN ✔ $1 $RESET_COLOR"
-    echo
+  echo -e "$GREEN ✔ $1 $RESET_COLOR"
+  echo
 }
 
 # Keep track of all the errors for printing at the end of install
 FAILURES_ARRAY=()
 fail() {
-    # Preserve white space by changing the Internal Field Separator
-    IFS='%'
-    NEW_ERROR="$RED ✘ $1 $RESET_COLOR"
-    # Add error to array
-    FAILURES_ARRAY+=($NEW_ERROR)
-    # Print error
-    echo -e "$NEW_ERROR"
-    # Reset the Internal Field Separator
-    unset IFS
-    echo
+  # Preserve white space by changing the Internal Field Separator
+  IFS='%'
+  NEW_ERROR="$RED ✘ $1 $RESET_COLOR"
+  # Add error to array
+  FAILURES_ARRAY+=($NEW_ERROR)
+  # Print error
+  echo -e "$NEW_ERROR"
+  # Reset the Internal Field Separator
+  unset IFS
+  echo
 }
 
 # Print out all failures line by line in the FAILURES_ARRAY
 printFailures() {
-    for failure in "${FAILURES_ARRAY[@]}"; do
-        echo -e "    -> $failure"
-    done
+  for failure in "${FAILURES_ARRAY[@]}"; do
+    echo -e "    -> $failure"
+  done
 }
 
 # Gets the repo name given a full git url
 repoName() {
-    # Get the name of the repo in format 'myRepo.git'
-    basename=$(basename $1)
-    # Echo out repo name in format 'myRepo'
-    echo "${basename%.*}"
+  # Get the name of the repo in format 'myRepo.git'
+  basename=$(basename $1)
+  # Echo out repo name in format 'myRepo'
+  echo "${basename%.*}"
 }
 
 # Backs up file $1 (if it exists) to location $BACKUP_DIRECTORY/$2
@@ -207,75 +216,75 @@ backupDir() {
 # Install package $1 via the command $2.
 # Configure via command $3 if passed
 installPackage() {
-    info "Installing Package: $1"
-    if cmdExists $1; then
-        info "$1 is already installed"
-    else
-        $2
-        # Run Config Command if present
-        if [ ! -z "$3" ]; then
-            $3
-        fi
+  info "Installing Package: $1"
+  if cmdExists $1; then
+    info "$1 is already installed"
+  else
+    $2
+    # Run Config Command if present
+    if [ ! -z "$3" ]; then
+      $3
     fi
+  fi
 }
 
 # Install application named $1 via the cask name $2 only if it does
 # not already exist at path /Applications/$1
 # Configure via command $3 if passed
 caskInstallAppPrompt() {
-    promptYesNo "Install application $1?"
+  promptYesNo "Install application $1?"
 
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        # Install Application
-        info "Installing Application: $1"
-        if brew ls --cask --versions $2 > /dev/null; then
-            warn "$1 is already installed. Prompting overwrite..."
-            promptYesNo "Do you want to $RED OVERWRITE $RESET_COLOR application $1?"
-            if [[ $REPLY =~ ^[Yy]$ ]]; then
-                rm -rf "/Applications/$1"
-                # Run re-install command
-                brew reinstall --cask $2
-                # Run Config Command if present
-                if [ ! -z "$3" ]; then
-                    $3
-                fi
-            else
-                info "Skipping overwrite..."
-            fi
-        else
-            # Run install command
-            brew install --cask $2
-            # Run Config Command if present
-            if [ ! -z "$3" ]; then
-                $3
-            fi
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    # Install Application
+    info "Installing Application: $1"
+    if brew ls --cask --versions $2 > /dev/null; then
+      warn "$1 is already installed. Prompting overwrite..."
+      promptYesNo "Do you want to $RED OVERWRITE $RESET_COLOR application $1?"
+      if [[ $REPLY =~ ^[Yy]$ ]]; then
+        rm -rf "/Applications/$1"
+        # Run re-install command
+        brew reinstall --cask $2
+        # Run Config Command if present
+        if [ ! -z "$3" ]; then
+            $3
         fi
-        # Assert application is installed correctly
-        assertAppInstallation "$1"
-    else
-        # Skip this installation section
-        info "Skipping Installation..."
-    fi
+      else
+        info "Skipping overwrite..."
+      fi
+      else
+        # Run install command
+        brew install --cask $2
+        # Run Config Command if present
+        if [ ! -z "$3" ]; then
+          $3
+        fi
+      fi
+    # Assert application is installed correctly
+    assertAppInstallation "$1"
+  else
+    # Skip this installation section
+    info "Skipping Installation..."
+  fi
 }
 
 # Assert $1 directory exists and display $2 success message if it does
 # or display $3 error message otherwise
 assertDirectoryExists() {
-    if [ -d $1 ]; then
-        success "$2"
-    else
-        fail "$3"
-    fi
+  if [ -d $1 ]; then
+    success "$2"
+  else
+    fail "$3"
+  fi
 }
 
 # Assert $1 file exists and display $2 success message if it does
 # or display $3 error message otherwise
 assertFileExists() {
-    if [ -f $1 ]; then
-        success "$2"
-    else
-        fail "$3"
-    fi
+  if [ -f $1 ]; then
+    success "$2"
+  else
+    fail "$3"
+  fi
 }
 
 isMacOs() {
@@ -295,39 +304,39 @@ isMacOs() {
 }
 
 assertPackageInstallation() {
-    # $1 is command to assert existence in order to verify correct installation
-    # $2 is name of command
-    if cmdExists $1; then
-        success "Successfully installed $2"
-    else
-        fail "Failed to install $2"
-    fi
+  # $1 is command to assert existence in order to verify correct installation
+  # $2 is name of command
+  if cmdExists $1; then
+    success "Successfully installed $2"
+  else
+    fail "Failed to install $2"
+  fi
 }
 
 assertAppInstallation() {
-    # Assert application $1 exists at /Applications/$1
-    if [ -d "/Applications/$1" ]; then
-        success "Successfully installed $1 and added to Applications"
-    else
-        fail "Failed to install $1"
-    fi
+  # Assert application $1 exists at /Applications/$1
+  if [ -d "/Applications/$1" ]; then
+    success "Successfully installed $1 and added to Applications"
+  else
+    fail "Failed to install $1"
+  fi
 }
 
 promptNewSection() {
-    echo
-    echo "$ORANGE[=== $1 ===] $RESET_COLOR"
-    promptYesNo "Proceed with section?"
+  echo
+  echo "$ORANGE[=== $1 ===] $RESET_COLOR"
+  promptYesNo "Proceed with section?"
 }
 
 manualAction() {
-    echo -e "[MANUAL ACTION REQUIRED]: $1"
-    read -p "   => Press Enter To Continue:"
+  echo -e "[MANUAL ACTION REQUIRED]: $1"
+  read -p "   => Press Enter To Continue:"
 }
 
 printInRainbow() {
-    if cmdExists lolcat; then
-        printf "$1" | lolcat
-    else
-        printf "$1"
-    fi
+  if cmdExists lolcat; then
+      printf "$1" | lolcat
+  else
+      printf "$1"
+  fi
 }
