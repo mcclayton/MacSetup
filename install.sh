@@ -229,7 +229,11 @@ function main {
         manualAction "If Homebrew installed successfully, please follow Homebrew's above instructions (in another tab) to add it to your path."
       fi
 
-      source ~/.profile
+      if [ ! -f ~/.bash_profile ]; then
+        source ~/.profile
+      else
+        source ~/.bash_profile
+      fi
 
       # Test to ensure successful install
       assertPackageInstallation brew "homebrew"
