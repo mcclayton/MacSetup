@@ -9,7 +9,6 @@ function runSection {
       # Install zsh
       installPackage zsh "brew install zsh"
       assertPackageInstallation zsh "zsh"
-      # TODO: Configure zsh
     else
       fail "Failed to install zsh. Homebrew is required to install."
     fi

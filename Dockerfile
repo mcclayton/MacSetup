@@ -38,7 +38,7 @@ ADD iTerm2            $APP_HOME/iTerm2
 ADD Mac_Dot_Files     $APP_HOME/Mac_Dot_Files
 ADD misc              $APP_HOME/misc
 ADD screensavers      $APP_HOME/screensavers
-ADD Spectacle         $APP_HOME/Spectacle
+ADD Rectangle         $APP_HOME/Rectangle
 ADD vim               $APP_HOME/vim
 ADD oh-my-zsh         $APP_HOME/oh-my-zsh
 ADD VSCode            $APP_HOME/VSCode
