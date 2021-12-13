@@ -36,8 +36,8 @@ function runSection {
         unset IFS
 
         # Install applications that need configuring
-        # Install Spectacle
-        caskInstallAppPrompt "Spectacle.app" "spectacle" configureSpectacle
+        # Install Rectangle
+        caskInstallAppPrompt "Rectangle.app" "rectangle" configureRectangle
         # Install Visual Studio Code
         caskInstallAppPrompt "Visual Studio Code.app" "visual-studio-code" configureVSCode
         # Install and configure iTerm2

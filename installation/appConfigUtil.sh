@@ -39,6 +39,10 @@ configureVSCode() {
             for extension in `grep -v "^$" "$(scriptDirectory)/VSCode/extensions.list"`; do
                 code --install-extension $extension
             done
+
+            addLineToFiles "" ~/.bash_profile ~/.zprofile
+            addLineToFiles "# Add Visual Studio Code (code)" ~/.bash_profile ~/.zprofile
+            addLineToFiles 'export PATH="\$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"' ~/.bash_profile ~/.zprofile
         else
             fail "Failed to install VSCode Extensions, 'code' command does not exist"
         fi
@@ -47,22 +51,22 @@ configureVSCode() {
     fi
 }
 
-# Set up spectacle
-configureSpectacle() {
-    info "Configuring Spectacle"
-    if [ -d "/Applications/Spectacle.app" ]; then
+# Set up rectangle
+configureRectangle() {
+    info "Configuring Rectangle"
+    if [ -d "/Applications/Rectangle.app" ]; then
         info "Setting up shortcut preferences"
         # Preserve white space by changing the Internal Field Separator
         IFS='%'
-        mkdir -p ~/Library/'Application Support'/Spectacle/Shortcuts.json
-        cp "$(scriptDirectory)/Spectacle/Shortcuts.json" ~/Library/'Application Support'/Spectacle/Shortcuts.json
-        assertFileExists ~/Library/'Application Support'/Spectacle/Shortcuts.json "Spectacle Shortcuts.json set" "Failed to set Spectacle Shortcuts.json"
+        mkdir -p ~/Library/'Application Support'/Rectangle
+        cp "$(scriptDirectory)/Rectangle/com.knollsoft.Rectangle.plist" ~/Library/Preferences/com.knollsoft.Rectangle.plist
+        assertFileExists ~/Library/Preferences/com.knollsoft.Rectangle.plist "Rectangle Shortcuts set" "Failed to set Rectangle Shortcuts"
         # Reset the Internal Field Separator
         unset IFS
-        info "Opening Spectacle.app"
-        open /Applications/Spectacle.app
+        info "Opening Rectangle.app"
+        open /Applications/Rectangle.app
     else
-        fail "Cannot configure Spectacle as it is not installed"
+        fail "Cannot configure Rectangle as it is not installed"
     fi
 }
 
