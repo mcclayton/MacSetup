@@ -45,6 +45,9 @@ function runSection {
       # Install lsd
       installPackage lsd "brew install lsd"
       assertPackageInstallation lsd "lsd (Better 'ls' Command)"
+      # Install openssl
+      installPackage openssl "brew install openssl"
+      assertPackageInstallation openssl "openssl"
       # Install icu4c
       installPackage icu4c "brew install icu4c"
       assertPackageInstallation icuinfo "icu4c"
