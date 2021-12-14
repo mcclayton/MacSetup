@@ -32,6 +32,14 @@ function currShell {
   fi
 }
 
+# Keep track of all prompts, success, info, and error logs
+LOG_ARRAY=()
+logEntry() {
+  MSG=$1
+  # Add message to logs
+  LOG_ARRAY+=("$MSG")
+}
+
 function finish {
   # Finish
   echo
@@ -48,6 +56,8 @@ EOF
   echo -e "$GRAY (May need to open new shell to experience all changes.)$RESET_COLOR"
   echo
 
+  generateLog
+
   if [ ${#FAILURES_ARRAY[@]} -eq 0 ]; then
     success "No failures occurred during install"
   else
@@ -55,6 +65,10 @@ EOF
     # Print failures
     printFailures
   fi
+
+  echo
+  info "View Summary Log: $LOG_PATH"
+
   echo
   promptYesNo "Would you like to open a new shell to experience the new changes?"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -102,18 +116,42 @@ prompt() {
 }
 
 warn() {
-  echo "$YELLOW ⚠ $1 $RESET_COLOR"
+  # Preserve white space by changing the Internal Field Separator
+  IFS='%'
+  MSG="$YELLOW ⚠ $1 $RESET_COLOR"
+  # Print message
+  echo -e $MSG
   echo
+
+  logEntry $MSG
+  # Reset the Internal Field Separator
+  unset IFS
 }
 
 info() {
-  echo -e "$GRAY ⓘ $1 $RESET_COLOR"
+  # Preserve white space by changing the Internal Field Separator
+  IFS='%'
+  MSG="$GRAY ⓘ $1 $RESET_COLOR"
+  # Print message
+  echo -e $MSG
   echo
+
+  logEntry $MSG
+  # Reset the Internal Field Separator
+  unset IFS
 }
 
 success() {
-  echo -e "$GREEN ✔ $1 $RESET_COLOR"
+  # Preserve white space by changing the Internal Field Separator
+  IFS='%'
+  MSG="$GREEN ✔ $1 $RESET_COLOR"
+  # Print message
+  echo -e $MSG
   echo
+
+  logEntry $MSG
+  # Reset the Internal Field Separator
+  unset IFS
 }
 
 # Keep track of all the errors for printing at the end of install
@@ -121,14 +159,29 @@ FAILURES_ARRAY=()
 fail() {
   # Preserve white space by changing the Internal Field Separator
   IFS='%'
-  NEW_ERROR="$RED ✘ $1 $RESET_COLOR"
-  # Add error to array
-  FAILURES_ARRAY+=($NEW_ERROR)
-  # Print error
-  echo -e "$NEW_ERROR"
+  MSG="$RED ✘ $1 $RESET_COLOR"
+  # Print message
+  echo -e $MSG
+  echo
+
+  logEntry $MSG
+  # Add message to array
+  FAILURES_ARRAY+=($MSG)
   # Reset the Internal Field Separator
   unset IFS
-  echo
+}
+
+generateLog() {
+  touch $LOG_PATH
+
+  echo "::: MAC SETUP LOG :::" >> $LOG_PATH
+  echo "---------------------" >> $LOG_PATH
+  echo >> $LOG_PATH
+  echo >> $LOG_PATH
+
+  for entry in "${LOG_ARRAY[@]}"; do
+    echo -e $entry >> $LOG_PATH
+  done
 }
 
 # Print out all failures line by line in the FAILURES_ARRAY
@@ -324,7 +377,10 @@ assertAppInstallation() {
 
 promptNewSection() {
   echo
-  echo "$ORANGE[=== $1 ===] $RESET_COLOR"
+  TITLE="[=== $1 ===]"
+  echo "$ORANGE$TITLE $RESET_COLOR"
+  logEntry "$TITLE"
+
   promptYesNo "Proceed with section?"
 }
 

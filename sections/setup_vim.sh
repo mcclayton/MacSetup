@@ -23,7 +23,6 @@ function runSection {
     info "Setting up .vimrc"
     cp "$(scriptDirectory)"/Mac_Dot_Files/vimrc.sh ~/.vimrc
     assertFileExists ~/.vimrc "~/.vimrc set" "Failed to set ~/.vimrc"
-    success "~/.vimrc set"
 
     # Clone all vim plugins
     vimPlugins=(

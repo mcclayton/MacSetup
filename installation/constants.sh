@@ -15,3 +15,4 @@ RESET_COLOR=$(tput sgr0)
 
 # The directory to store file and folder backups (i.e. dot file backups)
 BACKUP_DIRECTORY=~/mac_setup_backups
+LOG_PATH=~/.mac_setup_log
