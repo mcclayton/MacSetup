@@ -20,6 +20,7 @@ RUN \
   libssl-dev \
   libxml2-dev \
   libxslt1-dev \
+  openssh-client \
   procps \
   sudo \
   vim \
