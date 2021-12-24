@@ -15,6 +15,9 @@ source "$(scriptDirectory)/installation/appConfigUtil.sh"
 
 # Main Function
 function main {
+  # Create root setup folder
+  mkdir -p $ROOT_MAC_SETUP_FOLDER
+
   # Print out the intro message
   printIntro
 
