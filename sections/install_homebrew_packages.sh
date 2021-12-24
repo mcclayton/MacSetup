@@ -24,6 +24,9 @@ function runSection {
       # Install ack
       installPackage ack "brew install ack"
       assertPackageInstallation ack "ack"
+      # Install viu
+      installPackage viu "brew install viu"
+      assertPackageInstallation viu "viu"
       # Install yarn
       installPackage yarn "brew install yarn" configureYarn
       assertPackageInstallation yarn "yarn"

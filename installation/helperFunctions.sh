@@ -173,6 +173,8 @@ fail() {
 
 generateLog() {
   touch $LOG_PATH
+  # Clear the previous log
+  echo "" > $LOG_PATH
 
   echo "::: MAC SETUP LOG :::" >> $LOG_PATH
   echo "---------------------" >> $LOG_PATH
