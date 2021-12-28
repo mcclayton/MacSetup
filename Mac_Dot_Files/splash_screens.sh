@@ -1,28 +1,3 @@
-# Define an alias for a horse wearing a party hat. Why not?
-party_horse() {
-  IFS='' read -r -d '' PARTY_HORSE <<'EOF'
-                      .
-                     /|
-                    /_|
-               ,   /__|
-              / \,,___:'|
-           ,{{| /}}}}/_.'
-          }}}}` '{{'  '.
-        {{{{{    _   ;, \
-     ,}}}}}}    /o`\  ` ;)
-    {{{{{{   /           (
-    }}}}}}   |            \       _______________________
-    {{{{{{{{   \            \    /    __ _  ________     \
-   }}}}}}}}}   '.__      _  |   /    /  ' \/ __/ __/___   |
-   {{{{{{{{       /`._  (_\ /  <    / /_/_/\__/\______/   |
-    }}}}}}'      |    //___/    \  /_/ Michael Clayton    |
-    `{{{{`       |     '--'      \_______________________/
-     }}}'
-
-EOF
-  rainbowtext "$PARTY_HORSE"
-}
-
 wolf() {
   IFS='' read -r -d '' WOLF <<'EOF'
                                __
@@ -53,8 +28,33 @@ wolf() {
                             ;
 EOF
   rainbowtext "$WOLF" -S 35
+  # Print a horizontal divider
   HORIZONTAL_ROW=$(printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' ─)
   rainbowtext $HORIZONTAL_ROW -S 48 -p 7.0
+}
+
+party_horse() {
+  IFS='' read -r -d '' PARTY_HORSE <<'EOF'
+                      .
+                     /|
+                    /_|
+               ,   /__|
+              / \,,___:'|
+           ,{{| /}}}}/_.'
+          }}}}` '{{'  '.
+        {{{{{    _   ;, \
+     ,}}}}}}    /o`\  ` ;)
+    {{{{{{   /           (
+    }}}}}}   |            \       _______________________
+    {{{{{{{{   \            \    /    __ _  ________     \
+   }}}}}}}}}   '.__      _  |   /    /  ' \/ __/ __/___   |
+   {{{{{{{{       /`._  (_\ /  <    / /_/_/\__/\______/   |
+    }}}}}}'      |    //___/    \  /_/ Michael Clayton    |
+    `{{{{`       |     '--'      \_______________________/
+     }}}'
+
+EOF
+  rainbowtext "$PARTY_HORSE"
 }
 
 mcc() {
