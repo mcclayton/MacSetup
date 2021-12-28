@@ -1,5 +1,6 @@
 source ~/.config_vars
 source ~/.utility_aliases
+source ~/.splash_screens
 
 # This file is processed on each interactive invocation of bash
 
@@ -103,31 +104,13 @@ if [[ $(echo $BASH_VERSION) ]]; then
   fi
 fi
 
-# Define an alias for a horse wearing a party hat. Why not?
-partyhorse() {
+splash_screen() {
   clear
-  IFS='' read -r -d '' PARTY_HORSE <<'EOF'
-                      .
-                     /|
-                    /_|
-               ,   /__|
-              / \,,___:'|
-           ,{{| /}}}}/_.'
-          }}}}` '{{'  '.
-        {{{{{    _   ;, \
-     ,}}}}}}    /o`\  ` ;)
-    {{{{{{   /           (
-    }}}}}}   |            \       _______________________
-    {{{{{{{{   \            \    /    __ _  ________     \
-   }}}}}}}}}   '.__      _  |   /    /  ' \/ __/ __/___   |
-   {{{{{{{{       /`._  (_\ /  <    / /_/_/\__/\______/   |
-    }}}}}}'      |    //___/    \  /_/ Michael Clayton    |
-    `{{{{`       |     '--'      \_______________________/
-     }}}'
-
-EOF
-  rainbowtext "$PARTY_HORSE"
+  local SPLASH_COMMAND=noop
+  if type $SPLASH_COMMAND >/dev/null; then
+    $SPLASH_COMMAND
+  fi
 }
 
-# Display the welcome splash screen
-partyhorse
+# Invoke splash screen
+splash_screen

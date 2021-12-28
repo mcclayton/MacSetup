@@ -17,7 +17,8 @@ sandboxInstall() {
     docker build -t macsetup .
     success "Built docker image for sandbox environment."
     info "Starting sandbox environment..."
-    docker container run --name macsetup --rm -it -h sandbox macsetup /bin/bash -c "./install.sh"
+    # Need to forward env var. TERM_PROGRAM so we know what terminal program we are running docker in
+    docker container run --env TERM_PROGRAM --name macsetup --rm -it -h sandbox macsetup /bin/bash -c "./install.sh"
   else
     fail "Failed to run in Sandbox mode. Docker cli is not installed."
   fi

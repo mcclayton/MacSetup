@@ -12,6 +12,7 @@ promptNewSection "SETTING UP TOP-LEVEL DOT FILES"
       "zprofile"
       "utility_aliases"
       "config_vars"
+      "splash_screens"
     )
 
     info "Backing up top-level dot files"

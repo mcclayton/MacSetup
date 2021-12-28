@@ -31,6 +31,7 @@ function main {
     "setup_fonts"
     "setup_screensavers"
     "setup_dot_files"
+    "setup_splash_screen"
     "setup_vim"
     "setup_homebrew"
     "install_homebrew_packages"
