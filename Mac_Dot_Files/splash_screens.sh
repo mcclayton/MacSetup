@@ -52,7 +52,9 @@ wolf() {
                             :\
                             ;
 EOF
-  rainbowtext "$WOLF"
+  rainbowtext "$WOLF" -S 35
+  HORIZONTAL_ROW=$(printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' ─)
+  rainbowtext $HORIZONTAL_ROW -S 48 -p 7.0
 }
 
 mcc() {

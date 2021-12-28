@@ -35,7 +35,7 @@ promptNewSection "SETTING UP SPLASH SCREEN"
     done
 
     info "Setting splash screen to use command '$COMMAND_CHOICE'"
-    sed -i "s/local SPLASH_COMMAND=.*/local SPLASH_COMMAND=$COMMAND_CHOICE/" ~/.bashrc
+    sed -i -e "s/local SPLASH_COMMAND=.*/local SPLASH_COMMAND=$COMMAND_CHOICE/" ~/.bashrc
 
     if grep -q "local SPLASH_COMMAND=$COMMAND_CHOICE" ~/.bashrc; then
       success "Splash screen set to use command '$COMMAND_CHOICE'"

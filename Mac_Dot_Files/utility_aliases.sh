@@ -42,10 +42,11 @@ hlogs() {
 
 # Display text in rainbow if lolcat installed, else regular text
 rainbowtext() {
+  TEXT=$1 && shift
   if cmdExists lolcat; then
-    printf "$1" | lolcat
+    printf "$TEXT" | lolcat "$@"
   else
-    printf "$1"
+    printf "$TEXT"
   fi
 }
 
