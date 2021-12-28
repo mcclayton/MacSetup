@@ -42,7 +42,7 @@ configureVSCode() {
 
             addLineToFiles "" ~/.bash_profile ~/.zprofile
             addLineToFiles "# Add Visual Studio Code (code)" ~/.bash_profile ~/.zprofile
-            addLineToFiles 'export PATH="\$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"' ~/.bash_profile ~/.zprofile
+            addLineToFiles 'export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"' ~/.bash_profile ~/.zprofile
         else
             fail "Failed to install VSCode Extensions, 'code' command does not exist"
         fi
