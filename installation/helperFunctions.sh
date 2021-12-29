@@ -335,7 +335,7 @@ assertDirectoryExists() {
 # Assert $1 file exists and display $2 success message if it does
 # or display $3 error message otherwise
 assertFileExists() {
-  if [ -f $1 ]; then
+  if [ -f "$1" ]; then
     success "$2"
   else
     fail "$3"

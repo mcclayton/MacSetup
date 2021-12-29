@@ -29,11 +29,12 @@ configureVSCode() {
         addLineToFiles 'export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"' ~/.bash_profile ~/.zprofile
 
         info 'Setting settings.json file'
-        SETTINGS_PATH=~/Library/Application\ Support/Code/User/settings.json
-        if [ -f $SETTINGS_PATH ]; then
-          cp "$(scriptDirectory)/VSCode/settings.json" ~/Library/Application\ Support/Code/User/settings.json
-          assertFileExists ~/Library/Application\ Support/Code/User/settings.json "Successfully updated settings.json file" "Could not update settings.json file"
+        SETTINGS_PATH=~/Library/'Application Support'/Code/User/settings.json
+        if [ -f "$SETTINGS_PATH" ]; then
+          cp "$(scriptDirectory)/VSCode/settings.json" "$SETTINGS_PATH"
+          assertFileExists "$SETTINGS_PATH" "Successfully updated settings.json file" "Could not update settings.json file"
         else
+          warn "Could not automatically copy over settings.json"
           manualAction "For full configuration, please copy settings.json contents into VSCode settings"
         fi
       else
