@@ -12,25 +12,35 @@
 configureVSCode() {
     info "Configuring VSCode IDE"
     if [ -d "/Applications/Visual Studio Code.app" ]; then
-        # Backup .vscode directory
-        backupDir ~/.vscode vscode
+      # Backup .vscode directory
+      backupDir ~/.vscode vscode
 
-        # Install VSCode Packages
-        info "Installing VSCode Packages"
-        if cmdExists code; then
-            # For every non-blank line
-            for extension in `grep -v "^$" "$(scriptDirectory)/VSCode/extensions.list"`; do
-                code --install-extension $extension
-            done
+      # Install VSCode Packages
+      info "Installing VSCode Packages"
+      if cmdExists code; then
+        # For every non-blank line
+        for extension in `grep -v "^$" "$(scriptDirectory)/VSCode/extensions.list"`; do
+          code --install-extension $extension
+        done
 
-            addLineToFiles "" ~/.bash_profile ~/.zprofile
-            addLineToFiles "# Add Visual Studio Code (code)" ~/.bash_profile ~/.zprofile
-            addLineToFiles 'export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"' ~/.bash_profile ~/.zprofile
+        info 'Adding VSCode to $PATH'
+        addLineToFiles "" ~/.bash_profile ~/.zprofile
+        addLineToFiles "# Add Visual Studio Code (code)" ~/.bash_profile ~/.zprofile
+        addLineToFiles 'export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"' ~/.bash_profile ~/.zprofile
+
+        info 'Setting settings.json file'
+        SETTINGS_PATH=~/Library/Application\ Support/Code/User/settings.json
+        if [ -f $SETTINGS_PATH ]; then
+          cp "$(scriptDirectory)/VSCode/settings.json" ~/Library/Application\ Support/Code/User/settings.json
+          assertFileExists ~/Library/Application\ Support/Code/User/settings.json "Successfully updated settings.json file" "Could not update settings.json file"
         else
-            fail "Failed to install VSCode Extensions, 'code' command does not exist"
+          manualAction "For full configuration, please copy settings.json contents into VSCode settings"
         fi
+      else
+        fail "Failed to install VSCode Extensions, 'code' command does not exist"
+      fi
     else
-        fail "Cannot configure VSCode as it is not installed"
+      fail "Cannot configure VSCode as it is not installed"
     fi
 }
 
