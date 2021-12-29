@@ -29,8 +29,13 @@ wolf() {
 EOF
   rainbowtext "$WOLF" -S 35
   # Print a horizontal divider
+  COLUMNS=$(tput cols)
   HORIZONTAL_ROW=$(printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' ─)
-  rainbowtext $HORIZONTAL_ROW -S 48 -p 7.0
+  if [ $COLUMNS -gt 200 ]; then
+    rainbowtext $HORIZONTAL_ROW -S 48 -p 10.0
+  else
+    rainbowtext $HORIZONTAL_ROW -S 48 -p 7.0
+  fi
 }
 
 party_horse() {
