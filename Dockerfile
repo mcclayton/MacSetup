@@ -32,6 +32,7 @@ RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
 
 ADD install.sh        $APP_HOME/install.sh
+ADD diff.sh           $APP_HOME/diff.sh
 ADD sections          $APP_HOME/sections
 ADD splash_screen     $APP_HOME/splash_screen
 ADD fonts             $APP_HOME/fonts

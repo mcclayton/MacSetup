@@ -28,7 +28,7 @@ function runSection {
       installPackage viu "brew install viu"
       assertPackageInstallation viu "viu"
       # Install yarn
-      installPackage yarn "brew install yarn" configureYarn
+      installPackage yarn "brew install yarn"
       assertPackageInstallation yarn "yarn"
       # Install delta
       installPackage delta "brew install git-delta"

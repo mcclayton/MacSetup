@@ -51,7 +51,7 @@ find_dot_file_changes() {
   for dotFileName in "${filesToDiff[@]}"; do
     LOCAL_FILE=~/."$dotFileName"
     SETUP_FILE="$(scriptDirectory)"/Mac_Dot_Files/"$dotFileName".sh
-    diff $LOCAL_FILE $SETUP_FILE
+    diff $SETUP_FILE $LOCAL_FILE
   done
 }
 
