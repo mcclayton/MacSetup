@@ -43,7 +43,6 @@ ADD misc              $APP_HOME/misc
 ADD screensavers      $APP_HOME/screensavers
 ADD Rectangle         $APP_HOME/Rectangle
 ADD vim               $APP_HOME/vim
-ADD oh-my-zsh         $APP_HOME/oh-my-zsh
 ADD VSCode            $APP_HOME/VSCode
 ADD gitconfig.txt     $APP_HOME/gitconfig.txt
 ADD .tool-versions    $APP_HOME/.tool-versions
