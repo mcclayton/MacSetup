@@ -16,7 +16,6 @@
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
   "editor.detectIndentation": false,
-  "window.zoomLevel": 1,
   "files.trimTrailingWhitespace": true,
   "ruby.intellisense": "rubyLocate",
   "ruby.useBundler": true,
@@ -43,5 +42,10 @@
     "javascriptreact",
     "typescriptreact"
   ],
-  "eslint.workingDirectories": []
+  "eslint.workingDirectories": [],
+  "[less]": {
+    "editor.suggest.insertMode": "replace",
+    "gitlens.codeLens.scopes": ["document"]
+  },
+  "window.zoomLevel": 1
 }
