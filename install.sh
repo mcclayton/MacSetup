@@ -29,6 +29,7 @@ function main {
     "install_xcode_and_git"
     "setup_git"
     "setup_fonts"
+    "setup_wallpaper"
     "setup_screensavers"
     "setup_dot_files"
     "setup_splash_screen"

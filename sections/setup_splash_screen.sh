@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Set new top-level dot files
+# Set up terminal splash screem
 function runSection {
   promptNewSection "SETTING UP SPLASH SCREEN"
   if [[ $REPLY =~ ^[Yy]$ ]]; then

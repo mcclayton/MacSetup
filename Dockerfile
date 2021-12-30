@@ -35,6 +35,7 @@ ADD install.sh        $APP_HOME/install.sh
 ADD diff.sh           $APP_HOME/diff.sh
 ADD sections          $APP_HOME/sections
 ADD splash_screen     $APP_HOME/splash_screen
+ADD wallpapers        $APP_HOME/wallpapers
 ADD fonts             $APP_HOME/fonts
 ADD installation      $APP_HOME/installation
 ADD iTerm2            $APP_HOME/iTerm2
