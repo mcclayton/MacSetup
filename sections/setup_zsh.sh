@@ -12,6 +12,7 @@ function runSection {
     info "Setting up .oh-my-zsh folder"
     rm -rf ~/.oh-my-zsh
 
+    # Clone oh-my-zsh
     ZSH=${ZSH:-~/.oh-my-zsh}
     REPO=${REPO:-ohmyzsh/ohmyzsh}
     REMOTE=${REMOTE:-https://github.com/${REPO}.git}

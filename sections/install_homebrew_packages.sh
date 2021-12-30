@@ -52,7 +52,7 @@ function runSection {
       installPackage openssl "brew install openssl"
       assertPackageInstallation openssl "openssl"
       # Install icu4c
-      installPackage icu4c "brew install icu4c"
+      installPackage icu4c "brew install icu4c" configureICU4C
       assertPackageInstallation icuinfo "icu4c"
       # Install gcc
       installPackage gcc "brew install gcc"

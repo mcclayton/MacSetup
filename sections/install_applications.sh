@@ -27,7 +27,7 @@ function runSection {
         # Install Gimp
         caskInstallAppPrompt "Gimp.app" "gimp"
         # Install Docker
-        caskInstallAppPrompt "Docker.app" "docker"
+        caskInstallAppPrompt "Docker.app" "docker" configureDocker
         # Preserve white space by changing the Internal Field Separator
         IFS='%'
         # Install and configure Chrome

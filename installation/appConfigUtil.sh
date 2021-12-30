@@ -65,6 +65,7 @@ configureRectangle() {
 }
 
 configureITerm() {
+    info "Configuring iTerm"
     if [ -d "/Applications/iTerm.app" ]; then
         # Delete cached preferences
         info "Deleting cached iTerm preferences"
@@ -80,4 +81,31 @@ configureITerm() {
     else
         fail "Cannot configure iTerm as it is not installed"
     fi
+}
+
+configureICU4C() {
+  info "Configuring icu4c"
+  ICU_PATH=$(brew --prefix icu4c)
+  # Add To Path
+  addLineToFiles "" ~/.bash_profile ~/.zprofile
+  addLineToFiles "# Add icu4c to path" ~/.bash_profile ~/.zprofile
+  addLineToFiles "export PATH=\"$ICU_PATH/bin:\$PATH\"" ~/.bash_profile ~/.zprofile
+  addLineToFiles "export PATH=\"$ICU_PATH/sbin:\$PATH\"" ~/.bash_profile ~/.zprofile
+  # Enable Compilers to find icu4c
+  addLineToFiles "" ~/.bash_profile ~/.zprofile
+  addLineToFiles "# Enable compilers to find icu4c" ~/.bash_profile ~/.zprofile
+  addLineToFiles "export LDFLAGS=\"-L$ICU_PATH/lib\"" ~/.bash_profile ~/.zprofile
+  addLineToFiles "export LDFLAGS=\"-I$ICU_PATH/include\"" ~/.bash_profile ~/.zprofile
+  # Enable pkg-config to find icu4c
+  addLineToFiles "" ~/.bash_profile ~/.zprofile
+  addLineToFiles "# Enable pkg-config to find icu4c" ~/.bash_profile ~/.zprofile
+  addLineToFiles "export PKG_CONFIG_PATH=\"$ICU_PATH/lib/pkgconfig\"" ~/.bash_profile ~/.zprofile
+
+  # Source in the changes
+  [ -f ~/.bash_profile ] && source ~/.bash_profile
+  [ -f ~/.zprofile ] && source ~/.zprofile
+}
+
+configureDocker() {
+  manualAction "Open the Docker Desktop Application and grant priveledged access"
 }
