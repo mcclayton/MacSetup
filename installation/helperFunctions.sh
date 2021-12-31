@@ -292,7 +292,7 @@ caskInstallAppPrompt() {
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     # Install Application
     info "Installing Application: $1"
-    if brew ls --cask --versions $2 > /dev/null; then
+    if brew ls --cask --versions $2 > /dev/null 2>&1; then
       warn "$1 is already installed. Prompting overwrite..."
       promptYesNo "Do you want to $RED OVERWRITE $RESET_COLOR application $1?"
       if [[ $REPLY =~ ^[Yy]$ ]]; then
