@@ -7,6 +7,8 @@ function runSection {
     # Can only install brew packages if brew is installed
     if cmdExists brew; then
       # Install openssl
+      # TODO: When openssl exists, configureOpenSSL is not ran, but when openssl
+      # is installed/configured with homebrew -- Postgres via asdf fails to install
       installPackage openssl "brew install openssl" configureOpenSSL
       assertPackageInstallation openssl "openssl"
       # Install icu4c

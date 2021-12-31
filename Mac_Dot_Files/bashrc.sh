@@ -106,7 +106,7 @@ fi
 
 splash_screen() {
   clear
-  local SPLASH_COMMAND=noop
+  local SPLASH_COMMAND=
   if type $SPLASH_COMMAND >/dev/null; then
     $SPLASH_COMMAND
   fi

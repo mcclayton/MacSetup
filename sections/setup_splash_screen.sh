@@ -6,7 +6,7 @@ function runSection {
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     if [ -f ~/.bashrc ] && grep -q "local SPLASH_COMMAND=" ~/.bashrc && grep -q "source ~/.splash_screens" ~/.bashrc; then
       PS3='   => Choose Terminal Splash Screen: '
-      options=("Party Horse" "Wolf" "Initials" "Cancel / No Splash Screen")
+      options=("Party Horse" "Wolf" "Initials" "No Splash Screen" "Cancel" )
       select opt in "${options[@]}"
       do
         case $opt in
@@ -24,22 +24,30 @@ function runSection {
             COMMAND_CHOICE="mcc"
             break
             ;;
-          "Cancel / No Splash Screen")
+          "No Splash Screen")
             info "No splash screen set"
-            COMMAND_CHOICE=noop
+            COMMAND_CHOICE=
+            break
+            ;;
+          "Cancel")
+            COMMAND_CHOICE='cancel'
             break
             ;;
           *) warn "Invalid option $REPLY";;
           esac
       done
 
-      info "Setting splash screen to use command '$COMMAND_CHOICE'"
-      sed -i -e "s/local SPLASH_COMMAND=.*/local SPLASH_COMMAND=$COMMAND_CHOICE/" ~/.bashrc
-
-      if grep -q "local SPLASH_COMMAND=$COMMAND_CHOICE" ~/.bashrc; then
-        success "Splash screen set to use command '$COMMAND_CHOICE'"
+      if [ "$COMMAND_CHOICE" == "cancel" ]; then
+        info "Cancelling splash screen setup..."
       else
-        fail "Failed to set the splash screen to use command '$COMMAND_CHOICE'"
+        info "Setting splash screen to use command '$COMMAND_CHOICE'"
+        sed -i -e "s/local SPLASH_COMMAND=.*/local SPLASH_COMMAND=$COMMAND_CHOICE/" ~/.bashrc
+
+        if grep -q "local SPLASH_COMMAND=$COMMAND_CHOICE" ~/.bashrc; then
+          success "Splash screen set to use command '$COMMAND_CHOICE'"
+        else
+          fail "Failed to set the splash screen to use command '$COMMAND_CHOICE'"
+        fi
       fi
     else
       fail "~/.bashrc is not set up to support splash screens. Please ensure the 'TOP-LEVEL DOT FILES' setup step ran successfully."

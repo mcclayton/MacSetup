@@ -32,9 +32,22 @@ configureOpenSSL() {
   OPEN_SSL_PATH=$(brew --prefix openssl)
   # Add To Path
   addLineToFiles "" ~/.bash_profile ~/.zprofile
-  addLineToFiles "# Add icu4c to path" ~/.bash_profile ~/.zprofile
+  addLineToFiles "# Add openssl to path" ~/.bash_profile ~/.zprofile
   addLineToFiles "export PATH=\"$OPEN_SSL_PATH/bin:\$PATH\"" ~/.bash_profile ~/.zprofile
   addLineToFiles "export PATH=\"$OPEN_SSL_PATH/sbin:\$PATH\"" ~/.bash_profile ~/.zprofile
+
+  # TODO: Need to make sure that this adds values to these env vars rather than directly
+  # setting them
+
+  # # Enable Compilers to find openssl
+  # addLineToFiles "" ~/.bash_profile ~/.zprofile
+  # addLineToFiles "# Enable compilers to find openssl" ~/.bash_profile ~/.zprofile
+  # addLineToFiles "export LDFLAGS=\"-L$OPEN_SSL_PATH/lib\"" ~/.bash_profile ~/.zprofile
+  # addLineToFiles "export CPPFLAGS=\"-I$OPEN_SSL_PATH/include\"" ~/.bash_profile ~/.zprofile
+  # # Enable pkg-config to find openssl
+  # addLineToFiles "" ~/.bash_profile ~/.zprofile
+  # addLineToFiles "# Enable pkg-config to find openssl" ~/.bash_profile ~/.zprofile
+  # addLineToFiles "export PKG_CONFIG_PATH=\"$OPEN_SSL_PATH/lib/pkgconfig\"" ~/.bash_profile ~/.zprofile
 
   # Source in the changes
   [ -f ~/.bash_profile ] && source ~/.bash_profile
