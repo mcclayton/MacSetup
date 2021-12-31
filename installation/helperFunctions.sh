@@ -271,14 +271,23 @@ backupDir() {
 # Install package $1 via the command $2.
 # Configure via command $3 if passed
 installPackage() {
-  info "Installing Package: $1"
-  if cmdExists $1; then
-    info "$1 is already installed"
+  local package_name=$1
+  local install_cmd=$2
+  local config_cmd=$3
+  info "Installing Package: $package_name"
+  if cmdExists $package_name; then
+    if [ ! -z "$config_cmd" ]; then
+      warn "$package_name is already installed, but attempting a re-install in order to configure properly"
+      $install_cmd
+      $config_cmd
+    else
+      info "$package_name is already installed"
+    fi
   else
-    $2
+    $install_cmd
     # Run Config Command if present
-    if [ ! -z "$3" ]; then
-      $3
+    if [ ! -z "$config_cmd" ]; then
+      $config_cmd
     fi
   fi
 }

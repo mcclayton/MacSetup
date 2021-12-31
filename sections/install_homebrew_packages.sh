@@ -6,6 +6,15 @@ function runSection {
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     # Can only install brew packages if brew is installed
     if cmdExists brew; then
+      # Install openssl
+      installPackage openssl "brew install openssl" configureOpenSSL
+      assertPackageInstallation openssl "openssl"
+      # Install icu4c
+      installPackage icu4c "brew install icu4c" configureICU4C
+      assertPackageInstallation icuinfo "icu4c"
+      # Install gcc
+      installPackage gcc "brew install gcc"
+      assertPackageInstallation gcc "gcc"
       # Install lolcat
       installPackage lolcat "brew install lolcat"
       assertPackageInstallation lolcat "lolcat"
@@ -48,15 +57,6 @@ function runSection {
       # Install lsd
       installPackage lsd "brew install lsd"
       assertPackageInstallation lsd "lsd (Better 'ls' Command)"
-      # Install openssl
-      installPackage openssl "brew install openssl"
-      assertPackageInstallation openssl "openssl"
-      # Install icu4c
-      installPackage icu4c "brew install icu4c" configureICU4C
-      assertPackageInstallation icuinfo "icu4c"
-      # Install gcc
-      installPackage gcc "brew install gcc"
-      assertPackageInstallation gcc "gcc"
     else
       fail "Failed to install brew packages. Homebrew is not installed."
     fi
