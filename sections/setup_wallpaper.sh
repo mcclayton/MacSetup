@@ -6,22 +6,22 @@ function runSection {
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     if isMacOs; then
       PS3='   => Choose Wallpaper: '
-      options=("C Street Surf" "Tiki" "Cancel")
+      options=("Sushi Keyboard Key" "Samurai Cat" "Cancel")
       select opt in "${options[@]}"
       do
         case $opt in
-          "C Street Surf")
-            cp "$(scriptDirectory)/wallpapers/c_street.jpg" ~/wallpaper.jpg
-            assertFileExists ~/wallpaper.jpg "Copied over wallpaper.jpg asset" "Failed to copy over wallpaper.jpg asset"
+          "Sushi Keyboard Key")
+            cp "$(scriptDirectory)/wallpapers/sushi_key.png" ~/wallpaper.png
+            assertFileExists ~/wallpaper.png "Copied over wallpaper.png asset" "Failed to copy over wallpaper.png asset"
             open ~/
-            manualAction "Right click wallpaper.jpg and select 'Set Desktop Picture'"
+            manualAction "Right click wallpaper.png and select 'Set Desktop Picture'"
             break
             ;;
-          "Tiki")
-            cp "$(scriptDirectory)/wallpapers/tiki.jpg" ~/wallpaper.jpg
-            assertFileExists ~/wallpaper.jpg "Copied over wallpaper.jpg asset" "Failed to copy over wallpaper.jpg asset"
+          "Samurai Cat")
+            cp "$(scriptDirectory)/wallpapers/samurai_cat.png" ~/wallpaper.png
+            assertFileExists ~/wallpaper.png "Copied over wallpaper.png asset" "Failed to copy over wallpaper.png asset"
             open ~/
-            manualAction "Right click wallpaper.jpg and select 'Set Desktop Picture'"
+            manualAction "Right click wallpaper.png and select 'Set Desktop Picture'"
             break
             ;;
           "Cancel")
