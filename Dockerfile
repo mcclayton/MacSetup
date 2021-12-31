@@ -23,6 +23,7 @@ RUN \
   openssh-client \
   procps \
   sudo \
+  uuid-dev \
   vim \
   wget \
   zlib1g-dev
