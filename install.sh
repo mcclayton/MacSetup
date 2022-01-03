@@ -40,6 +40,7 @@ function main {
     "setup_asdf"
     "install_ruby"
     "install_node"
+    "install_python"
     "install_postgres"
     "install_zsh"
     "setup_zsh"
