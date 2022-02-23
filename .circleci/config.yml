@@ -1,8 +1,8 @@
 version: 2
 jobs:
   test:
-    docker:
-      - image: circleci/node:8.10
+    macos:
+      xcode: 12.5.1
     environment:
     working_directory: ~/MacSetup
     steps:
