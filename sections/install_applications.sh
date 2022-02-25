@@ -18,6 +18,8 @@ function runSection {
         caskInstallAppPrompt "Postman.app" "postman"
         # Install Spotify
         caskInstallAppPrompt "Spotify.app" "spotify"
+        # Install Beekeeper Studio (Postgres GUI)
+        caskInstallAppPrompt "Beekeeper Studio.app" "beekeeper-studio"
         # Install Slack
         caskInstallAppPrompt "Slack.app" "slack"
         # Install VirtualBox
