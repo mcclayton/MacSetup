@@ -14,6 +14,9 @@ function runSection {
       # Install icu4c
       installPackage icu4c "brew install icu4c" configureICU4C
       assertPackageInstallation icuinfo "icu4c"
+      # Install fzf
+      installPackage fzf "brew install fzf"
+      assertPackageInstallation fzf "fzf"
       # Install gcc
       installPackage gcc "brew install gcc"
       assertPackageInstallation gcc "gcc"
