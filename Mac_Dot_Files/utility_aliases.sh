@@ -1,7 +1,31 @@
 # Find a process running on a port
 findProcessOnPort() {
   PORT=$1
-  lsof -n -i4TCP:$PORT | grep LISTEN
+  lsof -n -i4TCP:$PORT | grep LISTEN | awk '{print $2}'
+}
+
+# Kill a process running on a port
+killProcessOnPort() {
+  PORT=$1
+  LSOF_LINE=$(lsof -n -i4TCP:$PORT | grep LISTEN)
+  PID=$(echo "$LSOF_LINE" | awk '{print $2}')
+
+  echo "   => Are you sure you want to kill process:"
+  echo "        | $LSOF_LINE"
+  echo ""
+
+  if [ ! -z "$ZSH_VERSION" ]; then
+    read -q "REPLY?      [Y/n] "
+  else
+    read -p "      [Y/n] " -r
+  fi
+
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "Killing pid $PID..."
+    kill -9 $PID
+  else
+    echo "Cancelled"
+  fi
 }
 
 # Print out 256 color codes / palette for use in terminal, vim, etc.
