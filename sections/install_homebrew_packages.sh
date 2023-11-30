@@ -62,6 +62,9 @@ function runSection {
       # Install lsd
       installPackage lsd "brew install lsd"
       assertPackageInstallation lsd "lsd (Better 'ls' Command)"
+      # Install ripgrep
+      installPackage rg "brew install ripgrep"
+      assertPackageInstallation rg "Ripgrep"
     else
       fail "Failed to install brew packages. Homebrew is not installed."
     fi
