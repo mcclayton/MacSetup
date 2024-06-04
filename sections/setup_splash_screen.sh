@@ -6,7 +6,7 @@ function runSection {
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     if [ -f ~/.bashrc ] && grep -q "local SPLASH_COMMAND=" ~/.bashrc && grep -q "source ~/.splash_screens" ~/.bashrc; then
       PS3='   => Choose Terminal Splash Screen: '
-      options=("Party Horse" "Wolf" "Initials" "No Splash Screen" "Cancel" )
+      options=("Party Horse" "Wolf" "Charizard" "Initials" "No Splash Screen" "Cancel" )
       select opt in "${options[@]}"
       do
         case $opt in
@@ -16,6 +16,10 @@ function runSection {
             ;;
           "Wolf")
             COMMAND_CHOICE="wolf"
+            break
+            ;;
+          "Charizard")
+            COMMAND_CHOICE="charizard"
             break
             ;;
           "Initials")
