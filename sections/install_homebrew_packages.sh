@@ -65,6 +65,9 @@ function runSection {
       # Install ripgrep
       installPackage rg "brew install ripgrep"
       assertPackageInstallation rg "Ripgrep"
+      # Install jnv
+      installPackage jnv "brew install jnv"
+      assertPackageInstallation jnv "jnv (Interactive jq JSON Viewer)"
     else
       fail "Failed to install brew packages. Homebrew is not installed."
     fi
