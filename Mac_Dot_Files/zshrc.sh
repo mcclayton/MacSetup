@@ -7,6 +7,12 @@ export ZSH=~/.oh-my-zsh
 # Make EOL marker empty string instead of '%'
 PROMPT_EOL_MARK=''
 
+# Custom binding Overrides to use Ctrl+WASD to move around the terminal line
+bindkey "^A" backward-word
+bindkey "^D" forward-word # Note Ctrl+D is EOF, so this is a bit of a misnomer to override
+bindkey "^S" beginning-of-line
+bindkey "^W" end-of-line
+
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
 # a theme from this variable instead of looking in $ZSH/themes/
