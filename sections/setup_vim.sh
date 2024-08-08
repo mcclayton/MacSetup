@@ -26,14 +26,15 @@ function runSection {
 
     # Clone all vim plugins
     vimPlugins=(
-      "git://github.com/vim-airline/vim-airline.git"
-      "git://github.com/scrooloose/nerdtree.git"
-      "git://github.com/ervandew/supertab.git"
-      "git://github.com/tpope/vim-fugitive.git"
-      "git://github.com/airblade/vim-gitgutter.git"
-      "git://github.com/junegunn/fzf.git"
-      "git://github.com/ryanoasis/vim-devicons.git"
-      "git://github.com/rstacruz/vim-closer.git"
+      "git@github.com:vim-airline/vim-airline.git"
+      "git@github.com:preservim/nerdtree.git"
+      "git@github.com:ervandew/supertab.git"
+      "git@github.com:tpope/vim-fugitive.git"
+      "git@github.com:airblade/vim-gitgutter.git"
+      "git@github.com:junegunn/fzf.git"
+      "git@github.com:ryanoasis/vim-devicons.git"
+      "git@github.com:rstacruz/vim-closer.git"
+      "git@github.com:Eliot00/git-lens.vim.git"
     )
 
     info "Cloning vim plugins"

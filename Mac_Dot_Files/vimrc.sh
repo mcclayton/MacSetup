@@ -110,11 +110,24 @@ autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() > 0 || exists('s:std_in') | wincmd p | endif
 
 
+"""""""""""""""
+" Git Plugins "
+"""""""""""""""
+"Configure GitLens
+let g:GIT_LENS_CONFIG = {
+    \ 'blame_wrap': v:false,
+    \ 'blame_empty_line': v:false,
+    \ 'blame_delay': 800
+    \ }
+"Default GitGutter and GitLens to be enabled
+let g:gitgutter_enabled = 1
+let g:GIT_LENS_ENABLED = 1
+
 """"""""""""""""
 " Key Mappings "
 """"""""""""""""
-"Ctrl+g to toggle GitGutter
-map <C-g> :GitGutterToggle<CR>
+"Ctrl+g to toggle GitGutter and GitLens
+map <C-g> :GitGutterToggle<CR>:call ToggleGitLens()<CR>
 
 "Ctrl+n to toggle nerdtree
 map <C-n> :NERDTreeToggle<CR>
