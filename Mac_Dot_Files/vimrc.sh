@@ -87,6 +87,24 @@ let g:indentLine_char_list = ['︴']
 let g:indentLine_enabled = 1
 
 
+"""""""
+" FZF "
+"""""""
+function! FzfWithPreview()
+  if system('git rev-parse --is-inside-work-tree 2>/dev/null') ==# "true\n"
+    let l:source = 'git ls-files --others --exclude-standard --cached --directory --full-name --no-empty-directory'
+  else
+    let l:source = 'find . -type f'
+  endif
+
+  call fzf#run(fzf#wrap({
+  \ 'source': l:source,
+  \ 'sink': 'e',
+  \ 'options': '--preview ''bat --style=numbers --color=always {}'' --bind shift-up:preview-page-up,shift-down:preview-page-down'
+  \ }))
+endfunction
+
+
 """""""""""""
 " VertSplit "
 """""""""""""
@@ -105,12 +123,36 @@ set fillchars=vert:\│
 "Auto open Nerdtree
 au VimEnter * NERDTree
 
-"Automatically close vim if NERDTree or minimap are the only window(s) remaining
-autocmd! BufEnter * if ((winnr('$') == 1 || winnr('$') == 2) && (&filetype == 'nerdtree' || &filetype == 'minimap')) | call timer_start(0, { -> execute('quit') }) | endif
+
+"""""""""""""""""""""""""""
+" Vim Buffer/Window Hooks "
+"""""""""""""""""""""""""""
+"Checks if only windows open are utility windows (i.e. NERDTree, minimap)
+function! AllWindowsAreUtility() abort
+  " Loop through all windows
+  for win in range(1, winnr('$'))
+      " Check the filetype of the window
+      let filetype = getbufvar(winbufnr(win), '&filetype')
+      if filetype != 'nerdtree' && filetype != 'minimap'
+          return 0
+      endif
+  endfor
+  return 1
+endfunction
+"Automatically close vim if only window(s) remaining are utility windows
+autocmd! BufEnter * if AllWindowsAreUtility() | call timer_start(0, { -> execute('quit') }) | endif
 
 "Keep focus on the file when opening vim with a file
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() > 0 || exists('s:std_in') | wincmd p | endif
+
+
+""""""""""""""""
+" Tabbed Files "
+""""""""""""""""
+" let g:buffet_powerline_separators = 1
+let g:buffet_use_devicons = 1
+let g:buffet_always_show_tabline = 0
 
 
 """""""""""
@@ -118,7 +160,6 @@ autocmd VimEnter * if argc() > 0 || exists('s:std_in') | wincmd p | endif
 """""""""""
 let g:minimap_width = 10
 let g:minimap_auto_start = 1
-let g:minimap_auto_start_win_enter = 1
 
 
 """""""""""""""
@@ -156,13 +197,26 @@ let g:gitgutter_enabled = 1
 """"""""""""""""
 " Key Mappings "
 """"""""""""""""
+"Ctrl+d to close many plugins proviging a more minimal experience
+map <C-d> :MinimapClose<CR>:NERDTreeClose<CR>:GitGutterDisable<CR>
+
+"Ctrl+m to toggle code minimap
+map <C-m> :MinimapToggle<CR>
+
 "Ctrl+g to toggle GitGutter and GitLens
 map <C-g> :GitGutterToggle<CR>:call ToggleGitLens()<CR>
 
 "Ctrl+n to toggle nerdtree
 map <C-n> :NERDTreeToggle<CR>
 
-"Map Ctrl+t to open fzf Fuzzy File Finding
-map <C-T> :FZF<cr>
+"Map Ctrl+t to open fzf Fuzzy File Finding with preview
+map <C-T> :call FzfWithPreview()<CR>
+
+"Map Tab to navigate to next tab (using buffet plugin)
+noremap <Tab> :bn<CR>
+"Map Shift+Tab to navigate to previous tab (using buffet plugin)
+noremap <S-Tab> :bp<CR>
+"Map \ + Tab to close current tab (using buffet plugin)
+noremap <Leader><Tab> :Bw<CR>
 
 "Note: Ctrl+ww to switch between windows (i.e. Nerdtree and file)"
