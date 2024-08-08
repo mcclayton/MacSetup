@@ -152,6 +152,7 @@ let g:GIT_LENS_CONFIG = {
 let g:GIT_LENS_ENABLED = 1
 let g:gitgutter_enabled = 1
 
+
 """"""""""""""""
 " Key Mappings "
 """"""""""""""""
