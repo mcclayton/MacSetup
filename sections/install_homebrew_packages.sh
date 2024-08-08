@@ -68,6 +68,9 @@ function runSection {
       # Install jnv
       installPackage jnv "brew install jnv"
       assertPackageInstallation jnv "jnv (Interactive jq JSON Viewer)"
+      # Install code-minimap
+      installPackage code-minimap "brew install code-minimap"
+      assertPackageInstallation code-minimap "code-minimap (Text-based minimaps)"
     else
       fail "Failed to install brew packages. Homebrew is not installed."
     fi

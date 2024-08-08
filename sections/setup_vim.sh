@@ -36,6 +36,7 @@ function runSection {
       "git@github.com:rstacruz/vim-closer.git"
       "git@github.com:Eliot00/git-lens.vim.git"
       "git@github.com:Yggdroot/indentLine.git"
+      "git@github.com:wfxr/minimap.vim.git" # Requires https://github.com/wfxr/code-minimap
     )
 
     info "Cloning vim plugins"

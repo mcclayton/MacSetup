@@ -67,9 +67,9 @@ highlight CursorLineNR cterm=bold ctermfg=17 ctermbg=190
 au VimLeave * hi clear
 
 
-"""""""""""""""""""""""
-" Whitespace Settings "
-"""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""
+" Whitespace / Indentation Settings "
+"""""""""""""""""""""""""""""""""""""
 "Enables Autoindent
 set autoindent
 "Use spaces instead of tab characters
@@ -105,17 +105,43 @@ set fillchars=vert:\│
 "Auto open Nerdtree
 au VimEnter * NERDTree
 
-"Automatically close vim if NERDTree is the only window remaining
-autocmd bufenter * if (winnr("$") == 1 && &filetype == 'nerdtree') | q | endif
+"Automatically close vim if NERDTree or minimap are the only window(s) remaining
+autocmd! BufEnter * if ((winnr('$') == 1 || winnr('$') == 2) && (&filetype == 'nerdtree' || &filetype == 'minimap')) | call timer_start(0, { -> execute('quit') }) | endif
 
 "Keep focus on the file when opening vim with a file
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() > 0 || exists('s:std_in') | wincmd p | endif
 
 
+"""""""""""
+" Minimap "
+"""""""""""
+let g:minimap_width = 10
+let g:minimap_auto_start = 1
+let g:minimap_auto_start_win_enter = 1
+
+
 """""""""""""""
 " Git Plugins "
 """""""""""""""
+"Configure GitGutter
+highlight GitGutterAdd    ctermfg=2 ctermbg=NONE cterm=bold
+highlight GitGutterChange ctermfg=24 ctermbg=NONE cterm=bold
+highlight GitGutterDelete ctermfg=1 ctermbg=NONE cterm=bold
+highlight SignColumn guibg=NONE ctermbg=NONE
+let g:gitgutter_sign_added = '\│'
+let g:gitgutter_sign_modified = '\│'
+let g:gitgutter_sign_removed = '\│'
+let g:gitgutter_sign_removed_first_line = '\│'
+let g:gitgutter_sign_removed_above_and_below = '\│'
+let g:gitgutter_sign_modified_removed = '\│'
+let g:gitgutter_sign_untracked = '\│'
+let g:gitgutter_sign_ignored = '\│'
+"Use low update time instead of realtime
+let g:gitgutter_realtime = 0
+let g:gitgutter_eager = 0
+set updatetime=250
+
 "Configure GitLens
 let g:GIT_LENS_CONFIG = {
     \ 'blame_wrap': v:false,
@@ -123,8 +149,8 @@ let g:GIT_LENS_CONFIG = {
     \ 'blame_delay': 800
     \ }
 "Default GitGutter and GitLens to be enabled
-let g:gitgutter_enabled = 1
 let g:GIT_LENS_ENABLED = 1
+let g:gitgutter_enabled = 1
 
 """"""""""""""""
 " Key Mappings "
