@@ -32,6 +32,8 @@ function runSection {
       "git://github.com/tpope/vim-fugitive.git"
       "git://github.com/airblade/vim-gitgutter.git"
       "git://github.com/junegunn/fzf.git"
+      "git://github.com/ryanoasis/vim-devicons.git"
+      "git://github.com/rstacruz/vim-closer.git"
     )
 
     info "Cloning vim plugins"

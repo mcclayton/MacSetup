@@ -121,3 +121,5 @@ map <C-n> :NERDTreeToggle<CR>
 
 "Map Ctrl+t to open fzf Fuzzy File Finding
 map <C-T> :FZF<cr>
+
+"Note: Ctrl+ww to switch between windows (i.e. Nerdtree and file)"
