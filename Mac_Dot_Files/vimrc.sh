@@ -129,14 +129,14 @@ highlight GitGutterAdd    ctermfg=2 ctermbg=NONE cterm=bold
 highlight GitGutterChange ctermfg=24 ctermbg=NONE cterm=bold
 highlight GitGutterDelete ctermfg=1 ctermbg=NONE cterm=bold
 highlight SignColumn guibg=NONE ctermbg=NONE
-let g:gitgutter_sign_added = '\│'
-let g:gitgutter_sign_modified = '\│'
-let g:gitgutter_sign_removed = '\│'
-let g:gitgutter_sign_removed_first_line = '\│'
-let g:gitgutter_sign_removed_above_and_below = '\│'
-let g:gitgutter_sign_modified_removed = '\│'
-let g:gitgutter_sign_untracked = '\│'
-let g:gitgutter_sign_ignored = '\│'
+let g:gitgutter_sign_added = '┃'
+let g:gitgutter_sign_modified = '┃'
+let g:gitgutter_sign_removed = '┃'
+let g:gitgutter_sign_removed_first_line = '┃'
+let g:gitgutter_sign_removed_above_and_below = '┃'
+let g:gitgutter_sign_modified_removed = '┃'
+let g:gitgutter_sign_untracked = '┃'
+let g:gitgutter_sign_ignored = '┃'
 "Use low update time instead of realtime
 let g:gitgutter_realtime = 0
 let g:gitgutter_eager = 0
