@@ -35,6 +35,7 @@ function runSection {
       "git@github.com:ryanoasis/vim-devicons.git"
       "git@github.com:rstacruz/vim-closer.git"
       "git@github.com:Eliot00/git-lens.vim.git"
+      "git@github.com:Yggdroot/indentLine.git"
     )
 
     info "Cloning vim plugins"

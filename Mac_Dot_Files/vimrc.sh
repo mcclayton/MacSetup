@@ -82,6 +82,9 @@ set softtabstop=4
 set shiftwidth=4
 "Round indent to a multiple of shiftwidth
 set shiftround
+" Indentation visualization via indentline plugin
+let g:indentLine_char_list = ['︴']
+let g:indentLine_enabled = 1
 
 
 """""""""""""
