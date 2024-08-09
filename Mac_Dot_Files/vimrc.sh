@@ -117,13 +117,6 @@ highlight VertSplit cterm=NONE
 set fillchars=vert:\│
 
 
-""""""""""""
-" NERDTree "
-""""""""""""
-"Auto open Nerdtree
-au VimEnter * NERDTree
-
-
 """""""""""""""""""""""""""
 " Vim Buffer/Window Hooks "
 """""""""""""""""""""""""""
@@ -142,6 +135,11 @@ endfunction
 "Automatically close vim if only window(s) remaining are utility windows
 autocmd! BufEnter * if AllWindowsAreUtility() | call timer_start(0, { -> execute('quit') }) | endif
 
+" Ensure buffet uses devicons (Needs to be done on VimEnter once all plugins are loaded)
+autocmd! VimEnter * let g:buffet_use_devicons = 1
+"Auto open Nerdtree
+autocmd VimEnter * NERDTree
+
 "Keep focus on the file when opening vim with a file
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() > 0 || exists('s:std_in') | wincmd p | endif
@@ -151,9 +149,20 @@ autocmd VimEnter * if argc() > 0 || exists('s:std_in') | wincmd p | endif
 " Tabbed Files "
 """"""""""""""""
 let g:buffet_powerline_separators = 1
-let g:buffet_use_devicons = 1
 let g:buffet_always_show_tabline = 1
-
+function! g:BuffetSetCustomColors()
+  hi! BuffetCurrentBuffer cterm=bold ctermbg=24 ctermfg=190 guibg=#000000 guifg=#00FF00
+  hi! BuffetActiveBuffer cterm=bold ctermbg=NONE ctermfg=190 guibg=#000000 guifg=#00FF00
+  hi! BuffetBuffer cterm=NONE ctermbg=NONE ctermfg=17 guibg=#000000 guifg=#00FF00
+  hi! BuffetTrunc cterm=NONE ctermbg=NONE ctermfg=17 guibg=#000000 guifg=#00FF00
+  hi! BuffetTab cterm=bold ctermbg=190 ctermfg=17 guibg=#000000 guifg=#00FF00
+  hi! BuffetTrunc cterm=NONE ctermbg=NONE ctermfg=17 guibg=#000000 guifg=#00FF00
+  hi! BuffetModBuffer cterm=NONE ctermbg=NONE ctermfg=17 guibg=#000000 guifg=#00FF00
+  hi! BuffetModActiveBuffer cterm=bold ctermbg=NONE ctermfg=17 guibg=#000000 guifg=#00FF00
+  hi! BuffetModCurrentBuffer cterm=bold ctermbg=NONE ctermfg=17 guibg=#000000 guifg=#00FF00
+endfunction
+let g:buffet_tab_icon = '⸬ tabs ⸬'
+let g:buffet_use_devicons = 1
 
 """""""""""
 " Minimap "
