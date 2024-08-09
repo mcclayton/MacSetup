@@ -1,3 +1,6 @@
+""""""""""""""""""""
+" General Settings "
+""""""""""""""""""""
 "UTF-8 Support
 set encoding=utf-8
 
@@ -10,18 +13,17 @@ set laststatus=2
 "Set the number of undos allowed
 set undolevels=1000
 
-"Backspace will delete over end of line and indent characters and can delete previously modified text.
-set backspace=indent,eol,start
-
 "Start scrolling when 8 lines away from margins
 set scrolloff=8
 
 "Mouse support
 set mouse=a
 
-
 "Show current cursor position
 set ruler
+
+"Prevents Vim from redrawing the screen while executing macros, registers, or other complex commands
+set lazyredraw
 
 "Restore cursor to last cursor line position on file re-open
 if has("autocmd")
@@ -35,14 +37,15 @@ call pathogen#helptags()
 "Enable airline powerline fonts
 let g:airline_powerline_fonts = 1
 
-"Display the status line always
-set laststatus=2
-
 """""""""""""""""""""""""
 " Colors + Highlighting "
 """""""""""""""""""""""""
 "256 Color Support
 set t_Co=256
+
+"Automatically detect the best regex engine to use
+"Note: Do this before syntax highlighting is enabled or vim will slow down
+set regexpengine=0
 
 "Syntax Highlighting
 filetype on
@@ -82,6 +85,8 @@ set softtabstop=4
 set shiftwidth=4
 "Round indent to a multiple of shiftwidth
 set shiftround
+"Backspace will delete over end of line and indent characters and can delete previously modified text.
+set backspace=indent,eol,start
 " Indentation visualization via indentline plugin
 let g:indentLine_char_list = ['︴']
 let g:indentLine_enabled = 1
