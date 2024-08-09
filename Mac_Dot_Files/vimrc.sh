@@ -109,6 +109,34 @@ function! FzfWithPreview()
   \ }))
 endfunction
 
+function! FzfRipgrepWithPreview()
+  " Prompt the user for a search query
+  let l:query = input('Initial Search Term: ')
+  if empty(l:query)
+    return
+  endif
+
+  " Define the rg command with fzf for interactive selection
+  let l:command = 'rg --ignore-case --color=always --line-number --no-heading ' . shellescape(l:query)
+  let l:result = system(l:command . ' | fzf --ansi --color ''hl:-1:underline,hl+:-1:underline:reverse'' --delimiter '':'' --preview ''bat --color=always {1} --theme="Solarized (light)" --highlight-line {2}'' --preview-window ''right:50%,border-left,+{2}+3/3,~3''')
+
+  " Ensure there's a valid result before proceeding
+  if empty(l:result)
+    return
+  endif
+
+  " Correctly extract the file path and line number from the selected result
+  let l:file = matchstr(l:result, '^[^:]*')
+  let l:linenumber = matchstr(l:result, ':\zs\d\+')
+
+  " Open the file at the specified line number in a new tab
+  if !empty(l:file) && !empty(l:linenumber)
+    execute 'edit +' . l:linenumber . ' ' . fnameescape(l:file)
+  endif
+endfunction
+
+command! -nargs=0 FzfRipgrepWithPreview call FzfRipgrepWithPreview()
+
 
 """""""""""""
 " VertSplit "
@@ -223,8 +251,11 @@ map <C-g> :GitGutterToggle<CR>:call ToggleGitLens()<CR>
 "Ctrl+n to toggle nerdtree
 map <C-n> :NERDTreeToggle<CR>
 
-"Map Ctrl+t to open fzf Fuzzy File Finding with preview
+"Map Ctrl+t to open fzf for searching file names with a content preview
 map <C-T> :call FzfWithPreview()<CR>
+
+"Map Ctrl+f to open fzf + ripgrep for searching file contents with a search preview
+map <C-F> :call FzfRipgrepWithPreview()<CR>
 
 "Map Tab to navigate to next tab (using buffet plugin)
 noremap <Tab> :bn<CR>
