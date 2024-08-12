@@ -109,33 +109,25 @@ function! FzfWithPreview()
   \ }))
 endfunction
 
-function! FzfRipgrepWithPreview()
-  " Prompt the user for a search query
-  let l:query = input('Initial Search Term: ')
-  if empty(l:query)
-    return
-  endif
+command! -bang -nargs=* FZFRg
+  \ call fzf#run(fzf#wrap({
+  \   'source': 'rg --column --line-number --no-heading --color=always --smart-case -- '.shellescape(<q-args>),
+  \   'sink': function('s:open_rg_result'),
+  \   'options': '--ansi --delimiter : --nth 3.. --preview ''bat --style=numbers --color=always --highlight-line {2} {1}'' --preview-window ''right:50%,border-left,+{2}+3/3,~3'' --bind shift-up:preview-page-up,shift-down:preview-page-down',
+  \   'dir': getcwd(),
+  \   'bang': <bang>0
+  \ }))
 
-  " Define the rg command with fzf for interactive selection
-  let l:command = 'rg --ignore-case --color=always --line-number --no-heading ' . shellescape(l:query)
-  let l:result = system(l:command . ' | fzf --ansi --color ''hl:-1:underline,hl+:-1:underline:reverse'' --delimiter '':'' --preview ''bat --color=always {1} --theme="Solarized (light)" --highlight-line {2}'' --preview-window ''right:50%,border-left,+{2}+3/3,~3''')
+function! s:open_rg_result(selected)
+  " Extract the filename and line number from the selected line
+  let l:filename = matchstr(a:selected, '^[^:]*')
+  let l:line = matchstr(a:selected, ':\zs\d\+')
 
-  " Ensure there's a valid result before proceeding
-  if empty(l:result)
-    return
-  endif
-
-  " Correctly extract the file path and line number from the selected result
-  let l:file = matchstr(l:result, '^[^:]*')
-  let l:linenumber = matchstr(l:result, ':\zs\d\+')
-
-  " Open the file at the specified line number in a new tab
-  if !empty(l:file) && !empty(l:linenumber)
-    execute 'edit +' . l:linenumber . ' ' . fnameescape(l:file)
+  " Open the file at the specific line
+  if !empty(l:filename) && !empty(l:line)
+    execute 'edit +' . l:line . ' ' . fnameescape(l:filename)
   endif
 endfunction
-
-command! -nargs=0 FzfRipgrepWithPreview call FzfRipgrepWithPreview()
 
 
 """""""""""""
@@ -255,7 +247,7 @@ map <C-n> :NERDTreeToggle<CR>
 map <C-T> :call FzfWithPreview()<CR>
 
 "Map Ctrl+f to open fzf + ripgrep for searching file contents with a search preview
-map <C-F> :call FzfRipgrepWithPreview()<CR>
+map <C-F> :FZFRg<CR>
 
 "Map Tab to navigate to next tab (using buffet plugin)
 noremap <Tab> :bn<CR>
