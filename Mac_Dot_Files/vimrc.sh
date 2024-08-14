@@ -176,8 +176,8 @@ autocmd VimEnter * if argc() > 0 || exists('s:std_in') | wincmd p | endif
 let g:buffet_powerline_separators = 1
 let g:buffet_always_show_tabline = 1
 function! g:BuffetSetCustomColors()
-  hi! BuffetCurrentBuffer cterm=bold ctermbg=24 ctermfg=190 guibg=#000000 guifg=#00FF00
-  hi! BuffetActiveBuffer cterm=bold ctermbg=NONE ctermfg=190 guibg=#000000 guifg=#00FF00
+  hi! BuffetCurrentBuffer cterm=bold ctermbg=24 ctermfg=24 guibg=#000000 guifg=#00FF00
+  hi! BuffetActiveBuffer cterm=bold ctermbg=NONE ctermfg=24 guibg=#000000 guifg=#00FF00
   hi! BuffetBuffer cterm=NONE ctermbg=NONE ctermfg=17 guibg=#000000 guifg=#00FF00
   hi! BuffetTrunc cterm=NONE ctermbg=NONE ctermfg=17 guibg=#000000 guifg=#00FF00
   hi! BuffetTab cterm=bold ctermbg=190 ctermfg=17 guibg=#000000 guifg=#00FF00
