@@ -15,11 +15,11 @@ jobs:
           command: printf 'n\n' | ./install.sh
   container_build:
     docker:
-      - image: docker:latest
+      - image: docker:default
     working_directory: ~/MacSetup
     steps:
       - setup_remote_docker:
-          version: 17.06.1-ce
+          version: default
           docker_layer_caching: true
       - checkout
       - run: docker build -t macsetup .
