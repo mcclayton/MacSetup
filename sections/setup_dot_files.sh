@@ -13,6 +13,7 @@ promptNewSection "SETTING UP TOP-LEVEL DOT FILES"
       "utility_aliases"
       "config_vars"
       "splash_screens"
+      "tmux.conf"
     )
 
     info "Backing up top-level dot files"
