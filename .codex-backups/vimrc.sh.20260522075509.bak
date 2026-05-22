@@ -37,41 +37,17 @@ endif
 "Prevents Vim from redrawing the screen while executing macros, registers, or other complex commands
 set lazyredraw
 
-"Automatically reload unchanged buffers when files are modified externally
-set autoread
-
 "Restore cursor to last cursor line position on file re-open
 if has("autocmd")
   au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 endif
 
-"Check for external file changes when returning to Vim, similar to VS Code
-augroup cadence_external_file_changes
-  autocmd!
-  autocmd FocusGained,BufEnter,CursorHold,CursorHoldI * if mode() !=# 'c' | checktime | endif
-augroup END
-
-" Disable unused stock Vim plugins before plugin loading. NERDTree replaces
-" netrw's :Explore workflow in this setup.
-let g:loaded_netrw = 1
-let g:loaded_netrwPlugin = 1
-let g:loaded_netrwSettings = 1
-let g:loaded_netrwFileHandlers = 1
-let g:loaded_2html_plugin = 1
-let g:loaded_getscriptPlugin = 1
-let g:loaded_tutor_mode_plugin = 1
-let loaded_logiPat = 1
-let loaded_rrhelper = 1
-let loaded_spellfile_plugin = 1
-
 " Feature gates keep this vimrc usable on older sandbox Vim builds while
 " enabling the full IDE-like setup on modern local Vim.
 let g:cadence_has_coc = (has('nvim-0.8') || has('patch-9.0.0438')) && executable('node')
 let g:cadence_has_git_lens = has('vim9script') && has('textprop')
+let g:cadence_has_minimap = v:version >= 800 && executable('code-minimap')
 let g:cadence_has_popup_windows = has('nvim-0.4') || (has('popupwin') && has('patch-8.2.191'))
-let g:cadence_has_rg = executable('rg')
-let g:cadence_has_bat = executable('bat') || executable('batcat')
-let g:cadence_has_minimap = v:version >= 800 && g:cadence_has_popup_windows && executable('code-minimap')
 let g:cadence_disabled_plugins = []
 if !g:cadence_has_coc
   call add(g:cadence_disabled_plugins, 'coc.nvim')
@@ -183,7 +159,6 @@ if get(g:, 'cadence_has_coc', 0)
 set hidden
 set signcolumn=yes
 set shortmess+=c
-set completeopt=menuone,noinsert
 
 let g:coc_global_extensions = [
 \ 'coc-json',
@@ -247,33 +222,6 @@ function! s:fzf_atom_one_dark_colors() abort
   \ ]
 endfunction
 
-function! s:fzf_bat_command() abort
-  if executable('bat')
-    return 'bat'
-  endif
-  if executable('batcat')
-    return 'batcat'
-  endif
-  return ''
-endfunction
-
-function! s:fzf_file_preview_command(file_placeholder) abort
-  let l:header = 'printf "\033[1;38;2;97;175;239m%s\033[0m\n\033[2;38;2;92;99;112m%s\033[0m\n\n" "$(basename "$file")" "$file"; '
-  let l:bat = s:fzf_bat_command()
-  if !empty(l:bat)
-    return 'sh -c ''file="$1"; ' . l:header . 'exec ' . l:bat . ' --theme="OneHalfDark" --style=numbers --color=always -- "$file"'' _ ' . a:file_placeholder
-  endif
-  return 'sh -c ''file="$1"; ' . l:header . 'sed -n "1,200p" "$file"'' _ ' . a:file_placeholder
-endfunction
-
-function! s:fzf_result_preview_command(file_placeholder, line_placeholder) abort
-  let l:bat = s:fzf_bat_command()
-  if !empty(l:bat)
-    return l:bat . ' --theme="OneHalfDark" --style=numbers --color=always --highlight-line ' . a:line_placeholder . ' ' . a:file_placeholder
-  endif
-  return 'sh -c ''line="$1"; file="$2"; start=$((line > 20 ? line - 20 : 1)); end=$((line + 80)); nl -ba "$file" | sed -n "${start},${end}p"'' _ ' . a:line_placeholder . ' ' . a:file_placeholder
-endfunction
-
 function! s:fzf_wrap_with_layout(...) abort
   let l:spec = copy(a:0 == 1 ? a:1 : a:2)
   if get(g:, 'cadence_has_popup_windows', 0)
@@ -305,14 +253,8 @@ function! s:fzf_file_options(state) abort
   \ '--marker', '+ ',
   \ '--info', 'inline-right',
   \ '--scroll-off', '3',
-  \ '--delimiter', "\t",
-  \ '--with-nth', '1',
-  \ '--nth', '1,2',
-  \ '--tabstop', '2',
-  \ '--no-hscroll',
-  \ '--preview', s:fzf_file_preview_command('{2}'),
+  \ '--preview', 'bat --theme="OneHalfDark" --style=numbers --color=always {}',
   \ '--preview-window', 'right:55%,border-left,~3',
-  \ '--bind', 'focus:transform-preview-label:sh -c ''printf " %s " "$1"'' _ {2}',
   \ '--bind', 'ctrl-o:transform:' . s:fzf_file_state_command(a:state, 'ctrl-o'),
   \ '--bind', 'ctrl-e:transform:' . s:fzf_file_state_command(a:state, 'ctrl-e'),
   \ '--bind', 'ctrl-r:transform:' . s:fzf_file_state_command(a:state, 'ctrl-r'),
@@ -321,7 +263,7 @@ function! s:fzf_file_options(state) abort
   \ '--bind', 'shift-up:preview-page-up,shift-down:preview-page-down,ctrl-u:preview-page-up,ctrl-d:preview-page-down,ctrl-/:toggle-preview'
   \ ]
 
-  call extend(l:options, ['--header', 'Smart path display, filename + path in preview | Ctrl-o include | Ctrl-e exclude | Ctrl-r reset filters', '--header-first'])
+  call extend(l:options, ['--header', 'Ctrl-o include | Ctrl-e exclude | Ctrl-r reset filters', '--header-first'])
   call extend(l:options, s:fzf_atom_one_dark_colors())
   return l:options
 endfunction
@@ -418,70 +360,7 @@ function! s:fzf_file_state_script(state) abort
   \ '  fi',
   \ '}',
   \ '',
-  \ 'format_files() {',
-  \ "  awk '",
-  \ '  BEGIN { blue = "\033[38;5;75m"; fg = "\033[38;5;145m"; dim = "\033[38;5;99m"; reset = "\033[0m" }',
-  \ '  {',
-  \ '    path = $0',
-  \ '    name = path',
-  \ '    sub(/^.*\//, "", name)',
-  \ '    icon = ""',
-  \ '    if (path ~ /\.go$/) icon = ""',
-  \ '    else if (path ~ /\.(ts|tsx)$/) icon = ""',
-  \ '    else if (path ~ /\.(js|jsx)$/) icon = ""',
-  \ '    else if (path ~ /\.py$/) icon = ""',
-  \ '    else if (path ~ /\.(md|mdx)$/) icon = ""',
-  \ '    else if (path ~ /\.(json|jsonnet)$/) icon = ""',
-  \ '    else if (path ~ /\.(yaml|yml)$/) icon = ""',
-  \ '    else if (path ~ /\.(proto|pb\.go)$/) icon = "󰈚"',
-  \ '    else if (path ~ /\.sql$/) icon = ""',
-  \ '    else if (path ~ /\.(sh|bash|zsh)$/) icon = ""',
-  \ '    else if (path ~ /\.vim$/) icon = ""',
-  \ '    else if (path ~ /\.lua$/) icon = ""',
-  \ '    else if (path ~ /\.(css|scss|sass)$/) icon = ""',
-  \ '    else if (path ~ /\.(html|htm)$/) icon = ""',
-  \ '    else if (path ~ /\.(bazel|bzl)$/ || path ~ /(^|\/)BUILD(\.bazel)?$/ || path ~ /(^|\/)MODULE\.bazel$/) icon = ""',
-  \ '    else if (path ~ /(^|\/)Dockerfile$/) icon = ""',
-  \ '    else if (path ~ /(^|\/)Makefile$/) icon = ""',
-  \ '    smart = path',
-  \ '    src = index(smart, "/src/")',
-  \ '    if (src > 0) smart = substr(smart, src + 1)',
-  \ '    max = 76',
-  \ '    if (length(smart) > max) {',
-  \ '      root = smart',
-  \ '      sub(/\/.*/, "", root)',
-  \ '      middle = smart',
-  \ '      sub(/^[^\/]*\//, "", middle)',
-  \ '      sub(/\/[^\/]*$/, "", middle)',
-  \ '      suffix = name',
-  \ '      while (middle != "") {',
-  \ '        last = middle',
-  \ '        sub(/^.*\//, "", last)',
-  \ '        candidate = last "/" suffix',
-  \ '        if (length(root "/.../" candidate) > max) break',
-  \ '        suffix = candidate',
-  \ '        if (middle == last) middle = ""',
-  \ '        else sub(/\/[^\/]*$/, "", middle)',
-  \ '      }',
-  \ '      smart = root "/.../" suffix',
-  \ '    }',
-  \ '    smart_dir = smart',
-  \ '    smart_name = smart',
-  \ '    sub(/^.*\//, "", smart_name)',
-  \ '    if (smart_dir == smart_name) smart_dir = ""',
-  \ '    else sub(/[^\/]*$/, "", smart_dir)',
-  \ '    display = sprintf("%s%s%s  %s%s%s%s%s%s", blue, icon, reset, dim, smart_dir, reset, fg, smart_name, reset)',
-  \ '    print display "\t" path',
-  \ '  }',
-  \ "  '",
-  \ '}',
-  \ '',
   \ 'list_files() {',
-  \ '  if ! command -v rg >/dev/null 2>&1; then',
-  \ '    find . -type f ! -path "*/.git/*" ! -name ".gitignore" | sed "s#^\./##" | format_files',
-  \ '    return',
-  \ '  fi',
-  \ '',
   \ '  set -- rg --files --hidden --ignore --ignore-vcs --no-require-git --no-messages --glob "!.git" --glob "!.git/*" --glob "!.gitignore"',
   \ '',
   \ '  while IFS= read -r glob; do',
@@ -503,7 +382,7 @@ function! s:fzf_file_state_script(state) abort
   \ '$(split_patterns "$(read_file "$exclude_file")")',
   \ 'EOF',
   \ '',
-  \ '  "$@" | format_files',
+  \ '  "$@"',
   \ '}',
   \ '',
   \ 'header() {',
@@ -512,11 +391,8 @@ function! s:fzf_file_state_script(state) abort
   \ '  case "$FZF_PROMPT" in',
   \ '    "Include > ") printf "%s\n" "Include filter: type rg glob/path, Enter applies, Esc cancels, Ctrl-r resets" ;;',
   \ '    "Exclude > ") printf "%s\n" "Exclude filter: type rg glob/path, Enter applies, Esc cancels, Ctrl-r resets" ;;',
-  \ '    *) printf "%s\n" "Smart path display, filename + path in preview | Ctrl-o include | Ctrl-e exclude | Ctrl-r reset filters" ;;',
+  \ '    *) printf "%s\n" "Ctrl-o include | Ctrl-e exclude | Ctrl-r reset filters" ;;',
   \ '  esac',
-  \ '  if ! command -v rg >/dev/null 2>&1; then',
-  \ '    printf "%s\n" "rg unavailable: using find fallback; include/exclude filters require rg"',
-  \ '  fi',
   \ '  [ -n "$include" ] && printf "include: %s\n" "$include"',
   \ '  [ -n "$exclude" ] && printf "exclude: %s\n" "$exclude"',
   \ '}',
@@ -586,9 +462,7 @@ function! s:fzf_file_state_script(state) abort
 endfunction
 
 function! s:fzf_file_accept(file) abort
-  let l:parts = split(a:file, "\t", 1)
-  let l:file = len(l:parts) > 1 ? l:parts[1] : a:file
-  call s:open_file_from_fzf(l:file)
+  call s:open_file_from_fzf(a:file)
 endfunction
 
 function! s:open_file_from_fzf(file) abort
@@ -642,8 +516,7 @@ function! s:fzf_rg(query, bang, ...) abort
   let l:include = get(a:000, 0, '')
   let l:exclude = get(a:000, 1, '')
   let l:state = s:fzf_rg_state(a:query, l:include, l:exclude)
-  let l:action = executable('rg') ? 'rg' : 'grep'
-  let l:source = empty(a:query) ? 'printf ""' : s:fzf_rg_state_command(l:state, l:action, shellescape(a:query))
+  let l:source = empty(a:query) ? 'printf ""' : s:fzf_rg_state_command(l:state, 'rg', shellescape(a:query))
   call s:fzf_begin()
 
   try
@@ -789,12 +662,6 @@ function! s:fzf_rg_state_script(state) abort
   \ '  "$@" -- "$query" | awk -F: -f "$format_file"',
   \ '}',
   \ '',
-  \ 'run_grep() {',
-  \ '  query="$1"',
-  \ '  [ -n "$query" ] || return',
-  \ '  find . -type f ! -path "*/.git/*" ! -name ".gitignore" -exec grep -IHn -- "$query" {} + 2>/dev/null | awk -F: ''{ file = $1; line = $2; text = $0; sub(/^[^:]*:[^:]*:/, "", text); sub(/^\.\//, "", file); print file ":" line ":1:" text }'' | awk -F: -f "$format_file"',
-  \ '}',
-  \ '',
   \ 'header() {',
   \ '  include=$(read_file "$include_file")',
   \ '  exclude=$(read_file "$exclude_file")',
@@ -803,9 +670,6 @@ function! s:fzf_rg_state_script(state) abort
   \ '    "Exclude > ") printf "%s\n" "Exclude filter: type rg glob/path, Enter applies, Esc cancels, Ctrl-r resets" ;;',
   \ '    *) printf "%s\n" "Ctrl-o include | Ctrl-e exclude | Ctrl-r reset filters" ;;',
   \ '  esac',
-  \ '  if ! command -v rg >/dev/null 2>&1; then',
-  \ '    printf "%s\n" "rg unavailable: using grep fallback; include/exclude filters require rg"',
-  \ '  fi',
   \ '  [ -n "$include" ] && printf "include: %s\n" "$include"',
   \ '  [ -n "$exclude" ] && printf "exclude: %s\n" "$exclude"',
   \ '}',
@@ -864,9 +728,7 @@ function! s:fzf_rg_state_script(state) abort
   \ '',
   \ 'case "$1" in',
   \ '  rg) run_rg "$2" ;;',
-  \ '  grep) run_grep "$2" ;;',
   \ '  rg-file) run_rg "$(read_file "$search_file")" ;;',
-  \ '  grep-file) run_grep "$(read_file "$search_file")" ;;',
   \ '  header) header ;;',
   \ '  ctrl-o) enter_include ;;',
   \ '  ctrl-e) enter_exclude ;;',
@@ -878,17 +740,12 @@ function! s:fzf_rg_state_script(state) abort
 endfunction
 
 function! s:fzf_rg_state_reload_command(state) abort
-  let l:action = executable('rg') ? 'rg' : 'grep'
-  return 'test -n {q} && ' . s:fzf_rg_state_command(a:state, l:action, '{q}') . ' || true'
+  return 'test -n {q} && ' . s:fzf_rg_state_command(a:state, 'rg', '{q}') . ' || true'
 endfunction
 
 function! s:fzf_rg_current_file_reload_command(file, format) abort
-  if executable('rg')
-    let l:command = 'rg --with-filename --column --line-number --no-heading --color=always --colors ''path:fg:171,178,191'' --colors ''line:fg:99,109,131'' --colors ''column:fg:86,182,194'' --colors ''match:fg:224,108,117'' --colors ''match:style:bold'' --smart-case --no-messages'
-    return 'test -n {q} && ' . l:command . ' -- {q} ' . shellescape(a:file) . ' | awk -F: -f ' . shellescape(a:format) . ' || true'
-  endif
-
-  return 'test -n {q} && grep -Hn -- {q} ' . shellescape(a:file) . ' 2>/dev/null | awk -F: ''{ file = $1; line = $2; text = $0; sub(/^[^:]*:[^:]*:/, "", text); print file ":" line ":1:" text }'' | awk -F: -f ' . shellescape(a:format) . ' || true'
+  let l:command = 'rg --with-filename --column --line-number --no-heading --color=always --colors ''path:fg:171,178,191'' --colors ''line:fg:99,109,131'' --colors ''column:fg:86,182,194'' --colors ''match:fg:224,108,117'' --colors ''match:style:bold'' --smart-case --no-messages'
+  return 'test -n {q} && ' . l:command . ' -- {q} ' . shellescape(a:file) . ' | awk -F: -f ' . shellescape(a:format) . ' || true'
 endfunction
 
 function! s:fzf_rg_accept(bang, lines) abort
@@ -999,7 +856,7 @@ function! s:fzf_rg_options(query, include, exclude, state) abort
   \ '--marker', '+ ',
   \ '--info', 'inline-right',
   \ '--scroll-off', '3',
-  \ '--preview', s:fzf_result_preview_command('{2}', '{3}'),
+  \ '--preview', 'bat --theme="OneHalfDark" --style=numbers --color=always --highlight-line {3} {2}',
   \ '--preview-window', 'right:55%,border-left,+{3}+3/3,~3',
   \ '--bind', 'change:reload:sleep 0.1; ' . s:fzf_rg_state_reload_command(a:state),
   \ '--bind', 'ctrl-o:transform:' . s:fzf_rg_state_command(a:state, 'ctrl-o'),
@@ -1011,9 +868,6 @@ function! s:fzf_rg_options(query, include, exclude, state) abort
   \ ]
 
   let l:header = ['Ctrl-o include | Ctrl-e exclude | Ctrl-r reset filters']
-  if !executable('rg')
-    call add(l:header, 'rg unavailable: using grep fallback; include/exclude filters require rg')
-  endif
   if !empty(a:include)
     call add(l:header, 'include: ' . a:include)
   endif
@@ -1055,9 +909,9 @@ function! s:fzf_rg_current_file_options(file, format) abort
   \ '--marker', '+ ',
   \ '--info', 'inline-right',
   \ '--scroll-off', '3',
-  \ '--header', 'Current file: ' . fnamemodify(a:file, ':t') . '  (' . fnamemodify(a:file, ':~:h') . ')' . (!executable('rg') ? "\nrg unavailable: using grep fallback" : ''),
+  \ '--header', 'Current file: ' . fnamemodify(a:file, ':t') . '  (' . fnamemodify(a:file, ':~:h') . ')',
   \ '--header-first',
-  \ '--preview', s:fzf_result_preview_command('{2}', '{3}'),
+  \ '--preview', 'bat --theme="OneHalfDark" --style=numbers --color=always --highlight-line {3} {2}',
   \ '--preview-window', 'right:55%,border-left,+{3}+3/3,~3',
   \ '--bind', 'change:reload:sleep 0.1; ' . s:fzf_rg_current_file_reload_command(a:file, a:format),
   \ '--bind', 'shift-up:preview-page-up,shift-down:preview-page-down,ctrl-u:preview-page-up,ctrl-d:preview-page-down,ctrl-/:toggle-preview'
@@ -1184,12 +1038,6 @@ endfunction
 
 function! s:enter_minimal_mode() abort
   let g:cadence_minimal_mode = 1
-  let t:cadence_last_nerdtree_sync_path = ''
-  if get(t:, 'cadence_nerdtree_sync_timer', 0)
-    call timer_stop(t:cadence_nerdtree_sync_timer)
-    let t:cadence_nerdtree_sync_timer = 0
-  endif
-
   if get(g:, 'cadence_has_minimap', 0)
     let g:minimap_auto_start = 0
   endif
@@ -1214,13 +1062,7 @@ function! s:toggle_code_minimap() abort
   call s:leave_minimal_mode()
   if !get(g:, 'cadence_has_minimap', 0)
     echohl WarningMsg
-    if !get(g:, 'cadence_has_popup_windows', 0)
-      echo 'Minimap unavailable: requires Vim 8.2.191+ with popupwin, or Neovim 0.4+'
-    elseif !executable('code-minimap')
-      echo 'Minimap unavailable: requires code-minimap on PATH'
-    else
-      echo 'Minimap unavailable in this Vim environment'
-    endif
+    echo 'Minimap unavailable: requires Vim 8+ and code-minimap on PATH'
     echohl None
     return
   endif
@@ -1277,7 +1119,6 @@ function! s:ensure_nerdtree_open() abort
     return
   endif
 
-  let t:cadence_last_nerdtree_sync_path = ''
   silent! NERDTree
   call timer_start(100, { -> <SID>dedupe_nerdtree_windows() })
 endfunction
@@ -1290,33 +1131,10 @@ function! s:reveal_path_in_nerdtree_soon(path, winid) abort
   let l:path = a:path
   let l:winid = a:winid
   call s:ensure_nerdtree_open()
-  call s:schedule_nerdtree_sync(l:path, l:winid, 75)
-endfunction
-
-function! s:schedule_nerdtree_sync(path, winid, delay) abort
-  if empty(a:path) || !filereadable(a:path)
-    return
-  endif
-  if !exists('g:NERDTree') || !g:NERDTree.IsOpen()
-    return
-  endif
-
-  if get(t:, 'cadence_last_nerdtree_sync_path', '') ==# a:path
-    return
-  endif
-
-  if get(t:, 'cadence_nerdtree_sync_timer', 0)
-    call timer_stop(t:cadence_nerdtree_sync_timer)
-  endif
-
-  let l:path = a:path
-  let l:winid = a:winid
-  let t:cadence_nerdtree_sync_timer = timer_start(a:delay, { -> <SID>sync_nerdtree_to_path(l:path, l:winid) })
+  call timer_start(75, { -> <SID>sync_nerdtree_to_path(l:path, l:winid) })
 endfunction
 
 function! s:sync_nerdtree_to_path(path, winid) abort
-  let t:cadence_nerdtree_sync_timer = 0
-
   if empty(a:path) || !filereadable(a:path)
     return
   endif
@@ -1330,7 +1148,6 @@ function! s:sync_nerdtree_to_path(path, winid) abort
   let g:cadence_nerdtree_syncing = 1
   try
     silent! execute 'NERDTreeFind ' . fnameescape(a:path)
-    let t:cadence_last_nerdtree_sync_path = a:path
     call s:dedupe_nerdtree_windows()
     call win_gotoid(a:winid)
   finally
@@ -1353,7 +1170,7 @@ function! s:sync_nerdtree_to_current_file_soon() abort
   endif
 
   let l:winid = win_getid()
-  call s:schedule_nerdtree_sync(l:path, l:winid, 150)
+  call timer_start(0, { -> s:sync_nerdtree_to_path(l:path, l:winid) })
 endfunction
 
 function! s:refresh_minimap_soon() abort
@@ -1506,7 +1323,8 @@ function! s:hotkey_lines() abort
   \ '',
   \ 'Global',
   \ '  <C-p>        Command palette for global actions',
-  \ '  <C-h>        Show this full hotkey reference',
+  \ '  :help        Show this full hotkey reference',
+  \ '  :hotkeys     Show this full hotkey reference',
   \ '  <C-n>        Toggle NERDTree file explorer',
   \ '  <C-t>        Find files with preview',
   \ '  <C-f>        Find in current file',
@@ -1514,14 +1332,6 @@ function! s:hotkey_lines() abort
   \ '  <C-l>        Toggle GitGutter signs and GitLens blame',
   \ '  <C-m>        Toggle minimap',
   \ '  <C-d>        Close side panels / minimal mode',
-  \ '',
-  \ 'Text Navigation',
-  \ '  Insert mode uses your shell-style Ctrl+WASD navigation',
-  \ '  <C-a>        Previous word',
-  \ '  <C-d>        Next word',
-  \ '  <C-s>        Beginning of line',
-  \ '  <C-w>        End of line',
-  \ '  Scope        Insert mode only; normal-mode Ctrl keys keep Vim behavior',
   \ '',
   \ 'Command Palette',
   \ '  <C-p>        Open palette',
@@ -1550,8 +1360,7 @@ function! s:hotkey_lines() abort
   \ '  <C-f>        Start native / search in current file',
   \ '  Type         Live-highlight matches while typing',
   \ '  <Enter>      Accept search',
-  \ '  n            Next match with anzu count',
-  \ '  N / Shift-n  Previous match with anzu count',
+  \ '  n / N        Next / previous match with anzu count',
   \ '  * / #        Search word under cursor forward / backward',
   \ '  smartcase    Lowercase search is case-insensitive; capitals make it exact',
   \ '',
@@ -1877,10 +1686,6 @@ cnoreabbrev <expr> hotkeys getcmdtype() ==# ':' && getcmdline() ==# 'hotkeys' ? 
 "Leader+? to show custom and plugin hotkeys
 nnoremap <silent> <Leader>? :Hotkeys<CR>
 
-"Ctrl+h to show custom and plugin hotkeys in normal/visual mode
-nnoremap <silent> <C-h> :Hotkeys<CR>
-vnoremap <silent> <C-h> :<C-u>Hotkeys<CR>
-
 "Use native current-file search with vim-anzu counts and is.vim highlight cleanup
 nmap <silent> n <Plug>(is-nohl)<Plug>(anzu-n-with-echo)
 nmap <silent> N <Plug>(is-nohl)<Plug>(anzu-N-with-echo)
@@ -1891,12 +1696,6 @@ augroup cadence_current_file_search
   autocmd!
   autocmd CmdlineLeave [/\?] if exists(':AnzuUpdateSearchStatusOutput') == 2 | AnzuUpdateSearchStatusOutput | endif
 augroup END
-
-"Match the shell Ctrl+WASD line-editing bindings in insert mode.
-inoremap <silent> <C-a> <C-o>b
-inoremap <silent> <C-d> <C-o>w
-inoremap <silent> <C-s> <Home>
-inoremap <silent> <C-w> <End>
 
 "Ctrl+d to close side panels and enter a more minimal mode
 nnoremap <silent> <C-d> :CloseSidePanels<CR>

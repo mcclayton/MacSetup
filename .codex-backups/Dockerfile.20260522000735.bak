@@ -1,9 +1,4 @@
-ARG BASE_IMAGE=ubuntu:18.04
-FROM ${BASE_IMAGE}
-
-ARG SANDBOX_PROFILE=old-vim
-ENV MACSETUP_SANDBOX_PROFILE=${SANDBOX_PROFILE}
-LABEL macsetup=true
+FROM ubuntu:18.04
 
 RUN \
   apt update -qq && \
@@ -60,8 +55,6 @@ RUN groupadd -g 999 $NEW_USER && \
     useradd --create-home --shell /bin/bash -r -u 999 -g $NEW_USER $NEW_USER
 RUN usermod -aG sudo $NEW_USER
 RUN usermod -p "" $NEW_USER
-RUN chown -R $NEW_USER:$NEW_USER $APP_HOME && \
-    chmod -R u+rwX,go+rX $APP_HOME
 USER $NEW_USER
 
 ENV SANDBOX true

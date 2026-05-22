@@ -41,7 +41,6 @@ This will present the user with a choice to run the installer in one of two mode
 
 1. **Sandbox Environment**
       Installation/Setup changes are made in a dockerized sandbox environment and will not affect the current actual machine.
-      The sandbox can run either an old Vim compatibility profile or a modern Vim + Node profile so Vim plugin fallback and full IDE flows can both be tested.
 2. **Current Machine**
       Installation/Setup changes made in this environment will modify and affect the current actual machine.
 

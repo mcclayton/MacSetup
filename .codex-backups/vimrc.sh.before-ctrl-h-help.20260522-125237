@@ -1506,7 +1506,8 @@ function! s:hotkey_lines() abort
   \ '',
   \ 'Global',
   \ '  <C-p>        Command palette for global actions',
-  \ '  <C-h>        Show this full hotkey reference',
+  \ '  :help        Show this full hotkey reference',
+  \ '  :hotkeys     Show this full hotkey reference',
   \ '  <C-n>        Toggle NERDTree file explorer',
   \ '  <C-t>        Find files with preview',
   \ '  <C-f>        Find in current file',
@@ -1876,10 +1877,6 @@ cnoreabbrev <expr> hotkeys getcmdtype() ==# ':' && getcmdline() ==# 'hotkeys' ? 
 
 "Leader+? to show custom and plugin hotkeys
 nnoremap <silent> <Leader>? :Hotkeys<CR>
-
-"Ctrl+h to show custom and plugin hotkeys in normal/visual mode
-nnoremap <silent> <C-h> :Hotkeys<CR>
-vnoremap <silent> <C-h> :<C-u>Hotkeys<CR>
 
 "Use native current-file search with vim-anzu counts and is.vim highlight cleanup
 nmap <silent> n <Plug>(is-nohl)<Plug>(anzu-n-with-echo)

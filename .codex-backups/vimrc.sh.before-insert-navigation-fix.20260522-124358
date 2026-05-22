@@ -1506,7 +1506,8 @@ function! s:hotkey_lines() abort
   \ '',
   \ 'Global',
   \ '  <C-p>        Command palette for global actions',
-  \ '  <C-h>        Show this full hotkey reference',
+  \ '  :help        Show this full hotkey reference',
+  \ '  :hotkeys     Show this full hotkey reference',
   \ '  <C-n>        Toggle NERDTree file explorer',
   \ '  <C-t>        Find files with preview',
   \ '  <C-f>        Find in current file',
@@ -1514,14 +1515,6 @@ function! s:hotkey_lines() abort
   \ '  <C-l>        Toggle GitGutter signs and GitLens blame',
   \ '  <C-m>        Toggle minimap',
   \ '  <C-d>        Close side panels / minimal mode',
-  \ '',
-  \ 'Text Navigation',
-  \ '  Insert mode uses your shell-style Ctrl+WASD navigation',
-  \ '  <C-a>        Previous word',
-  \ '  <C-d>        Next word',
-  \ '  <C-s>        Beginning of line',
-  \ '  <C-w>        End of line',
-  \ '  Scope        Insert mode only; normal-mode Ctrl keys keep Vim behavior',
   \ '',
   \ 'Command Palette',
   \ '  <C-p>        Open palette',
@@ -1643,6 +1636,16 @@ function! s:hotkey_lines() abort
   \ '  <C-w>s       Create horizontal split',
   \ '  <C-w>w       Switch windows',
   \ '  <C-w>h/j/k/l Move to left/down/up/right window',
+  \ '',
+  \ 'Cursor Navigation',
+  \ '  Cmd-Left     Beginning of line when terminal sends the key to Vim',
+  \ '  Cmd-Right    End of line when terminal sends the key to Vim',
+  \ '  Home / End   Beginning / end of line',
+  \ '  Option-Left  Previous word',
+  \ '  Option-Right Next word',
+  \ '  Ctrl-Left    Previous word when terminal sends the key to Vim',
+  \ '  Ctrl-Right   Next word when terminal sends the key to Vim',
+  \ '  Note         If Cmd-arrow does nothing, configure the terminal to send Home/End',
   \ '',
   \ 'Text / Editing Helpers',
   \ '  Auto-pairs   vim-closer auto-closes brackets, quotes, and tags',
@@ -1877,10 +1880,6 @@ cnoreabbrev <expr> hotkeys getcmdtype() ==# ':' && getcmdline() ==# 'hotkeys' ? 
 "Leader+? to show custom and plugin hotkeys
 nnoremap <silent> <Leader>? :Hotkeys<CR>
 
-"Ctrl+h to show custom and plugin hotkeys in normal/visual mode
-nnoremap <silent> <C-h> :Hotkeys<CR>
-vnoremap <silent> <C-h> :<C-u>Hotkeys<CR>
-
 "Use native current-file search with vim-anzu counts and is.vim highlight cleanup
 nmap <silent> n <Plug>(is-nohl)<Plug>(anzu-n-with-echo)
 nmap <silent> N <Plug>(is-nohl)<Plug>(anzu-N-with-echo)
@@ -1892,11 +1891,42 @@ augroup cadence_current_file_search
   autocmd CmdlineLeave [/\?] if exists(':AnzuUpdateSearchStatusOutput') == 2 | AnzuUpdateSearchStatusOutput | endif
 augroup END
 
-"Match the shell Ctrl+WASD line-editing bindings in insert mode.
-inoremap <silent> <C-a> <C-o>b
-inoremap <silent> <C-d> <C-o>w
-inoremap <silent> <C-s> <Home>
-inoremap <silent> <C-w> <End>
+"VS Code-like cursor navigation. Cmd-arrow mappings work in MacVim/gVim or
+"terminal profiles that pass those keys through; Home/End are the reliable
+"terminal fallback.
+nnoremap <silent> <D-Left> 0
+vnoremap <silent> <D-Left> 0
+inoremap <silent> <D-Left> <C-o>0
+cnoremap <D-Left> <Home>
+
+nnoremap <silent> <D-Right> $
+vnoremap <silent> <D-Right> $
+inoremap <silent> <D-Right> <C-o>$
+cnoremap <D-Right> <End>
+
+nnoremap <silent> <Home> 0
+vnoremap <silent> <Home> 0
+inoremap <silent> <Home> <C-o>0
+
+nnoremap <silent> <End> $
+vnoremap <silent> <End> $
+inoremap <silent> <End> <C-o>$
+
+nnoremap <silent> <M-Left> b
+vnoremap <silent> <M-Left> b
+inoremap <silent> <M-Left> <C-o>b
+
+nnoremap <silent> <M-Right> w
+vnoremap <silent> <M-Right> w
+inoremap <silent> <M-Right> <C-o>w
+
+nnoremap <silent> <C-Left> b
+vnoremap <silent> <C-Left> b
+inoremap <silent> <C-Left> <C-o>b
+
+nnoremap <silent> <C-Right> w
+vnoremap <silent> <C-Right> w
+inoremap <silent> <C-Right> <C-o>w
 
 "Ctrl+d to close side panels and enter a more minimal mode
 nnoremap <silent> <C-d> :CloseSidePanels<CR>

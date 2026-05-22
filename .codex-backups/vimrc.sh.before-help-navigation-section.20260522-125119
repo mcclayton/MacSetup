@@ -1506,7 +1506,8 @@ function! s:hotkey_lines() abort
   \ '',
   \ 'Global',
   \ '  <C-p>        Command palette for global actions',
-  \ '  <C-h>        Show this full hotkey reference',
+  \ '  :help        Show this full hotkey reference',
+  \ '  :hotkeys     Show this full hotkey reference',
   \ '  <C-n>        Toggle NERDTree file explorer',
   \ '  <C-t>        Find files with preview',
   \ '  <C-f>        Find in current file',
@@ -1514,14 +1515,6 @@ function! s:hotkey_lines() abort
   \ '  <C-l>        Toggle GitGutter signs and GitLens blame',
   \ '  <C-m>        Toggle minimap',
   \ '  <C-d>        Close side panels / minimal mode',
-  \ '',
-  \ 'Text Navigation',
-  \ '  Insert mode uses your shell-style Ctrl+WASD navigation',
-  \ '  <C-a>        Previous word',
-  \ '  <C-d>        Next word',
-  \ '  <C-s>        Beginning of line',
-  \ '  <C-w>        End of line',
-  \ '  Scope        Insert mode only; normal-mode Ctrl keys keep Vim behavior',
   \ '',
   \ 'Command Palette',
   \ '  <C-p>        Open palette',
@@ -1643,6 +1636,13 @@ function! s:hotkey_lines() abort
   \ '  <C-w>s       Create horizontal split',
   \ '  <C-w>w       Switch windows',
   \ '  <C-w>h/j/k/l Move to left/down/up/right window',
+  \ '',
+  \ 'Insert Cursor Navigation',
+  \ '  <C-a>        Previous word, matching shell Ctrl+WASD bindings',
+  \ '  <C-d>        Next word, matching shell Ctrl+WASD bindings',
+  \ '  <C-s>        Beginning of line',
+  \ '  <C-w>        End of line',
+  \ '  Scope        Insert mode only; normal-mode <C-d>/<C-w> keep Vim behavior',
   \ '',
   \ 'Text / Editing Helpers',
   \ '  Auto-pairs   vim-closer auto-closes brackets, quotes, and tags',
@@ -1876,10 +1876,6 @@ cnoreabbrev <expr> hotkeys getcmdtype() ==# ':' && getcmdline() ==# 'hotkeys' ? 
 
 "Leader+? to show custom and plugin hotkeys
 nnoremap <silent> <Leader>? :Hotkeys<CR>
-
-"Ctrl+h to show custom and plugin hotkeys in normal/visual mode
-nnoremap <silent> <C-h> :Hotkeys<CR>
-vnoremap <silent> <C-h> :<C-u>Hotkeys<CR>
 
 "Use native current-file search with vim-anzu counts and is.vim highlight cleanup
 nmap <silent> n <Plug>(is-nohl)<Plug>(anzu-n-with-echo)

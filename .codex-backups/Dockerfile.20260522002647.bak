@@ -1,9 +1,4 @@
-ARG BASE_IMAGE=ubuntu:18.04
-FROM ${BASE_IMAGE}
-
-ARG SANDBOX_PROFILE=old-vim
-ENV MACSETUP_SANDBOX_PROFILE=${SANDBOX_PROFILE}
-LABEL macsetup=true
+FROM ubuntu:18.04
 
 RUN \
   apt update -qq && \

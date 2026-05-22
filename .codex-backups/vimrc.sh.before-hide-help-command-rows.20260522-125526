@@ -1507,6 +1507,8 @@ function! s:hotkey_lines() abort
   \ 'Global',
   \ '  <C-p>        Command palette for global actions',
   \ '  <C-h>        Show this full hotkey reference',
+  \ '  :help        Show this full hotkey reference',
+  \ '  :hotkeys     Show this full hotkey reference',
   \ '  <C-n>        Toggle NERDTree file explorer',
   \ '  <C-t>        Find files with preview',
   \ '  <C-f>        Find in current file',
