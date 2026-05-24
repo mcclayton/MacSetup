@@ -35,5 +35,8 @@ echo "Checking focused package configuration behavior..."
 echo "Checking idempotent file edit helpers..."
 ./ci/test_file_edits.sh
 
+echo "Checking installer helpers..."
+./ci/test_installers.sh
+
 echo "Checking section registry and prompt wrapper..."
 ./ci/test_section_registry.sh
