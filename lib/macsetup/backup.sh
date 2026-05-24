@@ -18,7 +18,7 @@ backupFile() {
   local suffix=""
   local new_file=""
 
-  mkdir -p "$BACKUP_DIRECTORY"
+  runCommand "Create backup directory $BACKUP_DIRECTORY" mkdir -p "$BACKUP_DIRECTORY" || return 1
 
   if [ ! -f "$original_path" ]; then
     warn "$original_path Does not exist, skipping backup..."
@@ -27,10 +27,10 @@ backupFile() {
     suffix="__$(date +'%s')"
     new_file="$BACKUP_DIRECTORY/$date_folder/$new_file_name$suffix"
     if [ ! -d "$new_file" ]; then
-      mkdir -p "$new_file"
+      runCommand "Create backup destination $new_file" mkdir -p "$new_file" || return 1
     fi
 
-    cp "$original_path" "$new_file"
+    runCommand "Back up file $original_path" cp "$original_path" "$new_file" || return 1
     if [ -a "$new_file" ]; then
       success "Backed up $original_path to $new_file"
     else
@@ -46,7 +46,7 @@ backupDir() {
   local suffix=""
   local new_dir=""
 
-  mkdir -p "$BACKUP_DIRECTORY"
+  runCommand "Create backup directory $BACKUP_DIRECTORY" mkdir -p "$BACKUP_DIRECTORY" || return 1
 
   if [ ! -d "$original_path" ]; then
     warn "$original_path Does not exist, skipping backup..."
@@ -55,10 +55,10 @@ backupDir() {
     suffix="__$(date +'%s')"
     new_dir="$BACKUP_DIRECTORY/$date_folder/$new_directory_name$suffix"
     if [ ! -d "$new_dir" ]; then
-      mkdir -p "$new_dir"
+      runCommand "Create backup destination $new_dir" mkdir -p "$new_dir" || return 1
     fi
 
-    cp -r "$original_path" "$new_dir"
+    runCommand "Back up directory $original_path" cp -r "$original_path" "$new_dir" || return 1
     if [ -d "$new_dir" ]; then
       success "Backed up directory $original_path to $new_dir"
     else
@@ -76,7 +76,7 @@ addLineToFiles() {
   line="$(macsetupManagedLine "$text")"
 
   for file in "${files_arr[@]}"; do
-    ensureLineInFile "$line" "$file"
+    ensureLineInFile "$line" "$file" || return 1
   done
 }
 
@@ -94,7 +94,7 @@ ensureLineInFile() {
   local line="$1"
   local file="$2"
 
-  touch "$file"
+  runCommand "Ensure editable file exists at $file" touch "$file" || return 1
 
   if [ -z "$line" ]; then
     return 0
@@ -104,7 +104,7 @@ ensureLineInFile() {
     return 0
   fi
 
-  echo "$line" >> "$file"
+  runCommand "Append managed line to $file" bash -c 'printf "%s\n" "$1" >> "$2"' _ "$line" "$file"
 }
 
 removeManagedBlock() {
@@ -114,16 +114,22 @@ removeManagedBlock() {
   local start_marker="# >>> MacSetup: $block_name"
   local end_marker="# <<< MacSetup: $block_name"
 
-  touch "$file"
+  runCommand "Ensure editable file exists at $file" touch "$file" || return 1
   tmp_file="$(mktemp)"
 
-  awk -v start="$start_marker" -v end="$end_marker" '
+  runCommand "Remove managed block $block_name from $file" bash -c 'awk -v start="$1" -v end="$2" '"'"'
     $0 == start { skipping = 1; next }
     $0 == end { skipping = 0; next }
     !skipping { print }
-  ' "$file" > "$tmp_file"
+  '"'"' "$3" > "$4"' _ "$start_marker" "$end_marker" "$file" "$tmp_file" || {
+    rm -f "$tmp_file"
+    return 1
+  }
 
-  mv "$tmp_file" "$file"
+  runCommand "Replace managed block file $file" mv "$tmp_file" "$file" || {
+    rm -f "$tmp_file"
+    return 1
+  }
 }
 
 ensureManagedBlock() {
@@ -132,13 +138,19 @@ ensureManagedBlock() {
   shift 2
   local line=""
 
-  removeManagedBlock "$block_name" "$file"
+  removeManagedBlock "$block_name" "$file" || return 1
 
-  {
-    echo "# >>> MacSetup: $block_name"
-    for line in "$@"; do
-      echo "$line"
-    done
-    echo "# <<< MacSetup: $block_name"
-  } >> "$file"
+  runCommand "Append managed block $block_name to $file" bash -c '
+    file="$1"
+    block_name="$2"
+    shift 2
+
+    {
+      printf "%s\n" "# >>> MacSetup: $block_name"
+      for line in "$@"; do
+        printf "%s\n" "$line"
+      done
+      printf "%s\n" "# <<< MacSetup: $block_name"
+    } >> "$file"
+  ' _ "$file" "$block_name" "$@"
 }

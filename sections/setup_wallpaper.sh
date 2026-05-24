@@ -11,21 +11,21 @@ setupWallpaper() {
     chooseOption "Choose Wallpaper:" "${options[@]}"
     case "$MACSETUP_UI_CHOICE" in
       "Sushi Keyboard Key")
-        cp "$MACSETUP_ASSETS_DIR/wallpapers/sushi_key.png" ~/wallpaper.png
+        runCommand "Copy Sushi Keyboard Key wallpaper" cp "$MACSETUP_ASSETS_DIR/wallpapers/sushi_key.png" ~/wallpaper.png || return 1
         assertFileExists ~/wallpaper.png "Copied over wallpaper.png asset" "Failed to copy over wallpaper.png asset"
-        open ~/
+        runCommand "Open home directory for wallpaper setup" open ~/ || return 1
         manualAction "Right click wallpaper.png and select 'Set Desktop Picture'"
         ;;
       "Samurai Cat")
-        cp "$MACSETUP_ASSETS_DIR/wallpapers/samurai_cat.png" ~/wallpaper.png
+        runCommand "Copy Samurai Cat wallpaper" cp "$MACSETUP_ASSETS_DIR/wallpapers/samurai_cat.png" ~/wallpaper.png || return 1
         assertFileExists ~/wallpaper.png "Copied over wallpaper.png asset" "Failed to copy over wallpaper.png asset"
-        open ~/
+        runCommand "Open home directory for wallpaper setup" open ~/ || return 1
         manualAction "Right click wallpaper.png and select 'Set Desktop Picture'"
         ;;
       "Heroku")
-        cp "$MACSETUP_ASSETS_DIR/wallpapers/heroku.png" ~/wallpaper.png
+        runCommand "Copy Heroku wallpaper" cp "$MACSETUP_ASSETS_DIR/wallpapers/heroku.png" ~/wallpaper.png || return 1
         assertFileExists ~/wallpaper.png "Copied over wallpaper.png asset" "Failed to copy over wallpaper.png asset"
-        open ~/
+        runCommand "Open home directory for wallpaper setup" open ~/ || return 1
         manualAction "Right click wallpaper.png and select 'Set Desktop Picture'"
         ;;
       "Cancel")

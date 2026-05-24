@@ -6,16 +6,34 @@ function runSection {
 }
 
 setupHomebrew() {
+  local brewInstaller=""
+  local brewShellenv=""
+  local brewPrefix=""
+  local prefix=""
+  local BREW_PATH=""
+
   info "Installing Homebrew package manager"
   # Install Brew if it isn't already
   if cmdExists brew; then
     info "Homebrew is already installed"
   else
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    brewInstaller="$(mktemp "${TMPDIR:-/tmp}/macsetup-homebrew-install.XXXXXX")" || {
+      fail "Failed to create temporary file for Homebrew installer"
+      return 1
+    }
+    runCommand "Download Homebrew installer" curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o "$brewInstaller" || {
+      rm -f "$brewInstaller"
+      return 1
+    }
+    runInteractiveCommand "Run Homebrew installer" /bin/bash "$brewInstaller" || {
+      rm -f "$brewInstaller"
+      return 1
+    }
+    rm -f "$brewInstaller"
   fi
 
   # Attempt to find brew prefix automatically
-  prefixes=(
+  local prefixes=(
     "/usr/local"
     "/opt/homebrew"
     "/home/linuxbrew/.linuxbrew"
@@ -24,7 +42,9 @@ setupHomebrew() {
     BREW_PATH=$prefix/bin/brew
     if [ -f "$BREW_PATH" ]; then
       info "Loading brew into current context..."
-      eval "$("$BREW_PATH" shellenv)"
+      if runProbeCommandOutputVariable brewShellenv "Probe Homebrew shellenv from $BREW_PATH" "$BREW_PATH" shellenv; then
+        eval "$brewShellenv"
+      fi
     fi
   done
 
@@ -49,15 +69,17 @@ setupHomebrew() {
 
   if cmdExists brew; then
     info "Updating homebrew"
-    brew update
+    runCommand "Update Homebrew" brew update || return 1
     info "Making homebrew healthy with brew doctor"
-    brew doctor
+    runOptionalCommand "Run brew doctor" brew doctor || true
 
     info 'Adding Homebrew to $PATH in .bash_profile and .zprofile'
+    runCommandOutputVariable brewPrefix "Find Homebrew prefix" brew --prefix || return 1
     addLineToFiles "" ~/.bash_profile ~/.zprofile
     addLineToFiles "# Homebrew Package Manager" ~/.bash_profile ~/.zprofile
-    addLineToFiles "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" ~/.bash_profile ~/.zprofile
-    eval "$($(brew --prefix)/bin/brew shellenv)"
+    addLineToFiles "eval \"\$($brewPrefix/bin/brew shellenv)\"" ~/.bash_profile ~/.zprofile
+    runCommandOutputVariable brewShellenv "Load Homebrew shellenv" "$brewPrefix/bin/brew" shellenv || return 1
+    eval "$brewShellenv"
     success 'Added Homebrew to $PATH in ~/.bash_profile and ~/.zprofile'
   else
     fail "Failed to update Homebrew because it is not installed"

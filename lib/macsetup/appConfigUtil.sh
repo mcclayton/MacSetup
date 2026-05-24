@@ -6,7 +6,8 @@
 
 configureICU4C() {
   info "Configuring icu4c"
-  ICU_PATH=$(brew --prefix icu4c)
+  local ICU_PATH=""
+  runCommandOutputVariable ICU_PATH "Find Homebrew prefix for icu4c" brew --prefix icu4c || return 1
   # Add To Path
   addLineToFiles "" ~/.bash_profile ~/.zprofile
   addLineToFiles "# Add icu4c to path" ~/.bash_profile ~/.zprofile
@@ -29,7 +30,8 @@ configureICU4C() {
 
 configureOpenSSL() {
   info "Configuring openssl"
-  OPEN_SSL_PATH=$(brew --prefix openssl)
+  local OPEN_SSL_PATH=""
+  runCommandOutputVariable OPEN_SSL_PATH "Find Homebrew prefix for openssl" brew --prefix openssl || return 1
   # Add To Path
   addLineToFiles "" ~/.bash_profile ~/.zprofile
   addLineToFiles "# Add openssl to path" ~/.bash_profile ~/.zprofile
@@ -59,8 +61,7 @@ configureBat() {
 
   if cmdExists bat; then
     local bat_config_dir
-    if ! bat_config_dir="$(bat --config-dir)"; then
-      fail "Cannot configure bat. Failed to determine bat config directory"
+    if ! runCommandOutputVariable bat_config_dir "Determine bat config directory" bat --config-dir; then
       return
     fi
 
@@ -74,18 +75,15 @@ configureBat() {
       return
     fi
 
-    mkdir -p "$bat_theme_dir"
-    if ! cp "$bat_theme_source" "$bat_theme_destination"; then
-      fail "Failed to copy bat theme: $bat_theme_name"
-      return
-    fi
+    runCommand "Create bat theme directory" mkdir -p "$bat_theme_dir" || return 1
+    runCommand "Copy bat theme $bat_theme_name" cp "$bat_theme_source" "$bat_theme_destination" || return 1
 
     assertFileExists "$bat_theme_destination" "bat theme installed: $bat_theme_name" "Failed to install bat theme: $bat_theme_name"
 
-    if bat cache --build; then
+    if runCommand "Rebuild bat cache" bat cache --build; then
       success "bat cache rebuilt"
     else
-      fail "Failed to rebuild bat cache"
+      return 1
     fi
   else
     fail "Cannot configure bat because it is not installed"
@@ -107,9 +105,10 @@ configureVSCode() {
     info "Installing VSCode Packages"
     if cmdExists code; then
       # For every non-blank line
-      for extension in `grep -v "^$" "$MACSETUP_CONFIG_DIR/vscode/default/extensions.list"`; do
-        code --install-extension $extension
-      done
+      while IFS= read -r extension || [ -n "$extension" ]; do
+        [ -z "$extension" ] && continue
+        runCommand "Install VSCode extension $extension" code --install-extension "$extension" || return 1
+      done < "$MACSETUP_CONFIG_DIR/vscode/default/extensions.list"
 
       info 'Adding VSCode to $PATH'
       addLineToFiles "" ~/.bash_profile ~/.zprofile
@@ -119,7 +118,7 @@ configureVSCode() {
       info 'Setting settings.json file'
       SETTINGS_PATH=~/Library/'Application Support'/Code/User/settings.json
       if [ -f "$SETTINGS_PATH" ]; then
-        cp "$MACSETUP_CONFIG_DIR/vscode/default/settings.json" "$SETTINGS_PATH"
+        runCommand "Copy VSCode settings.json" cp "$MACSETUP_CONFIG_DIR/vscode/default/settings.json" "$SETTINGS_PATH" || return 1
         assertFileExists "$SETTINGS_PATH" "Successfully updated settings.json file" "Could not update settings.json file"
       else
         warn "Could not automatically copy over settings.json"
@@ -138,15 +137,11 @@ configureRectangle() {
   info "Configuring Rectangle"
   if [ -d "/Applications/Rectangle.app" ]; then
     info "Setting up shortcut preferences"
-    # Preserve white space by changing the Internal Field Separator
-    IFS='%'
-    mkdir -p ~/Library/'Application Support'/Rectangle
-    cp "$MACSETUP_CONFIG_DIR/apps/rectangle/com.knollsoft.Rectangle.plist" ~/Library/Preferences/com.knollsoft.Rectangle.plist
+    runCommand "Create Rectangle application support directory" mkdir -p ~/Library/'Application Support'/Rectangle || return 1
+    runCommand "Copy Rectangle preferences" cp "$MACSETUP_CONFIG_DIR/apps/rectangle/com.knollsoft.Rectangle.plist" ~/Library/Preferences/com.knollsoft.Rectangle.plist || return 1
     assertFileExists ~/Library/Preferences/com.knollsoft.Rectangle.plist "Rectangle Shortcuts set" "Failed to set Rectangle Shortcuts"
-    # Reset the Internal Field Separator
-    unset IFS
     info "Opening Rectangle.app"
-    open /Applications/Rectangle.app
+    runCommand "Open Rectangle.app" open /Applications/Rectangle.app || return 1
   else
     fail "Cannot configure Rectangle as it is not installed"
   fi
@@ -157,13 +152,13 @@ configureITerm() {
   if [ -d "/Applications/iTerm.app" ]; then
     # Delete cached preferences
     info "Deleting cached iTerm preferences"
-    defaults delete com.googlecode.iterm2
+    runOptionalCommand "Delete cached iTerm preferences" defaults delete com.googlecode.iterm2 || true
     # Copying over new configurations file
     info "Setting iTerm configurations file in ~/Library/Preferences/"
-    cp "$MACSETUP_CONFIG_DIR/terminal/iterm2/com.googlecode.iterm2.plist" ~/Library/Preferences/com.googlecode.iterm2.plist
+    runCommand "Copy iTerm preferences" cp "$MACSETUP_CONFIG_DIR/terminal/iterm2/com.googlecode.iterm2.plist" ~/Library/Preferences/com.googlecode.iterm2.plist || return 1
     # Reading in new config file
     info "Reading in new configurations file"
-    `defaults read -app iTerm` 2>/dev/null
+    runOptionalCommand "Read iTerm defaults" defaults read -app iTerm || true
     # Assert configuration file was copied over successfully
     assertFileExists ~/Library/Preferences/"com.googlecode.iterm2.plist" "iTerm config file set correctly" "Failed to set iTerm config file"
   else

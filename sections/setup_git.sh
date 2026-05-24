@@ -7,12 +7,14 @@ function runSection {
 
 setupGit() {
   if cmdExists git; then
+    local sshAgentEnv=""
+
     info "Configuring git"
     # Backup files
     backupFile ~/.gitconfig gitconfig
 
     # Set .gitconfig
-    cp "$MACSETUP_CONFIG_DIR/git/gitconfig" ~/.gitconfig
+    runCommand "Copy gitconfig" cp "$MACSETUP_CONFIG_DIR/git/gitconfig" ~/.gitconfig || return 1
     assertFileExists ~/.gitconfig "~/.gitconfig set" "Failed to set ~/.gitconfig"
 
     # Backup global .gitignore
@@ -21,20 +23,20 @@ setupGit() {
 
     # Set Global Gitignore
     info "Setting global .gitignore"
-    cp "$MACSETUP_CONFIG_DIR"/dotfiles/mac/gitignore.sh ~/.gitignore
+    runCommand "Copy global gitignore" cp "$MACSETUP_CONFIG_DIR"/dotfiles/mac/gitignore.sh ~/.gitignore || return 1
     assertFileExists ~/.gitignore "~/.gitignore set" "Failed to set ~/.gitignore"
 
     # Assign global gitignore in global gitconfig
-    git config --global core.excludesfile ~/.gitignore
+    runCommand "Configure global git excludesfile" git config --global core.excludesfile ~/.gitignore || return 1
 
     # Set Github Username and email
     prompt "What is your Github User Name (i.e. \"First Last\")?"
-    git config --global user.name "$REPLY"
+    runCommand "Configure global git username" git config --global user.name "$REPLY" || return 1
     success "Username set to $REPLY"
     prompt "What is your Github Email (i.e. \"me@mail.com\")?"
     GIT_EMAIL="$REPLY"
     success "Email set to $GIT_EMAIL"
-    git config --global user.email "$GIT_EMAIL"
+    runCommand "Configure global git email" git config --global user.email "$GIT_EMAIL" || return 1
 
     promptYesNo "Create an SSH Key For Email: $GIT_EMAIL?"
     if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -43,8 +45,8 @@ setupGit() {
         info "Found $SSH_CONFIG File"
       else
         info "Creating $SSH_CONFIG File..."
-        mkdir -p ~/.ssh
-        touch "$SSH_CONFIG"
+        runCommand "Create SSH config directory" mkdir -p ~/.ssh || return 1
+        runCommand "Create SSH config file" touch "$SSH_CONFIG" || return 1
       fi
 
       DEAULT_KEY_NAME="git_key_ecdsa"
@@ -56,11 +58,12 @@ setupGit() {
       fi
       KEY_PATH=~/.ssh/$KEY_NAME
 
-      ssh-keygen -f "$KEY_PATH" -t ed25519 -C "$GIT_EMAIL"
+      runInteractiveCommand "Create SSH key $KEY_PATH" ssh-keygen -f "$KEY_PATH" -t ed25519 -C "$GIT_EMAIL" || return 1
       assertFileExists "$KEY_PATH" "Successfully created SSH Key: $KEY_PATH" "Failed to create SSH Key: $KEY_PATH"
 
       info "Starting ssh-agent in background"
-      eval "$(ssh-agent -s)"
+      runCommandOutputVariable sshAgentEnv "Start ssh-agent" ssh-agent -s || return 1
+      eval "$sshAgentEnv"
       echo
 
       # Preserve white space by changing the Internal Field Separator

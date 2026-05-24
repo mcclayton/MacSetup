@@ -24,6 +24,9 @@ bash ./ci/test_ui.sh
 echo "Checking shell startup helpers..."
 bash ./ci/test_shell_startup.sh
 
+echo "Checking command failure logging..."
+bash ./ci/test_command_logging.sh
+
 echo "Checking install.sh skipped-section path with isolated HOME..."
 tmp_home="$(mktemp -d)"
 cleanup() {

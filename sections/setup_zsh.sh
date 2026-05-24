@@ -12,7 +12,7 @@ setupZsh() {
 
   # Set .oh-my-zsh folder
   info "Setting up .oh-my-zsh folder"
-  rm -rf ~/.oh-my-zsh
+  runCommand "Remove existing ~/.oh-my-zsh directory" rm -rf ~/.oh-my-zsh || return 1
 
   # Clone oh-my-zsh
   ZSH=${ZSH:-~/.oh-my-zsh}
@@ -20,15 +20,13 @@ setupZsh() {
   REMOTE=${REMOTE:-https://github.com/${REPO}.git}
   BRANCH=${BRANCH:-master}
 
-  git clone -c core.eol=lf -c core.autocrlf=false \
+  runCommand "Clone oh-my-zsh repo" git clone -c core.eol=lf -c core.autocrlf=false \
     -c fsck.zeroPaddedFilemode=ignore \
     -c fetch.fsck.zeroPaddedFilemode=ignore \
     -c receive.fsck.zeroPaddedFilemode=ignore \
     -c oh-my-zsh.remote=origin \
     -c oh-my-zsh.branch="$BRANCH" \
-    --depth=1 --branch "$BRANCH" "$REMOTE" "$ZSH" || {
-    fail "Failed to clone oh-my-zsh repo"
-  }
+    --depth=1 --branch "$BRANCH" "$REMOTE" "$ZSH" || return 1
 
   assertDirectoryExists ~/.oh-my-zsh "~/.oh-my-zsh directory set" "Failed to set ~/.oh-my-zsh directory"
 
@@ -41,13 +39,13 @@ setupZsh() {
   for pluginUrl in "${zshPlugins[@]}"; do
     repoName=$(repoName "$pluginUrl")
     cloneToPath=~/".oh-my-zsh/custom/plugins/$repoName"
-    rm -rf "$cloneToPath"
-    git clone "$pluginUrl" "$cloneToPath"
+    runCommand "Remove existing oh-my-zsh plugin $repoName" rm -rf "$cloneToPath" || continue
+    runCommand "Clone oh-my-zsh plugin $repoName" git clone "$pluginUrl" "$cloneToPath" || continue
     # Invoke installation script if exists
     installPath="$cloneToPath/install"
     if [ -f "$installPath" ]; then
       echo -e "\n\nInvoking installation for $repoName\n"
-      "$installPath"
+      runInteractiveCommand "Run oh-my-zsh plugin installer for $repoName" "$installPath" || continue
     fi
     assertDirectoryExists "$cloneToPath" "$repoName plugin added to $cloneToPath" "Failed to add plugin $repoName to $cloneToPath"
   done

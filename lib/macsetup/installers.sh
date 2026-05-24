@@ -20,13 +20,11 @@ installHomebrewPackage() {
   if brewPackageInstalled "$formula"; then
     info "$display_name is already installed"
   else
-    if [ -n "$tap" ] && ! brew tap "$tap"; then
-      fail "Failed to tap Homebrew repository: $tap"
+    if [ -n "$tap" ] && ! runCommand "Tap Homebrew repository $tap" brew tap "$tap"; then
       return 1
     fi
 
-    if ! brew install "$formula"; then
-      fail "Failed to install Homebrew package: $display_name"
+    if ! runCommand "Install Homebrew package $display_name" brew install "$formula"; then
       return 1
     fi
   fi
@@ -66,6 +64,52 @@ caskInstallAppsFromList() {
   done
 }
 
+asdfPluginInstalled() {
+  local plugin_name="$1"
+  asdf plugin list 2>/dev/null | grep -qx "$plugin_name"
+}
+
+ensureAsdfPlugin() {
+  local plugin_name="$1"
+  local display_name="$2"
+  local plugin_url="${3:-}"
+
+  if asdfPluginInstalled "$plugin_name"; then
+    info "$display_name asdf plugin is already added"
+    return 0
+  fi
+
+  if [ -n "$plugin_url" ]; then
+    runCommand "Add $display_name asdf plugin" asdf plugin-add "$plugin_name" "$plugin_url"
+  else
+    runCommand "Add $display_name asdf plugin" asdf plugin-add "$plugin_name"
+  fi
+}
+
+installAsdfToolFromToolVersions() {
+  local plugin_name="$1"
+  local display_name="$2"
+  local assertion_command="$3"
+  local plugin_url="${4:-}"
+
+  if ! cmdExists asdf; then
+    fail "Failed to install $display_name. \`asdf\` is required to install."
+    return 1
+  fi
+
+  if [ ! -f ~/.tool-versions ]; then
+    fail "~/.tool-versions not found, cannot install $display_name via \`asdf\`."
+    return 1
+  fi
+
+  success "Found ~/.tool-versions file"
+  ensureAsdfPlugin "$plugin_name" "$display_name" "$plugin_url" || return 1
+
+  info "Installing $display_name from ~/.tool-versions: "$'\n'"---TOOLS---"$'\n'"$(cat ~/.tool-versions)"$'\n'"-----------"
+  runCommand "Install $display_name with asdf" asdf install "$plugin_name" || return 1
+  assertPackageInstallation "$assertion_command" "$display_name"
+}
+
 caskInstallAppPrompt() {
   local app_name="$1"
   local cask_name="$2"
@@ -79,8 +123,8 @@ caskInstallAppPrompt() {
       warn "$app_name is already installed. Prompting overwrite..."
       promptYesNo "Do you want to $RED OVERWRITE $RESET_COLOR application $app_name?"
       if [[ $REPLY =~ ^[Yy]$ ]]; then
-        rm -rf "/Applications/$app_name"
-        brew reinstall --cask "$cask_name"
+        runCommand "Remove existing application $app_name" rm -rf "/Applications/$app_name" || return 1
+        runCommand "Reinstall Homebrew cask $cask_name" brew reinstall --cask "$cask_name" || return 1
         if [ -n "$configure_function" ]; then
           "$configure_function"
         fi
@@ -88,7 +132,7 @@ caskInstallAppPrompt() {
         info "Skipping overwrite..."
       fi
     else
-      brew install --cask "$cask_name"
+      runCommand "Install Homebrew cask $cask_name" brew install --cask "$cask_name" || return 1
       if [ -n "$configure_function" ]; then
         "$configure_function"
       fi

@@ -26,6 +26,42 @@ desired machine state it applies.
 Framework code should avoid knowing the details of a specific machine
 preference unless it is needed to apply or verify configuration.
 
+### Command Logging
+
+Shell-outs should use the command helpers in `lib/macsetup/logging.sh` instead
+of running commands directly. The installer should keep terminal output concise
+while writing detailed command diagnostics to `~/.mac_setup/log` when something
+fails.
+
+- `runCommand "Description" command args...`
+  Use for non-interactive commands whose normal output is not useful unless the
+  command fails, such as `cp`, `git clone`, `brew install`, and `asdf install`.
+  On failure, the terminal shows a short failure line and the log captures the
+  command, exit code, stdout, and stderr.
+- `runCommandCapture "Description" "$output_file" command args...`
+  Use when a later step needs stdout in a file. The failure logging behavior is
+  the same as `runCommand`.
+- `runCommandOutputVariable variable_name "Description" command args...`
+  Use instead of command substitution when stdout should be assigned to a
+  variable, such as `brew --prefix` or `ssh-agent -s`. This preserves detailed
+  failure logging.
+- `runProbeCommandOutputVariable variable_name "Description" command args...`
+  Use for exploratory path probes where failure should not print to the
+  terminal or count toward the final failure summary because a later candidate
+  may succeed. Failed probes still write command details to the log.
+- `runInteractiveCommand "Description" command args...`
+  Use for commands that may prompt, consume stdin, or manage their own terminal
+  output, such as native installers or `ssh-keygen`. Failure logs include the
+  command and exit code, but stdout/stderr are not captured.
+- `runOptionalCommand "Description" command args...`
+  Use for cleanup or advisory commands where failure should be a warning, not a
+  section failure. Captured stdout/stderr still go to the log when the command
+  fails.
+
+If a command is purely a local predicate and its output is intentionally
+discarded, direct execution is acceptable. Examples include `cmdExists`,
+`grep -q`, and package-installed checks.
+
 ## Sections
 
 `sections/` contains the installer workflow. Each section defines `runSection`

@@ -20,7 +20,7 @@ setupSplashScreen() {
         COMMAND_CHOICE="charizard"
         ;;
       "Initials")
-        cp "$MACSETUP_ASSETS_DIR/splash/mcc_logo.png" ~/mcc_logo.png
+        runCommand "Copy splash screen logo" cp "$MACSETUP_ASSETS_DIR/splash/mcc_logo.png" ~/mcc_logo.png || return 1
         assertFileExists ~/mcc_logo.png "Copied over mcc_logo.png asset" "Failed to copy over mcc_logo.png asset"
         COMMAND_CHOICE="mcc"
         ;;
@@ -37,7 +37,7 @@ setupSplashScreen() {
       info "Cancelling splash screen setup..."
     else
       info "Setting splash screen to use command '$COMMAND_CHOICE'"
-      sed -i -e "s/local SPLASH_COMMAND=.*/local SPLASH_COMMAND=$COMMAND_CHOICE/" ~/.bashrc
+      runCommand "Update splash screen command" sed -i -e "s/local SPLASH_COMMAND=.*/local SPLASH_COMMAND=$COMMAND_CHOICE/" ~/.bashrc || return 1
 
       if grep -q "local SPLASH_COMMAND=$COMMAND_CHOICE" ~/.bashrc; then
         success "Splash screen set to use command '$COMMAND_CHOICE'"

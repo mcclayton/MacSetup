@@ -26,7 +26,7 @@ changeDefaultShell() {
     chooseOption "Choose Default Shell:" "${options[@]}"
     case "$MACSETUP_UI_CHOICE" in
       "Bash")
-        chsh -s "$(which bash)"
+        runInteractiveCommand "Change default shell to bash" chsh -s "$(which bash)" || return 1
         if [ "$(currShell)" == "$(which bash)" ]; then
           success "Default shell has been updated to bash"
         else
@@ -34,7 +34,7 @@ changeDefaultShell() {
         fi
         ;;
       "Zsh")
-        chsh -s "$(which zsh)"
+        runInteractiveCommand "Change default shell to zsh" chsh -s "$(which zsh)" || return 1
         if [ "$(currShell)" == "$(which zsh)" ]; then
           success "Default shell has been updated to zsh"
         else

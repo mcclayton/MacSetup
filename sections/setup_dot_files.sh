@@ -17,7 +17,7 @@ setupDotFiles() {
 
   # Set Dot Files
   for dotFileName in "${MACSETUP_MANAGED_TOP_LEVEL_DOTFILES[@]}"; do
-    cp "$MACSETUP_CONFIG_DIR"/dotfiles/mac/"$dotFileName".sh ~/."$dotFileName"
+    runCommand "Copy ~/.$dotFileName" cp "$MACSETUP_CONFIG_DIR"/dotfiles/mac/"$dotFileName".sh ~/."$dotFileName" || continue
     assertFileExists ~/."$dotFileName" "~/.$dotFileName set" "Failed to set ~/.$dotFileName"
   done
 }

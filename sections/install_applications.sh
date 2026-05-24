@@ -9,6 +9,8 @@ installApplications() {
   if isMacOs; then
     # Can only install brew apps if brew is installed
     if cmdExists brew; then
+      # Entry format: "application bundle name|Homebrew cask name|configure function".
+      # Leave the configure function field empty when no post-install step is needed.
       local applications=(
         "Caffeine.app|caffeine|"
         "Sip.app|sip|"
@@ -31,7 +33,7 @@ installApplications() {
 
       # Cleanup downloads
       info "Cleaning up application .zip and .dmg files"
-      brew cleanup
+      runOptionalCommand "Clean up Homebrew downloads" brew cleanup || true
     else
       fail "Failed to install Applications via Homebrew Cask. Homebrew is not installed."
     fi

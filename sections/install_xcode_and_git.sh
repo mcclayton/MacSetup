@@ -8,7 +8,7 @@ function runSection {
 installXcodeAndGit() {
   if isMacOs; then
     info "Installing Xcode Command Line Tools"
-    xcode-select --install
+    runOptionalCommand "Install Xcode Command Line Tools" xcode-select --install || true
     # Test to ensure successful install
     assertPackageInstallation gcc "Xcode CLT"
     assertPackageInstallation git "Git"

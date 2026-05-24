@@ -16,7 +16,7 @@ source "$(scriptDirectory)/lib/macsetup/appConfigUtil.sh"
 # Main Function
 function main {
   # Create root setup folder
-  mkdir -p $ROOT_MAC_SETUP_FOLDER
+  runCommand "Create MacSetup root folder" mkdir -p "$ROOT_MAC_SETUP_FOLDER" || exit 1
 
   # Print out the intro message
   printIntro

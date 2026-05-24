@@ -8,6 +8,8 @@ function runSection {
 installHomebrewPackages() {
   # Can only install brew packages if brew is installed
   if cmdExists brew; then
+    # Entry format: "display name|formula|assertion command|configure function|tap".
+    # Leave optional fields empty, preserving delimiters for later fields.
     local packages=(
       "openssl|openssl|openssl|configureOpenSSL|"
       "icu4c|icu4c|icuinfo|configureICU4C|"

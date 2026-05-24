@@ -60,6 +60,10 @@ installer remains scriptable and portable.
 
 ## Diagnostics
 
+Installer runs write a summary log to `~/.mac_setup/log`. Interactive output is
+kept concise, while failed command details such as command text, exit code,
+stdout, and stderr are written to the log for debugging.
+
 To compare the current machine's managed top-level dotfiles against the repo
 configuration, run:
 

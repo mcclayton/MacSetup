@@ -8,7 +8,7 @@ function runSection {
 setupScreensavers() {
   if isMacOs; then
     info "Opening Aerial.saver"
-    open "$MACSETUP_ASSETS_DIR/screensavers/Aerial.saver"
+    runCommand "Open Aerial.saver" open "$MACSETUP_ASSETS_DIR/screensavers/Aerial.saver" || return 1
     manualAction "Follow MacOSX prompts to install Aerial.saver"
   else
     warn "This is a MacOS specific step, skipping due to invalid OS..."

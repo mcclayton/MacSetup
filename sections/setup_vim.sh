@@ -13,12 +13,12 @@ setupVim() {
 
   # Set .vim folder
   info "Setting up .vim folder"
-  rm -rf ~/.vim
-  cp -r "$MACSETUP_ASSETS_DIR/vim" ~/.vim
+  runCommand "Remove existing ~/.vim directory" rm -rf ~/.vim || return 1
+  runCommand "Copy vim assets" cp -r "$MACSETUP_ASSETS_DIR/vim" ~/.vim || return 1
   assertDirectoryExists ~/.vim "~/.vim directory set" "Failed to set ~/.vim directory"
   assertFileExists ~/.vim/autoload/pathogen.vim "pathogen.vim set" "Failed to set pathogen.vim"
   assertFileExists ~/.vim/colors/atom_one_dark.vim "Atom One Dark colorscheme set" "Failed to set Atom One Dark colorscheme"
-  mkdir -p ~/.vim/bundle
+  runCommand "Create vim bundle directory" mkdir -p ~/.vim/bundle || return 1
 
   # Backup .vimrc
   info "Backing up .vimrc"
@@ -26,7 +26,7 @@ setupVim() {
 
   # Set .vimrc
   info "Setting up .vimrc"
-  cp "$MACSETUP_CONFIG_DIR"/dotfiles/mac/vimrc.sh ~/.vimrc
+  runCommand "Copy vimrc" cp "$MACSETUP_CONFIG_DIR"/dotfiles/mac/vimrc.sh ~/.vimrc || return 1
   assertFileExists ~/.vimrc "~/.vimrc set" "Failed to set ~/.vimrc"
 
   # Clone all vim plugins
@@ -52,17 +52,17 @@ setupVim() {
   for pluginUrl in "${vimPlugins[@]}"; do
     repoName=$(repoName "$pluginUrl")
     cloneToPath=~/".vim/bundle/$repoName"
-    rm -rf "$cloneToPath"
+    runCommand "Remove existing vim plugin $repoName" rm -rf "$cloneToPath" || continue
     if [ "$repoName" = "coc.nvim" ]; then
-      git clone --branch release "$pluginUrl" "$cloneToPath"
+      runCommand "Clone vim plugin $repoName" git clone --branch release "$pluginUrl" "$cloneToPath" || continue
     else
-      git clone "$pluginUrl" "$cloneToPath"
+      runCommand "Clone vim plugin $repoName" git clone "$pluginUrl" "$cloneToPath" || continue
     fi
     # Invoke installation script if exists (i.e. for fzf)
     installPath="$cloneToPath/install"
     if [ -f "$installPath" ]; then
       echo -e "\n\nInvoking installation for $repoName\n"
-      "$installPath"
+      runInteractiveCommand "Run vim plugin installer for $repoName" "$installPath" || continue
     fi
     assertDirectoryExists "$cloneToPath" "$repoName plugin added to $cloneToPath" "Failed to add plugin $repoName to $cloneToPath"
   done
