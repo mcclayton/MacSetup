@@ -50,6 +50,8 @@ uiPadRight() {
 }
 
 uiSupportsRoundedBoxes() {
+  local charmap=""
+
   if [ "${MACSETUP_UI_ASCII:-}" = "true" ]; then
     return 1
   fi
@@ -60,11 +62,25 @@ uiSupportsRoundedBoxes() {
       ;;
   esac
 
+  if command -v locale >/dev/null 2>&1; then
+    charmap="$(locale charmap 2>/dev/null || true)"
+    case "$charmap" in
+      *UTF-8*|*utf-8*|UTF8|utf8)
+        return 0
+        ;;
+    esac
+  fi
+
+  if [ "$(uname -s 2>/dev/null)" = "Darwin" ]; then
+    return 0
+  fi
+
   return 1
 }
 
 uiSetBoxChars() {
   if uiSupportsRoundedBoxes; then
+    MACSETUP_UI_BOX_STYLE="rounded"
     MACSETUP_UI_BOX_TL="╭"
     MACSETUP_UI_BOX_TR="╮"
     MACSETUP_UI_BOX_BL="╰"
@@ -72,6 +88,7 @@ uiSetBoxChars() {
     MACSETUP_UI_BOX_H="─"
     MACSETUP_UI_BOX_V="│"
   else
+    MACSETUP_UI_BOX_STYLE="ascii"
     MACSETUP_UI_BOX_TL="+"
     MACSETUP_UI_BOX_TR="+"
     MACSETUP_UI_BOX_BL="+"
@@ -213,6 +230,14 @@ uiMenuLineCount() {
     count=$((count + 2))
   fi
 
+  uiSetBoxChars
+  if [ "$MACSETUP_UI_BOX_STYLE" = "ascii" ]; then
+    count=$((count + 1))
+    if [ -n "${MACSETUP_UI_FOOTER:-}" ]; then
+      count=$((count + 1))
+    fi
+  fi
+
   echo "$count"
 }
 
@@ -221,6 +246,14 @@ uiPrintBoxTop() {
   local content_width="$2"
   local title_width=0
   local fill_width=0
+
+  if [ "$MACSETUP_UI_BOX_STYLE" = "ascii" ]; then
+    printf '%s' "$MACSETUP_UI_BOX_TL"
+    uiRepeat "$MACSETUP_UI_BOX_H" "$((content_width + 2))"
+    printf '%s\n' "$MACSETUP_UI_BOX_TR"
+    uiPrintBoxLine "$title" "$content_width"
+    return
+  fi
 
   title_width="$(uiVisibleLength "$title")"
   fill_width=$((content_width - title_width - 1))
@@ -241,11 +274,38 @@ uiPrintBoxLine() {
   printf ' %s\n' "$MACSETUP_UI_BOX_V"
 }
 
+uiPrintBoxFooterLine() {
+  local footer="$1"
+  local content_width="$2"
+  local footer_width=0
+  local padding=0
+
+  footer_width="$(uiVisibleLength "$footer")"
+  padding=$((content_width - footer_width))
+
+  printf '%s ' "$MACSETUP_UI_BOX_V"
+  if [ "$padding" -gt 0 ]; then
+    uiRepeat " " "$padding"
+  fi
+  printf '%s %s\n' "$footer" "$MACSETUP_UI_BOX_V"
+}
+
 uiPrintBoxBottom() {
   local content_width="$1"
   local footer="${MACSETUP_UI_FOOTER:-}"
   local footer_width=0
   local fill_width=0
+
+  if [ "$MACSETUP_UI_BOX_STYLE" = "ascii" ]; then
+    if [ -n "$footer" ]; then
+      uiPrintBoxFooterLine "$footer" "$content_width"
+    fi
+
+    printf '%s' "$MACSETUP_UI_BOX_BL"
+    uiRepeat "$MACSETUP_UI_BOX_H" "$((content_width + 2))"
+    printf '%s\n' "$MACSETUP_UI_BOX_BR"
+    return
+  fi
 
   if [ -z "$footer" ]; then
     printf '%s' "$MACSETUP_UI_BOX_BL"
