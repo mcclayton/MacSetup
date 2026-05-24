@@ -4,6 +4,8 @@
 # Helper Functions #
 ####################
 
+source "$MACSETUP_LIB_DIR/ui.sh"
+
 function ensureNotRoot {
   if [ "$EUID" -eq 0 ]
     then
@@ -104,9 +106,22 @@ sandboxIntro() {
 }
 
 promptYesNo() {
-  echo "   => $1 "
-  read -p "      [Y/n] " -r
-  echo
+  local default_answer="${2:-yes}"
+
+  if [ "$default_answer" = "no" ]; then
+    MACSETUP_UI_DEFAULT_INDEX=1
+  else
+    MACSETUP_UI_DEFAULT_INDEX=0
+  fi
+
+  chooseOption "$1" "Yes" "No"
+  unset MACSETUP_UI_DEFAULT_INDEX
+
+  if [ "$MACSETUP_UI_CHOICE" = "Yes" ]; then
+    REPLY="y"
+  else
+    REPLY="n"
+  fi
 }
 
 prompt() {

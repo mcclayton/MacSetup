@@ -1,0 +1,78 @@
+#!/bin/bash
+
+set -euo pipefail
+
+repo_root="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+cd "$repo_root"
+
+echo "Checking plain UI option selection..."
+printf '2\n' | MACSETUP_UI=plain TERM="${TERM:-xterm}" bash -c '
+  source ./lib/macsetup/constants.sh
+  source ./lib/macsetup/helperFunctions.sh
+
+  chooseOption "Choose Test Option:" "First" "Second" "Third"
+
+  [ "$REPLY" = "2" ]
+  [ "$MACSETUP_UI_INDEX" = "1" ]
+  [ "$MACSETUP_UI_CHOICE" = "Second" ]
+'
+
+echo "Checking plain UI yes/no selection..."
+printf 'n\n' | MACSETUP_UI=plain TERM="${TERM:-xterm}" bash -c '
+  source ./lib/macsetup/constants.sh
+  source ./lib/macsetup/helperFunctions.sh
+
+  promptYesNo "Proceed?"
+
+  [ "$REPLY" = "n" ]
+'
+
+echo "Checking plain UI default selection..."
+printf '\n' | MACSETUP_UI=plain TERM="${TERM:-xterm}" bash -c '
+  source ./lib/macsetup/constants.sh
+  source ./lib/macsetup/helperFunctions.sh
+
+  promptYesNo "Proceed?"
+
+  [ "$REPLY" = "y" ]
+'
+
+echo "Checking plain UI EOF fallback..."
+MACSETUP_UI=plain TERM="${TERM:-xterm}" bash -c '
+  source ./lib/macsetup/constants.sh
+  source ./lib/macsetup/helperFunctions.sh
+
+  promptYesNo "Proceed?"
+
+  [ "$REPLY" = "n" ]
+' </dev/null
+
+echo "Checking arrow-key decoding on macOS Bash..."
+printf '\033[B' | TERM="${TERM:-xterm}" bash -c '
+  source ./lib/macsetup/constants.sh
+  source ./lib/macsetup/helperFunctions.sh
+
+  uiReadKey
+
+  [ "$MACSETUP_UI_KEY" = $'\''\033[B'\'' ]
+'
+
+echo "Checking interactive UI arrow selection..."
+printf '\033[B\n' | TERM="${TERM:-xterm}" bash -c '
+  source ./lib/macsetup/constants.sh
+  source ./lib/macsetup/helperFunctions.sh
+
+  output_file="$(mktemp)"
+  uiChooseInteractive "Choose Test Option:" 0 "First" "Second" >"$output_file"
+  rm -f "$output_file"
+
+  [ "$REPLY" = "2" ]
+  [ "$MACSETUP_UI_INDEX" = "1" ]
+  [ "$MACSETUP_UI_CHOICE" = "Second" ]
+'
+
+echo "Checking start.sh has no Bash select prompts..."
+if rg -n "^[[:space:]]*select[[:space:]]" start.sh sections lib; then
+  echo "Found Bash select prompt usage"
+  exit 1
+fi

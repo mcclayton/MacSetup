@@ -15,7 +15,7 @@ sandboxInstallWithProfile() {
   local profile="$1"
   local baseImage="$2"
   local imageTag="$3"
-  local containerName="macsetup-${profile}"
+  local containerName="macsetup-${profile}-$$"
 
   info "Setting up dockerized sandbox environment: ${profile}"
   info "Docker base image: ${baseImage}"
@@ -53,29 +53,18 @@ sandboxInstallWithProfile() {
 
 sandboxInstall() {
   if cmdExists docker; then
-    local sandboxPs3="$PS3"
-    PS3='   => Choose Sandbox Vim Profile: '
     local sandboxOptions=("Old Vim compatibility (Ubuntu 18.04 / Vim 8.0)" "Modern Vim + Coc (Node 22 / Vim 9)" "Back")
-    select sandboxOpt in "${sandboxOptions[@]}"
-    do
-      case $sandboxOpt in
-        "Old Vim compatibility (Ubuntu 18.04 / Vim 8.0)")
-          PS3="$sandboxPs3"
-          sandboxInstallWithProfile "vim-old" "ubuntu:18.04" "macsetup:vim-old"
-          break
-          ;;
-        "Modern Vim + Coc (Node 22 / Vim 9)")
-          PS3="$sandboxPs3"
-          sandboxInstallWithProfile "vim-modern" "node:22-bookworm" "macsetup:vim-modern"
-          break
-          ;;
-        "Back")
-          PS3="$sandboxPs3"
-          break
-          ;;
-        *) warn "Invalid option $REPLY";;
-      esac
-    done
+    chooseOption "Choose Sandbox Vim Profile:" "${sandboxOptions[@]}"
+    case "$MACSETUP_UI_CHOICE" in
+      "Old Vim compatibility (Ubuntu 18.04 / Vim 8.0)")
+        sandboxInstallWithProfile "vim-old" "ubuntu:18.04" "macsetup:vim-old"
+        ;;
+      "Modern Vim + Coc (Node 22 / Vim 9)")
+        sandboxInstallWithProfile "vim-modern" "node:22-bookworm" "macsetup:vim-modern"
+        ;;
+      "Back")
+        ;;
+    esac
   else
     fail "Failed to run in Sandbox mode. Docker cli is not installed."
   fi
@@ -87,22 +76,15 @@ function machineInstall() {
 }
 
 ### Main ###
-PS3='   => Choose Execution Environment: '
 options=("Sandbox (Docker)" "Current Machine" "Quit")
-select opt in "${options[@]}"
-do
-    case $opt in
-        "Sandbox (Docker)")
-            sandboxInstall
-            break
-            ;;
-        "Current Machine")
-            machineInstall
-            break
-            ;;
-        "Quit")
-            break
-            ;;
-        *) warn "Invalid option $REPLY";;
-    esac
-done
+chooseOption "Choose Execution Environment:" "${options[@]}"
+case "$MACSETUP_UI_CHOICE" in
+  "Sandbox (Docker)")
+    sandboxInstall
+    ;;
+  "Current Machine")
+    machineInstall
+    ;;
+  "Quit")
+    ;;
+esac

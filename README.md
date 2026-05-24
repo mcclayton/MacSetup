@@ -33,11 +33,15 @@ $ ./start.sh
 
 This will present the user with a choice to run the installer in one of two modes.
 ```
-1) Sandbox (Docker)
-2) Current Machine
-3) Quit
-    => Choose Execution Environment:
+   => Choose Execution Environment:
+    > Sandbox (Docker)
+      Current Machine
+      Quit
 ```
+
+Interactive terminals use Bash-native arrow-key menus. Non-interactive runs,
+including CI and piped Docker smoke tests, fall back to numeric prompts so the
+installer remains scriptable and portable.
 
 1. **Sandbox Environment**
       Installation/Setup changes are made in a dockerized sandbox environment and will not affect the current actual machine.
