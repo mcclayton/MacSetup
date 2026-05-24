@@ -56,6 +56,7 @@ function runSection {
       # Install bat
       installPackage bat "brew install bat"
       assertPackageInstallation bat "bat (Better 'cat' Command)"
+      configureBat
       # Install procs
       installPackage procs "brew install procs"
       assertPackageInstallation procs "procs (Better 'ps' Command)"

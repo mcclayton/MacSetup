@@ -54,6 +54,44 @@ configureOpenSSL() {
   [ -f ~/.zprofile ] && source ~/.zprofile
 }
 
+configureBat() {
+  info "Configuring bat"
+
+  if cmdExists bat; then
+    local bat_config_dir
+    if ! bat_config_dir="$(bat --config-dir)"; then
+      fail "Cannot configure bat. Failed to determine bat config directory"
+      return
+    fi
+
+    local bat_theme_dir="$bat_config_dir/themes"
+    local bat_theme_name="Catppuccin Macchiato.tmTheme"
+    local bat_theme_source="$MACSETUP_ASSETS_DIR/bat/themes/$bat_theme_name"
+    local bat_theme_destination="$bat_theme_dir/$bat_theme_name"
+
+    if [ ! -f "$bat_theme_source" ]; then
+      fail "Cannot configure bat. Theme asset not found: $bat_theme_source"
+      return
+    fi
+
+    mkdir -p "$bat_theme_dir"
+    if ! cp "$bat_theme_source" "$bat_theme_destination"; then
+      fail "Failed to copy bat theme: $bat_theme_name"
+      return
+    fi
+
+    assertFileExists "$bat_theme_destination" "bat theme installed: $bat_theme_name" "Failed to install bat theme: $bat_theme_name"
+
+    if bat cache --build; then
+      success "bat cache rebuilt"
+    else
+      fail "Failed to rebuild bat cache"
+    fi
+  else
+    fail "Cannot configure bat because it is not installed"
+  fi
+}
+
 #######################################
 # Application Configuration Functions #
 #######################################
