@@ -50,11 +50,31 @@ uiPadRight() {
 }
 
 uiSupportsRoundedBoxes() {
-  local charmap=""
-
   if [ "${MACSETUP_UI_ASCII:-}" = "true" ]; then
     return 1
   fi
+
+  if [ "${MACSETUP_UI_FORCE_ROUNDED:-}" = "true" ]; then
+    return 0
+  fi
+
+  if uiLocaleIsUtf8; then
+    return 0
+  fi
+
+  if uiTerminalUsuallySupportsUnicode; then
+    return 0
+  fi
+
+  if [ "$(uname -s 2>/dev/null)" = "Darwin" ]; then
+    return 0
+  fi
+
+  return 1
+}
+
+uiLocaleIsUtf8() {
+  local charmap=""
 
   case "${LC_ALL:-${LC_CTYPE:-${LANG:-}}}" in
     *UTF-8*|*utf-8*)
@@ -67,11 +87,25 @@ uiSupportsRoundedBoxes() {
     case "$charmap" in
       *UTF-8*|*utf-8*|UTF8|utf8)
         return 0
-        ;;
+      ;;
     esac
   fi
 
-  if [ "$(uname -s 2>/dev/null)" = "Darwin" ]; then
+  return 1
+}
+
+uiTerminalUsuallySupportsUnicode() {
+  case "${TERM_PROGRAM:-}" in
+    Apple_Terminal|iTerm.app|vscode|WezTerm|WarpTerminal|Ghostty)
+      return 0
+      ;;
+  esac
+
+  if [ -n "${KITTY_WINDOW_ID:-}" ] ||
+     [ -n "${WEZTERM_PANE:-}" ] ||
+     [ -n "${ALACRITTY_SOCKET:-}" ] ||
+     [ -n "${GHOSTTY_RESOURCES_DIR:-}" ] ||
+     [ -n "${WT_SESSION:-}" ]; then
     return 0
   fi
 
@@ -248,30 +282,32 @@ uiPrintBoxTop() {
   local fill_width=0
 
   if [ "$MACSETUP_UI_BOX_STYLE" = "ascii" ]; then
-    printf '%s' "$MACSETUP_UI_BOX_TL"
+    printf '%b%s' "$UI_BOX_COLOR" "$MACSETUP_UI_BOX_TL"
     uiRepeat "$MACSETUP_UI_BOX_H" "$((content_width + 2))"
-    printf '%s\n' "$MACSETUP_UI_BOX_TR"
-    uiPrintBoxLine "$title" "$content_width"
+    printf '%s%b\n' "$MACSETUP_UI_BOX_TR" "$RESET_COLOR"
+    uiPrintBoxLine "${UI_TITLE_COLOR}${title}${RESET_COLOR}" "$content_width"
     return
   fi
 
   title_width="$(uiVisibleLength "$title")"
   fill_width=$((content_width - title_width - 1))
 
-  printf '%s%s %s ' "$MACSETUP_UI_BOX_TL" "$MACSETUP_UI_BOX_H" "$title"
+  printf '%b%s%s ' "$UI_BOX_COLOR" "$MACSETUP_UI_BOX_TL" "$MACSETUP_UI_BOX_H"
+  printf '%b%s%b' "$UI_TITLE_COLOR" "$title" "$RESET_COLOR"
+  printf '%b ' "$UI_BOX_COLOR"
   if [ "$fill_width" -gt 0 ]; then
     uiRepeat "$MACSETUP_UI_BOX_H" "$fill_width"
   fi
-  printf '%s\n' "$MACSETUP_UI_BOX_TR"
+  printf '%s%b\n' "$MACSETUP_UI_BOX_TR" "$RESET_COLOR"
 }
 
 uiPrintBoxLine() {
   local content="$1"
   local content_width="$2"
 
-  printf '%s ' "$MACSETUP_UI_BOX_V"
+  printf '%b%s%b ' "$UI_BOX_COLOR" "$MACSETUP_UI_BOX_V" "$RESET_COLOR"
   uiPadRight "$content" "$content_width"
-  printf ' %s\n' "$MACSETUP_UI_BOX_V"
+  printf ' %b%s%b\n' "$UI_BOX_COLOR" "$MACSETUP_UI_BOX_V" "$RESET_COLOR"
 }
 
 uiPrintBoxFooterLine() {
@@ -283,11 +319,11 @@ uiPrintBoxFooterLine() {
   footer_width="$(uiVisibleLength "$footer")"
   padding=$((content_width - footer_width))
 
-  printf '%s ' "$MACSETUP_UI_BOX_V"
+  printf '%b%s%b ' "$UI_BOX_COLOR" "$MACSETUP_UI_BOX_V" "$RESET_COLOR"
   if [ "$padding" -gt 0 ]; then
     uiRepeat " " "$padding"
   fi
-  printf '%s %s\n' "$footer" "$MACSETUP_UI_BOX_V"
+  printf '%b%s%b %b%s%b\n' "$UI_FOOTER_COLOR" "$footer" "$RESET_COLOR" "$UI_BOX_COLOR" "$MACSETUP_UI_BOX_V" "$RESET_COLOR"
 }
 
 uiPrintBoxBottom() {
@@ -301,27 +337,27 @@ uiPrintBoxBottom() {
       uiPrintBoxFooterLine "$footer" "$content_width"
     fi
 
-    printf '%s' "$MACSETUP_UI_BOX_BL"
+    printf '%b%s' "$UI_BOX_COLOR" "$MACSETUP_UI_BOX_BL"
     uiRepeat "$MACSETUP_UI_BOX_H" "$((content_width + 2))"
-    printf '%s\n' "$MACSETUP_UI_BOX_BR"
+    printf '%s%b\n' "$MACSETUP_UI_BOX_BR" "$RESET_COLOR"
     return
   fi
 
   if [ -z "$footer" ]; then
-    printf '%s' "$MACSETUP_UI_BOX_BL"
+    printf '%b%s' "$UI_BOX_COLOR" "$MACSETUP_UI_BOX_BL"
     uiRepeat "$MACSETUP_UI_BOX_H" "$((content_width + 2))"
-    printf '%s\n' "$MACSETUP_UI_BOX_BR"
+    printf '%s%b\n' "$MACSETUP_UI_BOX_BR" "$RESET_COLOR"
     return
   fi
 
   footer_width="$(uiVisibleLength "$footer")"
-  fill_width=$((content_width - footer_width))
+  fill_width=$((content_width - footer_width - 1))
 
-  printf '%s%s %s ' "$MACSETUP_UI_BOX_BL" "$MACSETUP_UI_BOX_H" "$footer"
+  printf '%b%s' "$UI_BOX_COLOR" "$MACSETUP_UI_BOX_BL"
   if [ "$fill_width" -gt 0 ]; then
     uiRepeat "$MACSETUP_UI_BOX_H" "$fill_width"
   fi
-  printf '%s\n' "$MACSETUP_UI_BOX_BR"
+  printf ' %b%s%b%b %s%s%b\n' "$UI_FOOTER_COLOR" "$footer" "$RESET_COLOR" "$UI_BOX_COLOR" "$MACSETUP_UI_BOX_H" "$MACSETUP_UI_BOX_BR" "$RESET_COLOR"
 }
 
 uiRenderChoiceMenu() {
@@ -348,7 +384,7 @@ uiRenderChoiceMenu() {
 
   for option in "${options[@]}"; do
     if [ "$index" -eq "$selected_index" ]; then
-      option_line=" > ${GREEN}${option}${RESET_COLOR}"
+      option_line=" > ${UI_SELECTED_COLOR}${option}${RESET_COLOR}"
     else
       option_line="   ${option}"
     fi
@@ -366,9 +402,9 @@ uiPrintSelectedChoice() {
   title="$(uiMenuTitle "$prompt")"
 
   if [ "$title" != "$prompt" ]; then
-    printf '%b%s%b: %b%s%b\n' "$ORANGE" "$title" "$RESET_COLOR" "$GREEN" "$MACSETUP_UI_CHOICE" "$RESET_COLOR"
+    printf '%b%s%b: %b%s%b\n' "$ORANGE" "$title" "$RESET_COLOR" "$UI_SELECTED_COLOR" "$MACSETUP_UI_CHOICE" "$RESET_COLOR"
   else
-    printf '%s %b%s%b\n' "$prompt" "$GREEN" "$MACSETUP_UI_CHOICE" "$RESET_COLOR"
+    printf '%s %b%s%b\n' "$prompt" "$UI_SELECTED_COLOR" "$MACSETUP_UI_CHOICE" "$RESET_COLOR"
   fi
   echo
 }

@@ -16,6 +16,7 @@ sandboxInstallWithProfile() {
   local baseImage="$2"
   local imageTag="$3"
   local containerName="macsetup-${profile}-$$"
+  local forceRoundedUi=false
 
   info "Setting up dockerized sandbox environment: ${profile}"
   info "Docker base image: ${baseImage}"
@@ -35,10 +36,18 @@ sandboxInstallWithProfile() {
     dockerRunFlags=("-it")
   fi
 
+  if uiSupportsRoundedBoxes; then
+    forceRoundedUi=true
+  fi
+
   # Need to forward env vars so the sandbox can report its terminal/profile.
   if ! docker container run \
     --env TERM \
     --env TERM_PROGRAM \
+    --env LANG \
+    --env LC_ALL \
+    --env LC_CTYPE \
+    --env MACSETUP_UI_FORCE_ROUNDED="$forceRoundedUi" \
     --env MACSETUP_SANDBOX_PROFILE="$profile" \
     --name "$containerName" \
     --rm \

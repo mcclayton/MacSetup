@@ -85,6 +85,36 @@ MACSETUP_UI_ASCII=true TERM="${TERM:-xterm}" bash -c '
   ! printf "%s" "$output" | grep -q "=>"
 '
 
+echo "Checking forced rounded UI rendering..."
+MACSETUP_UI_FORCE_ROUNDED=true LANG= LC_ALL= LC_CTYPE= TERM="${TERM:-xterm}" bash -c '
+  source ./lib/macsetup/constants.sh
+  source ./lib/macsetup/helperFunctions.sh
+
+  uiSetBoxChars
+
+  [ "$MACSETUP_UI_BOX_STYLE" = "rounded" ]
+'
+
+echo "Checking terminal-based Unicode detection..."
+TERM_PROGRAM=Apple_Terminal LANG= LC_ALL= LC_CTYPE= TERM="${TERM:-xterm}" bash -c '
+  source ./lib/macsetup/constants.sh
+  source ./lib/macsetup/helperFunctions.sh
+
+  uiSetBoxChars
+
+  [ "$MACSETUP_UI_BOX_STYLE" = "rounded" ]
+'
+
+echo "Checking ASCII UI override..."
+MACSETUP_UI_FORCE_ROUNDED=true MACSETUP_UI_ASCII=true LANG=en_US.UTF-8 TERM="${TERM:-xterm}" bash -c '
+  source ./lib/macsetup/constants.sh
+  source ./lib/macsetup/helperFunctions.sh
+
+  uiSetBoxChars
+
+  [ "$MACSETUP_UI_BOX_STYLE" = "ascii" ]
+'
+
 echo "Checking start.sh has no Bash select prompts..."
 if rg -n "^[[:space:]]*select[[:space:]]" start.sh sections lib; then
   echo "Found Bash select prompt usage"
