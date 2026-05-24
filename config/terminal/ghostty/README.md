@@ -2,9 +2,10 @@
 
 This folder contains the Ghostty terminal configuration.
 
-## Installed By
+## Wiring Status
 
-`configureGhostty` in `installation/appConfigUtil.sh`.
+This config is kept as machine configuration, but the current installer does not
+yet apply it.
 
 ## Files
 

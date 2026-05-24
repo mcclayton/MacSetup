@@ -4,7 +4,7 @@ This folder contains configuration assets for `bat`, the syntax-highlighting fil
 
 ## Installed By
 
-`configureBat` in `installation/appConfigUtil.sh`.
+`configureBat` in `lib/macsetup/appConfigUtil.sh`.
 
 ## Files
 

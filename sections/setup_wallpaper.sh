@@ -11,21 +11,21 @@ function runSection {
       do
         case $opt in
           "Sushi Keyboard Key")
-            cp "$(scriptDirectory)/wallpapers/sushi_key.png" ~/wallpaper.png
+            cp "$MACSETUP_ASSETS_DIR/wallpapers/sushi_key.png" ~/wallpaper.png
             assertFileExists ~/wallpaper.png "Copied over wallpaper.png asset" "Failed to copy over wallpaper.png asset"
             open ~/
             manualAction "Right click wallpaper.png and select 'Set Desktop Picture'"
             break
             ;;
           "Samurai Cat")
-            cp "$(scriptDirectory)/wallpapers/samurai_cat.png" ~/wallpaper.png
+            cp "$MACSETUP_ASSETS_DIR/wallpapers/samurai_cat.png" ~/wallpaper.png
             assertFileExists ~/wallpaper.png "Copied over wallpaper.png asset" "Failed to copy over wallpaper.png asset"
             open ~/
             manualAction "Right click wallpaper.png and select 'Set Desktop Picture'"
             break
             ;;
           "Heroku")
-            cp "$(scriptDirectory)/wallpapers/heroku.png" ~/wallpaper.png
+            cp "$MACSETUP_ASSETS_DIR/wallpapers/heroku.png" ~/wallpaper.png
             assertFileExists ~/wallpaper.png "Copied over wallpaper.png asset" "Failed to copy over wallpaper.png asset"
             open ~/
             manualAction "Right click wallpaper.png and select 'Set Desktop Picture'"

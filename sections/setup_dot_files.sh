@@ -27,7 +27,7 @@ promptNewSection "SETTING UP TOP-LEVEL DOT FILES"
 
     # Set Dot Files
     for dotFileName in "${topLevelDotFiles[@]}"; do
-      cp "$(scriptDirectory)"/Mac_Dot_Files/"$dotFileName".sh ~/."$dotFileName"
+      cp "$MACSETUP_CONFIG_DIR"/dotfiles/mac/"$dotFileName".sh ~/."$dotFileName"
       assertFileExists ~/."$dotFileName" "~/.$dotFileName set" "Failed to set ~/.$dotFileName"
     done
   else

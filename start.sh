@@ -7,9 +7,9 @@ function scriptDirectory {
 }
 
 # Bring in constants
-source "$(scriptDirectory)/installation/constants.sh"
+source "$(scriptDirectory)/lib/macsetup/constants.sh"
 # Bring in the helper functions
-source "$(scriptDirectory)/installation/helperFunctions.sh"
+source "$(scriptDirectory)/lib/macsetup/helperFunctions.sh"
 
 sandboxInstallWithProfile() {
   local profile="$1"

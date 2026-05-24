@@ -26,7 +26,7 @@ function runSection {
     info "Backing up ~/.tool-versions"
     backupFile ~/.tool-versions tool-versions
 
-    cp "$(scriptDirectory)"/.tool-versions ~/.tool-versions
+    cp "$MACSETUP_CONFIG_DIR"/asdf/tool-versions ~/.tool-versions
     assertFileExists ~/.tool-versions "~/.tool-versions set" "Failed to set ~/.tool-versions"
 
     assertPackageInstallation asdf "asdf"

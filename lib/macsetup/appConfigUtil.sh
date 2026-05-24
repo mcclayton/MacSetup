@@ -54,6 +54,44 @@ configureOpenSSL() {
   [ -f ~/.zprofile ] && source ~/.zprofile
 }
 
+configureBat() {
+  info "Configuring bat"
+
+  if cmdExists bat; then
+    local bat_config_dir
+    if ! bat_config_dir="$(bat --config-dir)"; then
+      fail "Cannot configure bat. Failed to determine bat config directory"
+      return
+    fi
+
+    local bat_theme_dir="$bat_config_dir/themes"
+    local bat_theme_name="Catppuccin Macchiato.tmTheme"
+    local bat_theme_source="$MACSETUP_ASSETS_DIR/bat/themes/$bat_theme_name"
+    local bat_theme_destination="$bat_theme_dir/$bat_theme_name"
+
+    if [ ! -f "$bat_theme_source" ]; then
+      fail "Cannot configure bat. Theme asset not found: $bat_theme_source"
+      return
+    fi
+
+    mkdir -p "$bat_theme_dir"
+    if ! cp "$bat_theme_source" "$bat_theme_destination"; then
+      fail "Failed to copy bat theme: $bat_theme_name"
+      return
+    fi
+
+    assertFileExists "$bat_theme_destination" "bat theme installed: $bat_theme_name" "Failed to install bat theme: $bat_theme_name"
+
+    if bat cache --build; then
+      success "bat cache rebuilt"
+    else
+      fail "Failed to rebuild bat cache"
+    fi
+  else
+    fail "Cannot configure bat because it is not installed"
+  fi
+}
+
 #######################################
 # Application Configuration Functions #
 #######################################
@@ -69,7 +107,7 @@ configureVSCode() {
     info "Installing VSCode Packages"
     if cmdExists code; then
       # For every non-blank line
-      for extension in `grep -v "^$" "$(scriptDirectory)/VSCode/extensions.list"`; do
+      for extension in `grep -v "^$" "$MACSETUP_CONFIG_DIR/vscode/default/extensions.list"`; do
         code --install-extension $extension
       done
 
@@ -81,7 +119,7 @@ configureVSCode() {
       info 'Setting settings.json file'
       SETTINGS_PATH=~/Library/'Application Support'/Code/User/settings.json
       if [ -f "$SETTINGS_PATH" ]; then
-        cp "$(scriptDirectory)/VSCode/settings.json" "$SETTINGS_PATH"
+        cp "$MACSETUP_CONFIG_DIR/vscode/default/settings.json" "$SETTINGS_PATH"
         assertFileExists "$SETTINGS_PATH" "Successfully updated settings.json file" "Could not update settings.json file"
       else
         warn "Could not automatically copy over settings.json"
@@ -103,7 +141,7 @@ configureRectangle() {
     # Preserve white space by changing the Internal Field Separator
     IFS='%'
     mkdir -p ~/Library/'Application Support'/Rectangle
-    cp "$(scriptDirectory)/Rectangle/com.knollsoft.Rectangle.plist" ~/Library/Preferences/com.knollsoft.Rectangle.plist
+    cp "$MACSETUP_CONFIG_DIR/apps/rectangle/com.knollsoft.Rectangle.plist" ~/Library/Preferences/com.knollsoft.Rectangle.plist
     assertFileExists ~/Library/Preferences/com.knollsoft.Rectangle.plist "Rectangle Shortcuts set" "Failed to set Rectangle Shortcuts"
     # Reset the Internal Field Separator
     unset IFS
@@ -122,7 +160,7 @@ configureITerm() {
     defaults delete com.googlecode.iterm2
     # Copying over new configurations file
     info "Setting iTerm configurations file in ~/Library/Preferences/"
-    cp "$(scriptDirectory)/iTerm2/com.googlecode.iterm2.plist" ~/Library/Preferences/com.googlecode.iterm2.plist
+    cp "$MACSETUP_CONFIG_DIR/terminal/iterm2/com.googlecode.iterm2.plist" ~/Library/Preferences/com.googlecode.iterm2.plist
     # Reading in new config file
     info "Reading in new configurations file"
     `defaults read -app iTerm` 2>/dev/null
