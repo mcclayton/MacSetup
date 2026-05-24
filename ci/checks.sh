@@ -12,7 +12,7 @@ no_prompts() {
 }
 
 echo "Checking shell syntax..."
-find start.sh install.sh clean.sh diff.sh sections lib config assets ci -name '*.sh' -type f -print0 \
+find start.sh install.sh clean.sh sections lib config assets ci tools -name '*.sh' -type f -print0 \
   | xargs -0 bash -n
 
 echo "Checking start.sh quit path..."
@@ -34,6 +34,9 @@ echo "Checking focused package configuration behavior..."
 
 echo "Checking idempotent file edit helpers..."
 ./ci/test_file_edits.sh
+
+echo "Checking installer helpers..."
+./ci/test_installers.sh
 
 echo "Checking section registry and prompt wrapper..."
 ./ci/test_section_registry.sh

@@ -76,3 +76,8 @@ Changes should preserve the following goals.
 16. **Discoverable logs and backups**
     Install state should be inspectable after the fact through
     `~/.mac_setup/log` and `~/.mac_setup/backups`.
+
+17. **Complete pattern adoption**
+    When a new framework pattern is introduced, existing code should be migrated
+    to that pattern before the work is considered complete. Avoid leaving mixed
+    old/new approaches unless there is an explicit compatibility reason.
