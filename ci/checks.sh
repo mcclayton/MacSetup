@@ -31,3 +31,6 @@ no_prompts | env HOME="$tmp_home" TERM="${TERM:-xterm}" ./install.sh
 
 echo "Checking focused package configuration behavior..."
 ./ci/test_configure_bat.sh
+
+echo "Checking idempotent file edit helpers..."
+./ci/test_file_edits.sh
