@@ -21,3 +21,6 @@
 Network Trash Folder
 Temporary Items
 .apdisk
+
+### Local agent artifacts ###
+.codex-backups/
