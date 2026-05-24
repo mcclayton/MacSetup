@@ -4,7 +4,7 @@ This folder contains the Rectangle window manager preferences.
 
 ## Installed By
 
-`configureRectangle` in `installation/appConfigUtil.sh`.
+`configureRectangle` in `lib/macsetup/appConfigUtil.sh`.
 
 ## Files
 

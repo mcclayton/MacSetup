@@ -23,7 +23,7 @@ function runSection {
             break
             ;;
           "Initials")
-            cp "$(scriptDirectory)/splash_screen/mcc_logo.png" ~/mcc_logo.png
+            cp "$MACSETUP_ASSETS_DIR/splash/mcc_logo.png" ~/mcc_logo.png
             assertFileExists ~/mcc_logo.png "Copied over mcc_logo.png asset" "Failed to copy over mcc_logo.png asset"
             COMMAND_CHOICE="mcc"
             break

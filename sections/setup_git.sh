@@ -10,7 +10,7 @@ function runSection {
       backupFile ~/.gitconfig gitconfig
 
       # Set .gitconfig
-      cp "$(scriptDirectory)/gitconfig.txt" ~/.gitconfig
+      cp "$MACSETUP_CONFIG_DIR/git/gitconfig" ~/.gitconfig
       assertFileExists ~/.gitconfig "~/.gitconfig set" "Failed to set ~/.gitconfig"
 
       # Backup global .gitignore
@@ -19,7 +19,7 @@ function runSection {
 
       # Set Global Gitignore
       info "Setting global .gitignore"
-      cp "$(scriptDirectory)"/Mac_Dot_Files/gitignore.sh ~/.gitignore
+      cp "$MACSETUP_CONFIG_DIR"/dotfiles/mac/gitignore.sh ~/.gitignore
       assertFileExists ~/.gitignore "~/.gitignore set" "Failed to set ~/.gitignore"
 
       # Assign global gitignore in global gitconfig

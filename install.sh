@@ -7,11 +7,11 @@ function scriptDirectory {
 }
 
 # Bring in constants
-source "$(scriptDirectory)/installation/constants.sh"
+source "$(scriptDirectory)/lib/macsetup/constants.sh"
 # Bring in the helper functions
-source "$(scriptDirectory)/installation/helperFunctions.sh"
+source "$(scriptDirectory)/lib/macsetup/helperFunctions.sh"
 # Bring in the application configuration util
-source "$(scriptDirectory)/installation/appConfigUtil.sh"
+source "$(scriptDirectory)/lib/macsetup/appConfigUtil.sh"
 
 # Main Function
 function main {

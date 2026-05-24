@@ -7,9 +7,9 @@ function scriptDirectory {
 }
 
 # Bring in constants
-source "$(scriptDirectory)/installation/constants.sh"
+source "$(scriptDirectory)/lib/macsetup/constants.sh"
 # Bring in the helper functions
-source "$(scriptDirectory)/installation/helperFunctions.sh"
+source "$MACSETUP_LIB_DIR/helperFunctions.sh"
 
 info "Pruning docker resources with label: 'macsetup'..."
 docker system prune --filter "label=macsetup" --force

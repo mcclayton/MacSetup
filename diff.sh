@@ -7,11 +7,11 @@ function scriptDirectory {
 }
 
 # Bring in constants
-source "$(scriptDirectory)/installation/constants.sh"
+source "$(scriptDirectory)/lib/macsetup/constants.sh"
 # Bring in the helper functions
-source "$(scriptDirectory)/installation/helperFunctions.sh"
+source "$(scriptDirectory)/lib/macsetup/helperFunctions.sh"
 # Bring in the application configuration util
-source "$(scriptDirectory)/installation/appConfigUtil.sh"
+source "$(scriptDirectory)/lib/macsetup/appConfigUtil.sh"
 
 function diff {
   if cmdExists delta; then
@@ -50,7 +50,7 @@ find_dot_file_changes() {
 
   for dotFileName in "${filesToDiff[@]}"; do
     LOCAL_FILE=~/."$dotFileName"
-    SETUP_FILE="$(scriptDirectory)"/Mac_Dot_Files/"$dotFileName".sh
+    SETUP_FILE="$MACSETUP_CONFIG_DIR"/dotfiles/mac/"$dotFileName".sh
     diff $SETUP_FILE $LOCAL_FILE
   done
 }

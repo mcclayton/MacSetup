@@ -2,9 +2,10 @@
 
 This folder contains configuration assets for `bat`, the syntax-highlighting file previewer used by fzf.
 
-## Installed By
+## Wiring Status
 
-`configureBat` in `installation/appConfigUtil.sh`.
+This theme is kept as an installable asset, but the current installer does not
+yet apply it.
 
 ## Files
 

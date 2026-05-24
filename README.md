@@ -13,7 +13,7 @@
 
 ## About
 
-This repository contains an [install script](https://github.com/mcclayton/DotFiles/blob/master/install.sh) which, when run, will completely
+This repository contains an [install script](./install.sh) which, when run, will completely
 set up a Macintosh machine configured to [Michael Clayton](https://github.com/mcclayton)'s preferred and opinionated development environment.
 It will configure and install dot files, applications, packages, et cetera.
 
@@ -25,7 +25,7 @@ This script is designed to be safe and can be run multiple times.
 
 ## Usage
 
-Simply run the [install script](https://github.com/mcclayton/DotFiles/blob/master/install.sh) via the command:
+Simply run the [install script](./install.sh) via the command:
 
 ```bash
 $ ./start.sh
@@ -45,6 +45,13 @@ This will present the user with a choice to run the installer in one of two mode
 2. **Current Machine**
       Installation/Setup changes made in this environment will modify and affect the current actual machine.
 
+## Repository Layout
+
+- `lib/macsetup/` contains the installer framework: shared constants, helpers, logging, prompts, backups, and application configuration helpers.
+- `sections/` contains the ordered installation sections that call into the framework.
+- `config/` contains desired machine configuration such as dotfiles, Git config, VSCode settings, terminal preferences, app preferences, and asdf tool versions.
+- `assets/` contains copied/static payloads such as fonts, wallpapers, Vim runtime files, the Aerial screensaver, splash images, and demo media.
+
 ## Demo
 
-![Demo](./public/demo.gif)
+![Demo](./assets/public/demo.gif)
