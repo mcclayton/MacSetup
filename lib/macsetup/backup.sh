@@ -71,12 +71,74 @@ addLineToFiles() {
   local text="$1"
   local files_arr=("${@:2}")
   local file=""
+  local line=""
+
+  line="$(macsetupManagedLine "$text")"
 
   for file in "${files_arr[@]}"; do
-    if [[ $text =~ ^\# ]]; then
-      echo "$text (Added by MacSetup)" >> "$file"
-    else
-      echo "$text" >> "$file"
-    fi
+    ensureLineInFile "$line" "$file"
   done
+}
+
+macsetupManagedLine() {
+  local text="$1"
+
+  if [[ $text =~ ^\# ]]; then
+    echo "$text (Added by MacSetup)"
+  else
+    echo "$text"
+  fi
+}
+
+ensureLineInFile() {
+  local line="$1"
+  local file="$2"
+
+  touch "$file"
+
+  if [ -z "$line" ]; then
+    return 0
+  fi
+
+  if grep -Fqx "$line" "$file"; then
+    return 0
+  fi
+
+  echo "$line" >> "$file"
+}
+
+removeManagedBlock() {
+  local block_name="$1"
+  local file="$2"
+  local tmp_file=""
+  local start_marker="# >>> MacSetup: $block_name"
+  local end_marker="# <<< MacSetup: $block_name"
+
+  touch "$file"
+  tmp_file="$(mktemp)"
+
+  awk -v start="$start_marker" -v end="$end_marker" '
+    $0 == start { skipping = 1; next }
+    $0 == end { skipping = 0; next }
+    !skipping { print }
+  ' "$file" > "$tmp_file"
+
+  mv "$tmp_file" "$file"
+}
+
+ensureManagedBlock() {
+  local block_name="$1"
+  local file="$2"
+  shift 2
+  local line=""
+
+  removeManagedBlock "$block_name" "$file"
+
+  {
+    echo "# >>> MacSetup: $block_name"
+    for line in "$@"; do
+      echo "$line"
+    done
+    echo "# <<< MacSetup: $block_name"
+  } >> "$file"
 }
