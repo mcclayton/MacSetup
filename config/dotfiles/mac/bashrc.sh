@@ -5,10 +5,12 @@ source ~/.splash_screens
 # This file is processed on each interactive invocation of bash
 
 # Custom binding Overrides to use Ctrl+WASD to move around the terminal line
-bind '"\C-a": backward-word'
-bind '"\C-d": forward-word' # Note Ctrl+D is EOF, so this is a bit of a misnomer to override
-bind '"\C-s": beginning-of-line'
-bind '"\C-w": end-of-line'
+if [ -n "${BASH_VERSION:-}" ]; then
+  bind '"\C-a": backward-word'
+  bind '"\C-d": forward-word' # Note Ctrl+D is EOF, so this is a bit of a misnomer to override
+  bind '"\C-s": beginning-of-line'
+  bind '"\C-w": end-of-line'
+fi
 
 # Avoid problems with scp -- don't process the rest of the file if non-interactive
 [[ $- != *i* ]] && return
@@ -110,11 +112,29 @@ if [[ $(echo $BASH_VERSION) ]]; then
   fi
 fi
 
+splashClearScreen() {
+  if command -v clear >/dev/null 2>&1; then
+    if clear 2>/dev/null; then
+      return
+    fi
+
+    case "${TERM:-}" in
+      xterm-ghostty|ghostty)
+        if TERM=xterm-256color clear 2>/dev/null; then
+          return
+        fi
+        ;;
+    esac
+  fi
+
+  printf '\033[H\033[2J'
+}
+
 splash_screen() {
-  clear
+  splashClearScreen
   local SPLASH_COMMAND=
-  if type $SPLASH_COMMAND >/dev/null; then
-    $SPLASH_COMMAND
+  if [ -n "$SPLASH_COMMAND" ] && type "$SPLASH_COMMAND" >/dev/null 2>&1; then
+    "$SPLASH_COMMAND"
   fi
 }
 

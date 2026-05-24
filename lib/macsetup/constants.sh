@@ -5,17 +5,35 @@
 ################################
 
 # FONT COLORS
-RED=$(tput setaf 9)
-ORANGE=$(tput setaf 172)
-GREEN=$(tput setaf 2)
-BLUE=$(tput setaf 12)
-YELLOW=$(tput setaf 11)
-GRAY=$(tput setaf 8)
-LIGHT_GRAY=$(tput setaf 7)
+macsetupTput() {
+  local term_name="${TERM:-dumb}"
+
+  if ! command -v tput >/dev/null 2>&1 || [ "$term_name" = "dumb" ]; then
+    return 0
+  fi
+
+  if tput "$@" 2>/dev/null; then
+    return 0
+  fi
+
+  case "$term_name" in
+    xterm-ghostty|ghostty)
+      TERM=xterm-256color tput "$@" 2>/dev/null || true
+      ;;
+  esac
+}
+
+RED=$(macsetupTput setaf 9)
+ORANGE=$(macsetupTput setaf 172)
+GREEN=$(macsetupTput setaf 2)
+BLUE=$(macsetupTput setaf 12)
+YELLOW=$(macsetupTput setaf 11)
+GRAY=$(macsetupTput setaf 8)
+LIGHT_GRAY=$(macsetupTput setaf 7)
 HEADER_BLUE=$'\033[38;2;194;203;237m'
-BOLD=$(tput bold)
-DIM=$(tput dim)
-RESET_COLOR=$(tput sgr0)
+BOLD=$(macsetupTput bold)
+DIM=$(macsetupTput dim)
+RESET_COLOR=$(macsetupTput sgr0)
 
 UI_BOX_COLOR="${DIM}${LIGHT_GRAY}"
 UI_TITLE_COLOR="${BOLD}${HEADER_BLUE}"

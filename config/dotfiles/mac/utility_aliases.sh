@@ -40,7 +40,7 @@ termColors() {
 
 # Returns whether or not a command exists
 cmdExists() {
-  if hash $1 2>/dev/null; then
+  if [ "$#" -gt 0 ] && hash "$1" 2>/dev/null; then
     true
   else
     false
@@ -66,11 +66,13 @@ hlogs() {
 
 # Display text in rainbow if lolcat installed, else regular text
 rainbowtext() {
-  TEXT=$1 && shift
+  local TEXT="${1:-}"
+  [ "$#" -gt 0 ] && shift
+
   if cmdExists lolcat; then
-    printf "$TEXT" | lolcat "$@"
+    printf '%s' "$TEXT" | lolcat "$@"
   else
-    printf "$TEXT"
+    printf '%s' "$TEXT"
   fi
 }
 
