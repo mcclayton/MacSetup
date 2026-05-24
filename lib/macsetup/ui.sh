@@ -18,6 +18,18 @@ uiVisibleLength() {
   local esc=$'\033'
 
   text="$(printf '%s' "$text" | sed "s/${esc}(B//g; s/${esc}\\[[0-9;]*[[:alpha:]]//g")"
+
+  # Bash counts bytes instead of characters when the locale is not UTF-8. The
+  # TUI still uses these glyphs in known Unicode-capable terminals, so normalize
+  # framework-owned glyphs to single-byte placeholders before measuring.
+  text="${text//╭/x}"
+  text="${text//╮/x}"
+  text="${text//╰/x}"
+  text="${text//╯/x}"
+  text="${text//─/x}"
+  text="${text//│/x}"
+  text="${text//▶/x}"
+
   echo "${#text}"
 }
 
@@ -266,12 +278,13 @@ uiMenuLineCount() {
     count=$((count + 2))
   fi
 
+  if [ -n "${MACSETUP_UI_FOOTER:-}" ]; then
+    count=$((count + 1))
+  fi
+
   uiSetBoxChars
   if [ "$MACSETUP_UI_BOX_STYLE" = "ascii" ]; then
     count=$((count + 1))
-    if [ -n "${MACSETUP_UI_FOOTER:-}" ]; then
-      count=$((count + 1))
-    fi
   fi
 
   echo "$count"
@@ -331,8 +344,6 @@ uiPrintBoxFooterLine() {
 uiPrintBoxBottom() {
   local content_width="$1"
   local footer="${MACSETUP_UI_FOOTER:-}"
-  local footer_width=0
-  local fill_width=0
 
   if [ "$MACSETUP_UI_BOX_STYLE" = "ascii" ]; then
     if [ -n "$footer" ]; then
@@ -345,21 +356,13 @@ uiPrintBoxBottom() {
     return
   fi
 
-  if [ -z "$footer" ]; then
-    printf '%b%s' "$UI_BOX_COLOR" "$MACSETUP_UI_BOX_BL"
-    uiRepeat "$MACSETUP_UI_BOX_H" "$((content_width + 2))"
-    printf '%s%b\n' "$MACSETUP_UI_BOX_BR" "$RESET_COLOR"
-    return
+  if [ -n "$footer" ]; then
+    uiPrintBoxFooterLine "$footer" "$content_width"
   fi
-
-  footer_width="$(uiVisibleLength "$footer")"
-  fill_width=$((content_width - footer_width - 1))
 
   printf '%b%s' "$UI_BOX_COLOR" "$MACSETUP_UI_BOX_BL"
-  if [ "$fill_width" -gt 0 ]; then
-    uiRepeat "$MACSETUP_UI_BOX_H" "$fill_width"
-  fi
-  printf ' %b%s%b%b %s%s%b\n' "$UI_FOOTER_COLOR" "$footer" "$RESET_COLOR" "$UI_BOX_COLOR" "$MACSETUP_UI_BOX_H" "$MACSETUP_UI_BOX_BR" "$RESET_COLOR"
+  uiRepeat "$MACSETUP_UI_BOX_H" "$((content_width + 2))"
+  printf '%s%b\n' "$MACSETUP_UI_BOX_BR" "$RESET_COLOR"
 }
 
 uiRenderChoiceMenu() {

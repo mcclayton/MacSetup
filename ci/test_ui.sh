@@ -95,6 +95,35 @@ MACSETUP_UI_ASCII=true TERM="${TERM:-xterm}" bash -c '
   ! printf "%s" "$output" | grep -q "=>"
 '
 
+echo "Checking rounded section footer preserves border..."
+MACSETUP_UI_FORCE_ROUNDED=true LANG= LC_ALL= LC_CTYPE= TERM="${TERM:-xterm}" bash -c '
+  source ./lib/macsetup/constants.sh
+  source ./lib/macsetup/helperFunctions.sh
+
+  MACSETUP_UI_TITLE="ASDF Version Manager"
+  MACSETUP_UI_FOOTER="Section 12/19"
+  output="$(uiRenderChoiceMenu "Proceed with section?" 0 "No" "Yes")"
+  expected_width=""
+  line_count=0
+  bottom_line=""
+
+  while IFS= read -r line; do
+    width="$(uiVisibleLength "$line")"
+    if [ -z "$expected_width" ]; then
+      expected_width="$width"
+    fi
+    [ "$width" = "$expected_width" ]
+    bottom_line="$line"
+    line_count=$((line_count + 1))
+  done <<< "$output"
+
+  [ "$line_count" -eq 7 ]
+  printf "%s" "$output" | grep -q "Section 12/19"
+  printf "%s" "$bottom_line" | grep -q "╰"
+  printf "%s" "$bottom_line" | grep -q "╯"
+  ! printf "%s" "$bottom_line" | grep -q "Section"
+'
+
 echo "Checking forced rounded UI rendering..."
 MACSETUP_UI_FORCE_ROUNDED=true LANG= LC_ALL= LC_CTYPE= TERM="${TERM:-xterm}" bash -c '
   source ./lib/macsetup/constants.sh
