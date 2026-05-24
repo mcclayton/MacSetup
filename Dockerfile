@@ -38,11 +38,11 @@ RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
 
 ADD install.sh        $APP_HOME/install.sh
-ADD diff.sh           $APP_HOME/diff.sh
 ADD sections          $APP_HOME/sections
 ADD lib               $APP_HOME/lib
 ADD config            $APP_HOME/config
 ADD assets            $APP_HOME/assets
+ADD tools             $APP_HOME/tools
 
 # Create a user 'sandbox_user' to test running outside of root
 ENV NEW_USER sandbox_user

@@ -6,29 +6,17 @@ function runSection {
 }
 
 setupDotFiles() {
-  topLevelDotFiles=(
-    "bashrc"
-    "bash_profile"
-    "profile"
-    "zshrc"
-    "zprofile"
-    "utility_aliases"
-    "config_vars"
-    "splash_screens"
-    "tmux.conf"
-  )
-
   info "Backing up top-level dot files"
 
   # Backup Dot Files
-  for dotFileName in "${topLevelDotFiles[@]}"; do
+  for dotFileName in "${MACSETUP_MANAGED_TOP_LEVEL_DOTFILES[@]}"; do
     backupFile ~/."$dotFileName" "$dotFileName"
   done
 
   info "Setting top-level dot files"
 
   # Set Dot Files
-  for dotFileName in "${topLevelDotFiles[@]}"; do
+  for dotFileName in "${MACSETUP_MANAGED_TOP_LEVEL_DOTFILES[@]}"; do
     cp "$MACSETUP_CONFIG_DIR"/dotfiles/mac/"$dotFileName".sh ~/."$dotFileName"
     assertFileExists ~/."$dotFileName" "~/.$dotFileName set" "Failed to set ~/.$dotFileName"
   done

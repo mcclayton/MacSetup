@@ -56,6 +56,19 @@ installer remains scriptable and portable.
 - `sections/` contains the ordered installation sections that call into the framework.
 - `config/` contains desired machine configuration such as dotfiles, Git config, VSCode settings, terminal preferences, app preferences, and asdf tool versions.
 - `assets/` contains copied/static payloads such as fonts, wallpapers, Vim runtime files, the Aerial screensaver, splash images, and demo media.
+- `tools/` contains read-only utility scripts for inspecting local machine state against repo-managed configuration.
+
+## Diagnostics
+
+To compare the current machine's managed top-level dotfiles against the repo
+configuration, run:
+
+```bash
+$ ./tools/diff-dotfiles.sh
+```
+
+The diff tool reports missing live dotfiles and exits non-zero when it detects
+config drift.
 
 ## Demo
 

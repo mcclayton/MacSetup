@@ -15,6 +15,10 @@ desired machine state it applies.
   helper modules.
 - `logging.sh`, `prompts.sh`, `backup.sh`, `assertions.sh`, `platform.sh`, and
   `installers.sh` own shared framework responsibilities.
+- `dotfiles.sh` owns the managed top-level dotfile inventory shared by install
+  sections and diagnostic tools.
+- `configDiff.sh` owns reusable read-only comparison helpers for detecting
+  drift between repo-managed config and current-machine files.
 - `sectionRegistry.sh` owns the ordered section list and section metadata.
 - `appConfigUtil.sh` owns app-specific configuration functions used by install
   sections.
@@ -30,6 +34,15 @@ and is sourced by `install.sh` in a fixed order.
 Sections should stay focused on orchestration: prompt for the step, call shared
 helpers, copy config from `config/`, copy static payloads from `assets/`, and
 verify the result.
+
+## Tools
+
+`tools/` contains utility scripts for inspecting or comparing local machine
+state. These scripts should be read-only by default and should not be part of
+the primary installation path.
+
+`tools/diff-dotfiles.sh` compares the repo-managed top-level dotfiles against
+the current user's home directory and reports missing files or content drift.
 
 ## Configuration
 
