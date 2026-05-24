@@ -19,7 +19,6 @@ jobs:
     working_directory: ~/MacSetup
     steps:
       - setup_remote_docker:
-          version: 17.06.1-ce
           docker_layer_caching: true
       - checkout
       - run: docker build -t macsetup .
