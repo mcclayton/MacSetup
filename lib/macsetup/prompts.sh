@@ -109,6 +109,19 @@ promptNewSection() {
   unset MACSETUP_UI_FOOTER
 }
 
+runPromptedSection() {
+  local title="$1"
+  local section_function="$2"
+
+  promptNewSection "$title"
+
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    "$section_function"
+  else
+    info "Skipping..."
+  fi
+}
+
 manualAction() {
   echo -e "[MANUAL ACTION REQUIRED]: $1"
   read -r -p "   => Press Enter To Continue:"

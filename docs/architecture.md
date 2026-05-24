@@ -15,6 +15,7 @@ desired machine state it applies.
   helper modules.
 - `logging.sh`, `prompts.sh`, `backup.sh`, `assertions.sh`, `platform.sh`, and
   `installers.sh` own shared framework responsibilities.
+- `sectionRegistry.sh` owns the ordered section list and section metadata.
 - `appConfigUtil.sh` owns app-specific configuration functions used by install
   sections.
 

@@ -2,17 +2,15 @@
 
 # Set up screensavers
 function runSection {
-  promptNewSection "SETTING UP SCREENSAVERS"
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    if isMacOs; then
-      info "Opening Aerial.saver"
-      open "$MACSETUP_ASSETS_DIR/screensavers/Aerial.saver"
-      manualAction "Follow MacOSX prompts to install Aerial.saver"
-    else
-      warn "This is a MacOS specific step, skipping due to invalid OS..."
-    fi
+  runPromptedSection "SETTING UP SCREENSAVERS" setupScreensavers
+}
+
+setupScreensavers() {
+  if isMacOs; then
+    info "Opening Aerial.saver"
+    open "$MACSETUP_ASSETS_DIR/screensavers/Aerial.saver"
+    manualAction "Follow MacOSX prompts to install Aerial.saver"
   else
-    # Skip this installation section
-    info "Skipping..."
+    warn "This is a MacOS specific step, skipping due to invalid OS..."
   fi
 }
