@@ -25,32 +25,11 @@ function main {
   ensureNotRoot
 
   # Execute each section's installation/configuration/setup
-  sections=(
-    "install_xcode_and_git"
-    "setup_git"
-    "setup_fonts"
-    "setup_wallpaper"
-    "setup_screensavers"
-    "setup_dot_files"
-    "setup_splash_screen"
-    "setup_vim"
-    "setup_homebrew"
-    "install_homebrew_packages"
-    "install_applications"
-    "setup_asdf"
-    "install_ruby"
-    "install_node"
-    "install_python"
-    "install_postgres"
-    "install_zsh"
-    "setup_zsh"
-    "change_default_shell"
-  )
-
+  sectionRegistryLoad
   local sectionIndex=1
-  local sectionTotal="${#sections[@]}"
+  local sectionTotal="${#MACSETUP_SECTION_PATHS[@]}"
 
-  for sectionPath in "${sections[@]}"; do
+  for sectionPath in "${MACSETUP_SECTION_PATHS[@]}"; do
     MACSETUP_SECTION_INDEX="$sectionIndex"
     MACSETUP_SECTION_TOTAL="$sectionTotal"
 

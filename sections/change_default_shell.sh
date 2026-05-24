@@ -2,50 +2,48 @@
 
 # Change default shell
 function runSection {
-promptNewSection "CHANGE DEFAULT SHELL"
+  runPromptedSection "CHANGE DEFAULT SHELL" changeDefaultShell
+}
+
+changeDefaultShell() {
   info "Current default shell is: $(currShell)"
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    PS3='   => Please enter the number corresponding to your shell choice: '
-    options=()
-    if cmdExists bash; then
-      if [ $(currShell) != $(which bash) ]; then
-        options+=("Bash")
-      fi
+  PS3='   => Please enter the number corresponding to your shell choice: '
+  options=()
+  if cmdExists bash; then
+    if [ "$(currShell)" != "$(which bash)" ]; then
+      options+=("Bash")
     fi
-    if cmdExists zsh; then
-      if [ $(currShell) != $(which zsh) ]; then
-        options+=("Zsh")
-      fi
+  fi
+  if cmdExists zsh; then
+    if [ "$(currShell)" != "$(which zsh)" ]; then
+      options+=("Zsh")
     fi
-    if ! (( ${#options[@]} > 0 )); then
-      warn "No other shells were found other than the current default. Skipping..."
-    else
-      options+=("Cancel / Keep Current Default")
-      chooseOption "Choose Default Shell:" "${options[@]}"
-      case "$MACSETUP_UI_CHOICE" in
-        "Bash")
-          chsh -s $(which bash)
-          if [ $(currShell) == $(which bash) ]; then
-            success "Default shell has been updated to bash"
-          else
-            fail "Failed to update default shell to bash"
-          fi
-          ;;
-        "Zsh")
-          chsh -s $(which zsh)
-          if [ $(currShell) == $(which zsh) ]; then
-            success "Default shell has been updated to zsh"
-          else
-            fail "Failed to update default shell to zsh"
-          fi
-          ;;
-        "Cancel / Keep Current Default")
-          info "Keeping current default shell. Skipping..."
-          ;;
-      esac
-    fi
+  fi
+  if ! (( ${#options[@]} > 0 )); then
+    warn "No other shells were found other than the current default. Skipping..."
   else
-    # Skip this installation section
-    info "Skipping..."
+    options+=("Cancel / Keep Current Default")
+    chooseOption "Choose Default Shell:" "${options[@]}"
+    case "$MACSETUP_UI_CHOICE" in
+      "Bash")
+        chsh -s "$(which bash)"
+        if [ "$(currShell)" == "$(which bash)" ]; then
+          success "Default shell has been updated to bash"
+        else
+          fail "Failed to update default shell to bash"
+        fi
+        ;;
+      "Zsh")
+        chsh -s "$(which zsh)"
+        if [ "$(currShell)" == "$(which zsh)" ]; then
+          success "Default shell has been updated to zsh"
+        else
+          fail "Failed to update default shell to zsh"
+        fi
+        ;;
+      "Cancel / Keep Current Default")
+        info "Keeping current default shell. Skipping..."
+        ;;
+    esac
   fi
 }
