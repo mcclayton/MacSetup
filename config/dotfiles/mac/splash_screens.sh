@@ -1,3 +1,30 @@
+splashTerminalColumns() {
+  local terminal_columns=""
+
+  if command -v tput >/dev/null 2>&1 && [ "${TERM:-dumb}" != "dumb" ]; then
+    terminal_columns="$(tput cols 2>/dev/null || true)"
+  fi
+
+  case "$terminal_columns" in
+    ''|*[!0-9]*)
+      terminal_columns="${COLUMNS:-80}"
+      ;;
+  esac
+
+  case "$terminal_columns" in
+    ''|*[!0-9]*)
+      terminal_columns=80
+      ;;
+  esac
+
+  printf '%s' "$terminal_columns"
+}
+
+splashHorizontalRow() {
+  local terminal_columns="$1"
+  printf '%*s\n' "$terminal_columns" '' | tr ' ' ─
+}
+
 wolf() {
   IFS='' read -r -d '' WOLF <<'EOF'
                                __
@@ -29,12 +56,14 @@ wolf() {
 EOF
   rainbowtext "$WOLF" -S 35
   # Print a horizontal divider
-  COLUMNS=$(tput cols)
-  HORIZONTAL_ROW=$(printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' ─)
-  if [ $COLUMNS -gt 200 ]; then
-    rainbowtext $HORIZONTAL_ROW -S 48 -p 10.0
+  local SPLASH_COLUMNS
+  local HORIZONTAL_ROW
+  SPLASH_COLUMNS="$(splashTerminalColumns)"
+  HORIZONTAL_ROW="$(splashHorizontalRow "$SPLASH_COLUMNS")"
+  if [ "$SPLASH_COLUMNS" -gt 200 ]; then
+    rainbowtext "$HORIZONTAL_ROW" -S 48 -p 10.0
   else
-    rainbowtext $HORIZONTAL_ROW -S 48 -p 7.0
+    rainbowtext "$HORIZONTAL_ROW" -S 48 -p 7.0
   fi
 }
 
@@ -71,7 +100,7 @@ mcc() {
 
 EOF
   # Only print graphical logo if we have all the means to display it properly
-  if cmdExists viu && [ -f ~/mcc_logo.png ] && [[ $TERM_PROGRAM == "iTerm.app" ]]; then
+  if cmdExists viu && [ -f ~/mcc_logo.png ] && [[ ${TERM_PROGRAM:-} == "iTerm.app" ]]; then
     viu ~/mcc_logo.png -h 7
   else
     rainbowtext "$MCC"
@@ -111,11 +140,13 @@ charizard() {
 EOF
   rainbowtext "$CHARIZARD" -S 35
   # Print a horizontal divider
-  COLUMNS=$(tput cols)
-  HORIZONTAL_ROW=$(printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' ─)
-  if [ $COLUMNS -gt 200 ]; then
-    rainbowtext $HORIZONTAL_ROW -S 48 -p 10.0
+  local SPLASH_COLUMNS
+  local HORIZONTAL_ROW
+  SPLASH_COLUMNS="$(splashTerminalColumns)"
+  HORIZONTAL_ROW="$(splashHorizontalRow "$SPLASH_COLUMNS")"
+  if [ "$SPLASH_COLUMNS" -gt 200 ]; then
+    rainbowtext "$HORIZONTAL_ROW" -S 48 -p 10.0
   else
-    rainbowtext $HORIZONTAL_ROW -S 48 -p 7.0
+    rainbowtext "$HORIZONTAL_ROW" -S 48 -p 7.0
   fi
 }

@@ -15,12 +15,12 @@ setupAsdf() {
   assertPackageInstallation asdf "asdf"
   cd "$currDir"
 
-  info "Configuring asdf version manager in .bash_profile and .zprofile"
-  addLineToFiles "" ~/.bash_profile ~/.zprofile
-  addLineToFiles "# asdf version manager" ~/.bash_profile ~/.zprofile
-  addLineToFiles '. $HOME/.asdf/asdf.sh' ~/.bash_profile ~/.zprofile
-  addLineToFiles '. $HOME/.asdf/completions/asdf.bash' ~/.bash_profile # This line does not apply to .zprofile
-  success 'Added asdf configuration to ~/.bash_profile and ~/.zprofile'
+  info "Configuring asdf version manager in shell startup files"
+  addLineToFiles "" ~/.bash_profile ~/.bashrc ~/.zprofile ~/.zshrc
+  addLineToFiles "# asdf version manager" ~/.bash_profile ~/.bashrc ~/.zprofile ~/.zshrc
+  addLineToFiles '. $HOME/.asdf/asdf.sh' ~/.bash_profile ~/.bashrc ~/.zprofile ~/.zshrc
+  addLineToFiles '. $HOME/.asdf/completions/asdf.bash' ~/.bash_profile ~/.bashrc
+  success 'Added asdf configuration to shell startup files'
 
   source ~/.bash_profile
   source ~/.zprofile
