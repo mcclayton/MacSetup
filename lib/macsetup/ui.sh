@@ -13,6 +13,74 @@ MACSETUP_UI_CHOICE=""
 MACSETUP_UI_INDEX=""
 MACSETUP_UI_KEY=""
 
+uiVisibleLength() {
+  local text="$1"
+  local esc=$'\033'
+
+  text="$(printf '%s' "$text" | sed "s/${esc}(B//g; s/${esc}\\[[0-9;]*[[:alpha:]]//g")"
+  echo "${#text}"
+}
+
+uiRepeat() {
+  local char="$1"
+  local count="$2"
+  local output=""
+
+  while [ "$count" -gt 0 ]; do
+    output="${output}${char}"
+    count=$((count - 1))
+  done
+
+  printf '%s' "$output"
+}
+
+uiPadRight() {
+  local text="$1"
+  local width="$2"
+  local length=0
+  local padding=0
+
+  length="$(uiVisibleLength "$text")"
+  padding=$((width - length))
+  printf '%s' "$text"
+
+  if [ "$padding" -gt 0 ]; then
+    uiRepeat " " "$padding"
+  fi
+}
+
+uiSupportsRoundedBoxes() {
+  if [ "${MACSETUP_UI_ASCII:-}" = "true" ]; then
+    return 1
+  fi
+
+  case "${LC_ALL:-${LC_CTYPE:-${LANG:-}}}" in
+    *UTF-8*|*utf-8*)
+      return 0
+      ;;
+  esac
+
+  return 1
+}
+
+uiSetBoxChars() {
+  if uiSupportsRoundedBoxes; then
+    MACSETUP_UI_BOX_TL="╭"
+    MACSETUP_UI_BOX_TR="╮"
+    MACSETUP_UI_BOX_BL="╰"
+    MACSETUP_UI_BOX_BR="╯"
+    MACSETUP_UI_BOX_H="─"
+    MACSETUP_UI_BOX_V="│"
+  else
+    MACSETUP_UI_BOX_TL="+"
+    MACSETUP_UI_BOX_TR="+"
+    MACSETUP_UI_BOX_BL="+"
+    MACSETUP_UI_BOX_BR="+"
+    MACSETUP_UI_BOX_H="-"
+    MACSETUP_UI_BOX_V="|"
+  fi
+}
+
 uiIsInteractive() {
   if [ "${MACSETUP_UI:-}" = "plain" ]; then
     return 1
@@ -81,23 +149,168 @@ uiSetChoice() {
   REPLY="$((index + 1))"
 }
 
+uiMenuTitle() {
+  echo "${MACSETUP_UI_TITLE:-$1}"
+}
+
+uiMenuShowsPromptLine() {
+  local prompt="$1"
+  local title=""
+
+  title="$(uiMenuTitle "$prompt")"
+  [ "$title" != "$prompt" ]
+}
+
+uiMenuContentWidth() {
+  local prompt="$1"
+  shift
+  local options=("$@")
+  local title=""
+  local footer="${MACSETUP_UI_FOOTER:-}"
+  local width=28
+  local length=0
+  local option=""
+
+  title="$(uiMenuTitle "$prompt")"
+
+  length="$(uiVisibleLength "$title")"
+  if [ "$((length + 1))" -gt "$width" ]; then
+    width=$((length + 1))
+  fi
+
+  if uiMenuShowsPromptLine "$prompt"; then
+    length="$(uiVisibleLength "$prompt")"
+    if [ "$length" -gt "$width" ]; then
+      width="$length"
+    fi
+  fi
+
+  for option in "${options[@]}"; do
+    length="$(uiVisibleLength "$option")"
+    if [ "$((length + 3))" -gt "$width" ]; then
+      width=$((length + 3))
+    fi
+  done
+
+  if [ -n "$footer" ]; then
+    length="$(uiVisibleLength "$footer")"
+    if [ "$((length + 2))" -gt "$width" ]; then
+      width=$((length + 2))
+    fi
+  fi
+
+  echo "$width"
+}
+
+uiMenuLineCount() {
+  local prompt="$1"
+  local option_count="$2"
+  local count=0
+
+  count=$((option_count + 2))
+
+  if uiMenuShowsPromptLine "$prompt"; then
+    count=$((count + 2))
+  fi
+
+  echo "$count"
+}
+
+uiPrintBoxTop() {
+  local title="$1"
+  local content_width="$2"
+  local title_width=0
+  local fill_width=0
+
+  title_width="$(uiVisibleLength "$title")"
+  fill_width=$((content_width - title_width - 1))
+
+  printf '%s%s %s ' "$MACSETUP_UI_BOX_TL" "$MACSETUP_UI_BOX_H" "$title"
+  if [ "$fill_width" -gt 0 ]; then
+    uiRepeat "$MACSETUP_UI_BOX_H" "$fill_width"
+  fi
+  printf '%s\n' "$MACSETUP_UI_BOX_TR"
+}
+
+uiPrintBoxLine() {
+  local content="$1"
+  local content_width="$2"
+
+  printf '%s ' "$MACSETUP_UI_BOX_V"
+  uiPadRight "$content" "$content_width"
+  printf ' %s\n' "$MACSETUP_UI_BOX_V"
+}
+
+uiPrintBoxBottom() {
+  local content_width="$1"
+  local footer="${MACSETUP_UI_FOOTER:-}"
+  local footer_width=0
+  local fill_width=0
+
+  if [ -z "$footer" ]; then
+    printf '%s' "$MACSETUP_UI_BOX_BL"
+    uiRepeat "$MACSETUP_UI_BOX_H" "$((content_width + 2))"
+    printf '%s\n' "$MACSETUP_UI_BOX_BR"
+    return
+  fi
+
+  footer_width="$(uiVisibleLength "$footer")"
+  fill_width=$((content_width - footer_width))
+
+  printf '%s%s %s ' "$MACSETUP_UI_BOX_BL" "$MACSETUP_UI_BOX_H" "$footer"
+  if [ "$fill_width" -gt 0 ]; then
+    uiRepeat "$MACSETUP_UI_BOX_H" "$fill_width"
+  fi
+  printf '%s\n' "$MACSETUP_UI_BOX_BR"
+}
+
 uiRenderChoiceMenu() {
   local prompt="$1"
   local selected_index="$2"
   shift 2
   local options=("$@")
+  local title=""
+  local content_width=0
   local index=0
   local option=""
+  local option_line=""
 
-  printf '   => %s\n' "$prompt"
+  uiSetBoxChars
+  title="$(uiMenuTitle "$prompt")"
+  content_width="$(uiMenuContentWidth "$prompt" "${options[@]}")"
+
+  uiPrintBoxTop "$title" "$content_width"
+
+  if uiMenuShowsPromptLine "$prompt"; then
+    uiPrintBoxLine "$prompt" "$content_width"
+    uiPrintBoxLine "" "$content_width"
+  fi
+
   for option in "${options[@]}"; do
     if [ "$index" -eq "$selected_index" ]; then
-      printf '    %b>%b %b%s%b\n' "$BLUE" "$RESET_COLOR" "$GREEN" "$option" "$RESET_COLOR"
+      option_line=" > ${GREEN}${option}${RESET_COLOR}"
     else
-      printf '      %s\n' "$option"
+      option_line="   ${option}"
     fi
+    uiPrintBoxLine "$option_line" "$content_width"
     index=$((index + 1))
   done
+
+  uiPrintBoxBottom "$content_width"
+}
+
+uiPrintSelectedChoice() {
+  local prompt="$1"
+  local title=""
+
+  title="$(uiMenuTitle "$prompt")"
+
+  if [ "$title" != "$prompt" ]; then
+    printf '%b%s%b: %b%s%b\n' "$ORANGE" "$title" "$RESET_COLOR" "$GREEN" "$MACSETUP_UI_CHOICE" "$RESET_COLOR"
+  else
+    printf '%s %b%s%b\n' "$prompt" "$GREEN" "$MACSETUP_UI_CHOICE" "$RESET_COLOR"
+  fi
+  echo
 }
 
 uiChooseInteractive() {
@@ -108,6 +321,7 @@ uiChooseInteractive() {
   local option_count="${#options[@]}"
   local selected_index="$default_index"
   local fallback_index=""
+  local line_count=0
 
   if [ "$option_count" -eq 0 ]; then
     return 1
@@ -118,6 +332,7 @@ uiChooseInteractive() {
   fi
 
   fallback_index="$(uiFallbackIndex "${options[@]}")"
+  line_count="$(uiMenuLineCount "$prompt" "$option_count")"
 
   uiHideCursor
   uiRenderChoiceMenu "$prompt" "$selected_index" "${options[@]}"
@@ -150,14 +365,13 @@ uiChooseInteractive() {
         ;;
     esac
 
-    uiEraseLines "$((option_count + 1))"
+    uiEraseLines "$line_count"
     uiRenderChoiceMenu "$prompt" "$selected_index" "${options[@]}"
   done
 
-  uiEraseLines "$((option_count + 1))"
+  uiEraseLines "$line_count"
   uiSetChoice "$selected_index" "${options[@]}"
-  printf '   => %s %b%s%b\n' "$prompt" "$GREEN" "$MACSETUP_UI_CHOICE" "$RESET_COLOR"
-  echo
+  uiPrintSelectedChoice "$prompt"
   uiShowCursor
   return 0
 }

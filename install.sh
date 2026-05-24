@@ -47,12 +47,23 @@ function main {
     "change_default_shell"
   )
 
+  local sectionIndex=1
+  local sectionTotal="${#sections[@]}"
+
   for sectionPath in "${sections[@]}"; do
+    MACSETUP_SECTION_INDEX="$sectionIndex"
+    MACSETUP_SECTION_TOTAL="$sectionTotal"
+
     # Source the section file
     source "$(scriptDirectory)/sections/$sectionPath.sh"
     # Run the section's installation/configuration/setup
     runSection
+
+    sectionIndex=$((sectionIndex + 1))
   done
+
+  unset MACSETUP_SECTION_INDEX
+  unset MACSETUP_SECTION_TOTAL
 
   finish
 }

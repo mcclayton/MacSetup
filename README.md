@@ -33,10 +33,11 @@ $ ./start.sh
 
 This will present the user with a choice to run the installer in one of two modes.
 ```
-   => Choose Execution Environment:
-    > Sandbox (Docker)
-      Current Machine
-      Quit
+╭─ Choose Execution Environment: ─╮
+│  > Sandbox (Docker)             │
+│    Current Machine              │
+│    Quit                         │
+╰─────────────────────────────────╯
 ```
 
 Interactive terminals use Bash-native arrow-key menus. Non-interactive runs,

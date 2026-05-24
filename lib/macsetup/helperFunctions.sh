@@ -395,10 +395,21 @@ assertAppInstallation() {
 promptNewSection() {
   echo
   TITLE="[=== $1 ===]"
-  echo "$ORANGE$TITLE $RESET_COLOR"
   logEntry "$TITLE"
 
+  if ! uiIsInteractive; then
+    echo "$ORANGE$TITLE $RESET_COLOR"
+  fi
+
+  MACSETUP_UI_TITLE="$1"
+  if [ -n "${MACSETUP_SECTION_INDEX:-}" ] && [ -n "${MACSETUP_SECTION_TOTAL:-}" ]; then
+    MACSETUP_UI_FOOTER="Section ${MACSETUP_SECTION_INDEX}/${MACSETUP_SECTION_TOTAL}"
+  fi
+
   promptYesNo "Proceed with section?"
+
+  unset MACSETUP_UI_TITLE
+  unset MACSETUP_UI_FOOTER
 }
 
 manualAction() {

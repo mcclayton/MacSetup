@@ -71,6 +71,20 @@ printf '\033[B\n' | TERM="${TERM:-xterm}" bash -c '
   [ "$MACSETUP_UI_CHOICE" = "Second" ]
 '
 
+echo "Checking section menu footer rendering..."
+MACSETUP_UI_ASCII=true TERM="${TERM:-xterm}" bash -c '
+  source ./lib/macsetup/constants.sh
+  source ./lib/macsetup/helperFunctions.sh
+
+  MACSETUP_UI_TITLE="SETTING UP SCREENSAVERS"
+  MACSETUP_UI_FOOTER="Section 5/19"
+  output="$(uiRenderChoiceMenu "Proceed with section?" 0 "Yes" "No")"
+
+  printf "%s" "$output" | grep -q "SETTING UP SCREENSAVERS"
+  printf "%s" "$output" | grep -q "Section 5/19"
+  ! printf "%s" "$output" | grep -q "=>"
+'
+
 echo "Checking start.sh has no Bash select prompts..."
 if rg -n "^[[:space:]]*select[[:space:]]" start.sh sections lib; then
   echo "Found Bash select prompt usage"
