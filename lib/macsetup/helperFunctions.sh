@@ -106,15 +106,15 @@ sandboxIntro() {
 }
 
 promptYesNo() {
-  local default_answer="${2:-yes}"
+  local default_answer="${2:-no}"
 
-  if [ "$default_answer" = "no" ]; then
+  if [ "$default_answer" = "yes" ]; then
     MACSETUP_UI_DEFAULT_INDEX=1
   else
     MACSETUP_UI_DEFAULT_INDEX=0
   fi
 
-  chooseOption "$1" "Yes" "No"
+  chooseOption "$1" "No" "Yes"
   unset MACSETUP_UI_DEFAULT_INDEX
 
   if [ "$MACSETUP_UI_CHOICE" = "Yes" ]; then

@@ -121,6 +121,7 @@ uiSetBoxChars() {
     MACSETUP_UI_BOX_BR="╯"
     MACSETUP_UI_BOX_H="─"
     MACSETUP_UI_BOX_V="│"
+    MACSETUP_UI_POINTER="▶"
   else
     MACSETUP_UI_BOX_STYLE="ascii"
     MACSETUP_UI_BOX_TL="+"
@@ -129,6 +130,7 @@ uiSetBoxChars() {
     MACSETUP_UI_BOX_BR="+"
     MACSETUP_UI_BOX_H="-"
     MACSETUP_UI_BOX_V="|"
+    MACSETUP_UI_POINTER=">"
   fi
 }
 
@@ -384,7 +386,7 @@ uiRenderChoiceMenu() {
 
   for option in "${options[@]}"; do
     if [ "$index" -eq "$selected_index" ]; then
-      option_line=" > ${UI_SELECTED_COLOR}${option}${RESET_COLOR}"
+      option_line=" ${MACSETUP_UI_POINTER} ${UI_SELECTED_COLOR}${option}${RESET_COLOR}"
     else
       option_line="   ${option}"
     fi
@@ -499,14 +501,24 @@ uiChoosePlain() {
     return 0
   fi
 
-  if [ "$option_count" -eq 2 ] && [ "${options[0]}" = "Yes" ] && [ "${options[1]}" = "No" ]; then
+  if [ "$option_count" -eq 2 ] &&
+     { [ "${options[0]}" = "Yes" ] || [ "${options[0]}" = "No" ]; } &&
+     { [ "${options[1]}" = "Yes" ] || [ "${options[1]}" = "No" ]; }; then
     case "$REPLY" in
       [Yy]*)
-        uiSetChoice 0 "${options[@]}"
+        if [ "${options[0]}" = "Yes" ]; then
+          uiSetChoice 0 "${options[@]}"
+        else
+          uiSetChoice 1 "${options[@]}"
+        fi
         return 0
         ;;
       [Nn]*|q|Q)
-        uiSetChoice 1 "${options[@]}"
+        if [ "${options[0]}" = "No" ]; then
+          uiSetChoice 0 "${options[@]}"
+        else
+          uiSetChoice 1 "${options[@]}"
+        fi
         return 0
         ;;
     esac

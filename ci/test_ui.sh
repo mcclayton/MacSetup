@@ -34,6 +34,16 @@ printf '\n' | MACSETUP_UI=plain TERM="${TERM:-xterm}" bash -c '
 
   promptYesNo "Proceed?"
 
+  [ "$REPLY" = "n" ]
+'
+
+echo "Checking plain UI explicit yes default..."
+printf '\n' | MACSETUP_UI=plain TERM="${TERM:-xterm}" bash -c '
+  source ./lib/macsetup/constants.sh
+  source ./lib/macsetup/helperFunctions.sh
+
+  promptYesNo "Proceed?" "yes"
+
   [ "$REPLY" = "y" ]
 '
 
@@ -78,7 +88,7 @@ MACSETUP_UI_ASCII=true TERM="${TERM:-xterm}" bash -c '
 
   MACSETUP_UI_TITLE="SETTING UP SCREENSAVERS"
   MACSETUP_UI_FOOTER="Section 5/19"
-  output="$(uiRenderChoiceMenu "Proceed with section?" 0 "Yes" "No")"
+  output="$(uiRenderChoiceMenu "Proceed with section?" 0 "No" "Yes")"
 
   printf "%s" "$output" | grep -q "SETTING UP SCREENSAVERS"
   printf "%s" "$output" | grep -q "Section 5/19"
@@ -93,6 +103,7 @@ MACSETUP_UI_FORCE_ROUNDED=true LANG= LC_ALL= LC_CTYPE= TERM="${TERM:-xterm}" bas
   uiSetBoxChars
 
   [ "$MACSETUP_UI_BOX_STYLE" = "rounded" ]
+  [ "$MACSETUP_UI_POINTER" = "▶" ]
 '
 
 echo "Checking terminal-based Unicode detection..."
@@ -113,6 +124,7 @@ MACSETUP_UI_FORCE_ROUNDED=true MACSETUP_UI_ASCII=true LANG=en_US.UTF-8 TERM="${T
   uiSetBoxChars
 
   [ "$MACSETUP_UI_BOX_STYLE" = "ascii" ]
+  [ "$MACSETUP_UI_POINTER" = ">" ]
 '
 
 echo "Checking start.sh has no Bash select prompts..."
