@@ -19,23 +19,36 @@ sandboxInstallWithProfile() {
 
   info "Setting up dockerized sandbox environment: ${profile}"
   info "Docker base image: ${baseImage}"
-  docker build \
+  if ! docker build \
     --build-arg BASE_IMAGE="$baseImage" \
     --build-arg SANDBOX_PROFILE="$profile" \
-    -t "$imageTag" .
+    -t "$imageTag" .; then
+    fail "Failed to build docker image for sandbox environment: ${imageTag}"
+    return 1
+  fi
+
   success "Built docker image for sandbox environment: ${imageTag}"
   info "Starting sandbox environment..."
+
+  local dockerRunFlags=("-i")
+  if [ -t 0 ] && [ -t 1 ]; then
+    dockerRunFlags=("-it")
+  fi
+
   # Need to forward env vars so the sandbox can report its terminal/profile.
-  docker container run \
+  if ! docker container run \
     --env TERM \
     --env TERM_PROGRAM \
     --env MACSETUP_SANDBOX_PROFILE="$profile" \
     --name "$containerName" \
     --rm \
-    -it \
+    "${dockerRunFlags[@]}" \
     -h sandbox \
     "$imageTag" \
-    /bin/bash -c 'echo "Sandbox profile: ${MACSETUP_SANDBOX_PROFILE:-unknown}"; vim --version | sed -n "1p"; if command -v node >/dev/null 2>&1; then node --version; else echo "node: unavailable"; fi; ./install.sh'
+    /bin/bash -c 'echo "Sandbox profile: ${MACSETUP_SANDBOX_PROFILE:-unknown}"; vim --version | sed -n "1p"; if command -v node >/dev/null 2>&1; then node --version; else echo "node: unavailable"; fi; ./install.sh'; then
+    fail "Sandbox environment failed: ${imageTag}"
+    return 1
+  fi
 }
 
 sandboxInstall() {

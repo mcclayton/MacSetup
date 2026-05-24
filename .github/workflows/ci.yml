@@ -10,22 +10,39 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    name: Test install invocation
+  checks:
+    name: Shell and installer smoke checks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Verify install script starts
-        run: printf 'n\n' | ./install.sh
+      - name: Run shell and helper checks
+        run: bash ./ci/checks.sh
 
-  container_build:
-    name: Build Docker image
+  docker_old_profile:
+    name: Docker sandbox smoke - old Vim profile
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build sandbox image
-        run: docker build -t macsetup .
+      - name: Build and run old Vim sandbox
+        run: bash ./ci/docker_install_smoke.sh vim-old ubuntu:18.04
+
+  start_sandbox:
+    name: start.sh Docker sandbox smoke - modern profile
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run start.sh through Docker sandbox
+        run: |
+          {
+            printf '1\n'
+            printf '2\n'
+            for _ in {1..32}; do
+              printf 'n\n'
+            done
+          } | ./start.sh
