@@ -4,6 +4,8 @@
 # Helper Functions #
 ####################
 
+source "$MACSETUP_LIB_DIR/ui.sh"
+
 function ensureNotRoot {
   if [ "$EUID" -eq 0 ]
     then
@@ -104,9 +106,22 @@ sandboxIntro() {
 }
 
 promptYesNo() {
-  echo "   => $1 "
-  read -p "      [Y/n] " -r
-  echo
+  local default_answer="${2:-no}"
+
+  if [ "$default_answer" = "yes" ]; then
+    MACSETUP_UI_DEFAULT_INDEX=1
+  else
+    MACSETUP_UI_DEFAULT_INDEX=0
+  fi
+
+  chooseOption "$1" "No" "Yes"
+  unset MACSETUP_UI_DEFAULT_INDEX
+
+  if [ "$MACSETUP_UI_CHOICE" = "Yes" ]; then
+    REPLY="y"
+  else
+    REPLY="n"
+  fi
 }
 
 prompt() {
@@ -380,10 +395,21 @@ assertAppInstallation() {
 promptNewSection() {
   echo
   TITLE="[=== $1 ===]"
-  echo "$ORANGE$TITLE $RESET_COLOR"
   logEntry "$TITLE"
 
+  if ! uiIsInteractive; then
+    echo "$ORANGE$TITLE $RESET_COLOR"
+  fi
+
+  MACSETUP_UI_TITLE="$1"
+  if [ -n "${MACSETUP_SECTION_INDEX:-}" ] && [ -n "${MACSETUP_SECTION_TOTAL:-}" ]; then
+    MACSETUP_UI_FOOTER="Section ${MACSETUP_SECTION_INDEX}/${MACSETUP_SECTION_TOTAL}"
+  fi
+
   promptYesNo "Proceed with section?"
+
+  unset MACSETUP_UI_TITLE
+  unset MACSETUP_UI_FOOTER
 }
 
 manualAction() {

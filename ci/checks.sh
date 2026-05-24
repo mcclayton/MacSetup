@@ -18,6 +18,9 @@ find start.sh install.sh clean.sh diff.sh sections lib config assets ci -name '*
 echo "Checking start.sh quit path..."
 printf '3\n' | ./start.sh
 
+echo "Checking UI prompt behavior..."
+bash ./ci/test_ui.sh
+
 echo "Checking install.sh skipped-section path with isolated HOME..."
 tmp_home="$(mktemp -d)"
 cleanup() {

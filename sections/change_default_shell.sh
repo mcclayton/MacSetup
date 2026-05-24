@@ -21,34 +21,28 @@ promptNewSection "CHANGE DEFAULT SHELL"
       warn "No other shells were found other than the current default. Skipping..."
     else
       options+=("Cancel / Keep Current Default")
-      select opt in "${options[@]}"
-      do
-        case $opt in
-          "Bash")
-            chsh -s $(which bash)
-            if [ $(currShell) == $(which bash) ]; then
-              success "Default shell has been updated to bash"
-            else
-              fail "Failed to update default shell to bash"
-            fi
-            break
-            ;;
-          "Zsh")
-            chsh -s $(which zsh)
-            if [ $(currShell ) == $(which zsh) ]; then
-              success "Default shell has been updated to zsh"
-            else
-              fail "Failed to update default shell to zsh"
-            fi
-            break
-            ;;
-          "Cancel / Keep Current Default")
-            info "Keeping current default shell. Skipping..."
-            break
-            ;;
-          *) warn "Invalid option $REPLY";;
-          esac
-      done
+      chooseOption "Choose Default Shell:" "${options[@]}"
+      case "$MACSETUP_UI_CHOICE" in
+        "Bash")
+          chsh -s $(which bash)
+          if [ $(currShell) == $(which bash) ]; then
+            success "Default shell has been updated to bash"
+          else
+            fail "Failed to update default shell to bash"
+          fi
+          ;;
+        "Zsh")
+          chsh -s $(which zsh)
+          if [ $(currShell) == $(which zsh) ]; then
+            success "Default shell has been updated to zsh"
+          else
+            fail "Failed to update default shell to zsh"
+          fi
+          ;;
+        "Cancel / Keep Current Default")
+          info "Keeping current default shell. Skipping..."
+          ;;
+      esac
     fi
   else
     # Skip this installation section

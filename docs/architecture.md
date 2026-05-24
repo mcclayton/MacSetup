@@ -9,6 +9,8 @@ desired machine state it applies.
 
 - `constants.sh` defines terminal colors, log/backup locations, and repository
   path constants.
+- `ui.sh` owns portable terminal UI primitives, including boxed arrow-key menus
+  for interactive terminals and plain numeric prompts for non-interactive runs.
 - `helperFunctions.sh` owns prompts, logging, backup helpers, assertions, and
   shared install utilities.
 - `appConfigUtil.sh` owns app-specific configuration functions used by install

@@ -5,41 +5,31 @@ function runSection {
   promptNewSection "SETTING UP SPLASH SCREEN"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     if [ -f ~/.bashrc ] && grep -q "local SPLASH_COMMAND=" ~/.bashrc && grep -q "source ~/.splash_screens" ~/.bashrc; then
-      PS3='   => Choose Terminal Splash Screen: '
       options=("Party Horse" "Wolf" "Charizard" "Initials" "No Splash Screen" "Cancel" )
-      select opt in "${options[@]}"
-      do
-        case $opt in
-          "Party Horse")
-            COMMAND_CHOICE="party_horse"
-            break
-            ;;
-          "Wolf")
-            COMMAND_CHOICE="wolf"
-            break
-            ;;
-          "Charizard")
-            COMMAND_CHOICE="charizard"
-            break
-            ;;
-          "Initials")
-            cp "$MACSETUP_ASSETS_DIR/splash/mcc_logo.png" ~/mcc_logo.png
-            assertFileExists ~/mcc_logo.png "Copied over mcc_logo.png asset" "Failed to copy over mcc_logo.png asset"
-            COMMAND_CHOICE="mcc"
-            break
-            ;;
-          "No Splash Screen")
-            info "No splash screen set"
-            COMMAND_CHOICE=
-            break
-            ;;
-          "Cancel")
-            COMMAND_CHOICE='cancel'
-            break
-            ;;
-          *) warn "Invalid option $REPLY";;
-          esac
-      done
+      chooseOption "Choose Terminal Splash Screen:" "${options[@]}"
+      case "$MACSETUP_UI_CHOICE" in
+        "Party Horse")
+          COMMAND_CHOICE="party_horse"
+          ;;
+        "Wolf")
+          COMMAND_CHOICE="wolf"
+          ;;
+        "Charizard")
+          COMMAND_CHOICE="charizard"
+          ;;
+        "Initials")
+          cp "$MACSETUP_ASSETS_DIR/splash/mcc_logo.png" ~/mcc_logo.png
+          assertFileExists ~/mcc_logo.png "Copied over mcc_logo.png asset" "Failed to copy over mcc_logo.png asset"
+          COMMAND_CHOICE="mcc"
+          ;;
+        "No Splash Screen")
+          info "No splash screen set"
+          COMMAND_CHOICE=
+          ;;
+        "Cancel")
+          COMMAND_CHOICE='cancel'
+          ;;
+      esac
 
       if [ "$COMMAND_CHOICE" == "cancel" ]; then
         info "Cancelling splash screen setup..."
