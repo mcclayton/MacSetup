@@ -11,8 +11,10 @@ desired machine state it applies.
   path constants.
 - `ui.sh` owns portable terminal UI primitives, including boxed arrow-key menus
   for interactive terminals and plain numeric prompts for non-interactive runs.
-- `helperFunctions.sh` owns prompts, logging, backup helpers, assertions, and
-  shared install utilities.
+- `helperFunctions.sh` is the compatibility entrypoint that sources focused
+  helper modules.
+- `logging.sh`, `prompts.sh`, `backup.sh`, `assertions.sh`, `platform.sh`, and
+  `installers.sh` own shared framework responsibilities.
 - `appConfigUtil.sh` owns app-specific configuration functions used by install
   sections.
 
