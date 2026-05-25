@@ -67,7 +67,9 @@ function runSection {
         addLineToFiles "# Git SSH" $SSH_CONFIG
         addLineToFiles "Host *" $SSH_CONFIG
         addLineToFiles "  AddKeysToAgent yes" $SSH_CONFIG
-        addLineToFiles "  UseKeychain yes" $SSH_CONFIG
+        if isMacOs; then
+          addLineToFiles "  UseKeychain yes" $SSH_CONFIG
+        fi
         addLineToFiles "  IdentityFile $KEY_PATH" $SSH_CONFIG
         # Reset the Internal Field Separator
         unset IFS

@@ -10,8 +10,8 @@ configureICU4C() {
   # Add To Path
   addLineToFiles "" ~/.bash_profile ~/.zprofile
   addLineToFiles "# Add icu4c to path" ~/.bash_profile ~/.zprofile
-  addLineToFiles "export PATH=\"$ICU_PATH/bin:\$PATH\"" ~/.bash_profile ~/.zprofile
-  addLineToFiles "export PATH=\"$ICU_PATH/sbin:\$PATH\"" ~/.bash_profile ~/.zprofile
+  addLineToFiles "$(pathPrependShellLine "$ICU_PATH/bin")" ~/.bash_profile ~/.zprofile
+  addLineToFiles "$(pathPrependShellLine "$ICU_PATH/sbin")" ~/.bash_profile ~/.zprofile
   # Enable Compilers to find icu4c
   addLineToFiles "" ~/.bash_profile ~/.zprofile
   addLineToFiles "# Enable compilers to find icu4c" ~/.bash_profile ~/.zprofile
@@ -33,8 +33,8 @@ configureOpenSSL() {
   # Add To Path
   addLineToFiles "" ~/.bash_profile ~/.zprofile
   addLineToFiles "# Add openssl to path" ~/.bash_profile ~/.zprofile
-  addLineToFiles "export PATH=\"$OPEN_SSL_PATH/bin:\$PATH\"" ~/.bash_profile ~/.zprofile
-  addLineToFiles "export PATH=\"$OPEN_SSL_PATH/sbin:\$PATH\"" ~/.bash_profile ~/.zprofile
+  addLineToFiles "$(pathPrependShellLine "$OPEN_SSL_PATH/bin")" ~/.bash_profile ~/.zprofile
+  addLineToFiles "$(pathPrependShellLine "$OPEN_SSL_PATH/sbin")" ~/.bash_profile ~/.zprofile
 
   # TODO: Need to make sure that this adds values to these env vars rather than directly
   # setting them
@@ -114,7 +114,7 @@ configureVSCode() {
       info 'Adding VSCode to $PATH'
       addLineToFiles "" ~/.bash_profile ~/.zprofile
       addLineToFiles "# Add Visual Studio Code (code)" ~/.bash_profile ~/.zprofile
-      addLineToFiles 'export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"' ~/.bash_profile ~/.zprofile
+      addLineToFiles "$(pathAppendShellLine '/Applications/Visual Studio Code.app/Contents/Resources/app/bin')" ~/.bash_profile ~/.zprofile
 
       info 'Setting settings.json file'
       SETTINGS_PATH=~/Library/'Application Support'/Code/User/settings.json

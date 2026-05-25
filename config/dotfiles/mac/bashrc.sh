@@ -4,14 +4,24 @@ source ~/.splash_screens
 
 # This file is processed on each interactive invocation of bash
 
+clearTerminal() {
+  if command -v clear >/dev/null 2>&1 && clear 2>/dev/null; then
+    return 0
+  fi
+
+  if [ -n "${TERM:-}" ] && [ "$TERM" != "dumb" ]; then
+    printf '\033[H\033[2J'
+  fi
+}
+
+# Avoid problems with scp -- don't process the rest of the file if non-interactive
+[[ $- != *i* ]] && return
+
 # Custom binding Overrides to use Ctrl+WASD to move around the terminal line
 bind '"\C-a": backward-word'
 bind '"\C-d": forward-word' # Note Ctrl+D is EOF, so this is a bit of a misnomer to override
 bind '"\C-s": beginning-of-line'
 bind '"\C-w": end-of-line'
-
-# Avoid problems with scp -- don't process the rest of the file if non-interactive
-[[ $- != *i* ]] && return
 
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'
@@ -111,7 +121,7 @@ if [[ $(echo $BASH_VERSION) ]]; then
 fi
 
 splash_screen() {
-  clear
+  clearTerminal
   local SPLASH_COMMAND=
   if type $SPLASH_COMMAND >/dev/null; then
     $SPLASH_COMMAND

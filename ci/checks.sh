@@ -21,6 +21,15 @@ printf '3\n' | ./start.sh
 echo "Checking UI prompt behavior..."
 bash ./ci/test_ui.sh
 
+echo "Checking PATH helper behavior..."
+bash ./ci/test_path_helpers.sh
+
+echo "Checking terminal compatibility behavior..."
+bash ./ci/test_terminal_compat.sh
+
+echo "Checking platform-specific Git config behavior..."
+bash ./ci/test_setup_git_platform.sh
+
 echo "Checking install.sh skipped-section path with isolated HOME..."
 tmp_home="$(mktemp -d)"
 cleanup() {

@@ -1,3 +1,17 @@
+terminalColumns() {
+  local columns=""
+
+  if command -v tput >/dev/null 2>&1; then
+    columns="$(tput cols 2>/dev/null || true)"
+  fi
+
+  if [ -n "$columns" ]; then
+    printf '%s\n' "$columns"
+  else
+    printf '%s\n' "${COLUMNS:-80}"
+  fi
+}
+
 wolf() {
   IFS='' read -r -d '' WOLF <<'EOF'
                                __
@@ -29,12 +43,14 @@ wolf() {
 EOF
   rainbowtext "$WOLF" -S 35
   # Print a horizontal divider
-  COLUMNS=$(tput cols)
-  HORIZONTAL_ROW=$(printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' ─)
-  if [ $COLUMNS -gt 200 ]; then
-    rainbowtext $HORIZONTAL_ROW -S 48 -p 10.0
+  local columns
+  local horizontal_row
+  columns="$(terminalColumns)"
+  horizontal_row="$(printf '%*s\n' "$columns" '' | tr ' ' ─)"
+  if [ "$columns" -gt 200 ]; then
+    rainbowtext "$horizontal_row" -S 48 -p 10.0
   else
-    rainbowtext $HORIZONTAL_ROW -S 48 -p 7.0
+    rainbowtext "$horizontal_row" -S 48 -p 7.0
   fi
 }
 
@@ -111,11 +127,13 @@ charizard() {
 EOF
   rainbowtext "$CHARIZARD" -S 35
   # Print a horizontal divider
-  COLUMNS=$(tput cols)
-  HORIZONTAL_ROW=$(printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' ─)
-  if [ $COLUMNS -gt 200 ]; then
-    rainbowtext $HORIZONTAL_ROW -S 48 -p 10.0
+  local columns
+  local horizontal_row
+  columns="$(terminalColumns)"
+  horizontal_row="$(printf '%*s\n' "$columns" '' | tr ' ' ─)"
+  if [ "$columns" -gt 200 ]; then
+    rainbowtext "$horizontal_row" -S 48 -p 10.0
   else
-    rainbowtext $HORIZONTAL_ROW -S 48 -p 7.0
+    rainbowtext "$horizontal_row" -S 48 -p 7.0
   fi
 }

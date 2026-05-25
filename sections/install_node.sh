@@ -8,7 +8,7 @@ function runSection {
       assertFileExists ~/.tool-versions "Found ~/.tool-versions file" "~/.tool-versions not found, cannot install Node via \`asdf\`."
 
       info "Adding Node Plugin..."
-      asdf plugin-add nodejs
+      asdf plugin add nodejs
 
       if [[ $REPLY =~ ^[Yy]$ ]]; then
         info "Installing Node from ~/.tool-versions: "$'\n'"---TOOLS---"$'\n'"$(cat ~/.tool-versions)"$'\n'"-----------"
