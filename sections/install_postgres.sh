@@ -8,7 +8,7 @@ function runSection {
       assertFileExists ~/.tool-versions "Found ~/.tool-versions file" "~/.tool-versions not found, cannot install Postgres via \`asdf\`."
 
       info "Adding Postgres Plugin..."
-      asdf plugin-add postgres
+      asdf plugin add postgres
 
       if [[ $REPLY =~ ^[Yy]$ ]]; then
         info "Installing Postgres from ~/.tool-versions: "$'\n'"---TOOLS---"$'\n'"$(cat ~/.tool-versions)"$'\n'"-----------"
