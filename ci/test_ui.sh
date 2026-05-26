@@ -128,7 +128,7 @@ MACSETUP_UI_FORCE_ROUNDED=true MACSETUP_UI_ASCII=true LANG=en_US.UTF-8 TERM="${T
 '
 
 echo "Checking start.sh has no Bash select prompts..."
-if rg -n "^[[:space:]]*select[[:space:]]" start.sh sections lib; then
+if rg -n "^[[:space:]]*select[[:space:]]" start.sh bin sections lib; then
   echo "Found Bash select prompt usage"
   exit 1
 fi

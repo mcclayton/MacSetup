@@ -1,15 +1,6 @@
 #!/bin/bash
 
-# Prints path to directory containing this script
-function scriptDirectory {
-  local self_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-  echo "$self_dir"
-}
+set -euo pipefail
 
-# Bring in constants
-source "$(scriptDirectory)/lib/macsetup/constants.sh"
-# Bring in the helper functions
-source "$MACSETUP_LIB_DIR/helperFunctions.sh"
-
-info "Pruning docker resources with label: 'macsetup'..."
-docker system prune --filter "label=macsetup" --force
+repo_root="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+exec "$repo_root/bin/clean.sh" "$@"

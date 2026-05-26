@@ -44,6 +44,8 @@ function runSection {
         caskInstallAppPrompt "Visual Studio Code.app" "visual-studio-code" configureVSCode
         # Install and configure iTerm2
         caskInstallAppPrompt "iTerm.app" "iterm2" configureITerm
+        # Install and configure Ghostty
+        caskInstallAppPrompt "Ghostty.app" "ghostty" configureGhostty
 
         # Cleanup downloads
         info "Cleaning up application .zip and .dmg files"

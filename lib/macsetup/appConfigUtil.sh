@@ -171,6 +171,39 @@ configureITerm() {
   fi
 }
 
+configureGhostty() {
+  info "Configuring Ghostty"
+
+  local applications_dir="${MACSETUP_APPLICATIONS_DIR:-/Applications}"
+  local ghostty_app="$applications_dir/Ghostty.app"
+  local ghostty_config_source="$MACSETUP_CONFIG_DIR/terminal/ghostty/config"
+  local ghostty_config_dir="$HOME/Library/Application Support/com.mitchellh.ghostty"
+  local ghostty_config_destination="$ghostty_config_dir/config"
+
+  if [ ! -d "$ghostty_app" ]; then
+    fail "Cannot configure Ghostty as it is not installed"
+    return
+  fi
+
+  if [ ! -f "$ghostty_config_source" ]; then
+    fail "Cannot configure Ghostty. Config asset not found: $ghostty_config_source"
+    return
+  fi
+
+  backupFile "$ghostty_config_destination" ghostty-config
+  if ! mkdir -p "$ghostty_config_dir"; then
+    fail "Failed to create Ghostty config directory: $ghostty_config_dir"
+    return
+  fi
+
+  if ! cp "$ghostty_config_source" "$ghostty_config_destination"; then
+    fail "Failed to copy Ghostty config"
+    return
+  fi
+
+  assertFileExists "$ghostty_config_destination" "Ghostty config file set correctly" "Failed to set Ghostty config file"
+}
+
 configureDocker() {
   manualAction "Open the Docker Desktop Application and grant priveledged access"
 }
