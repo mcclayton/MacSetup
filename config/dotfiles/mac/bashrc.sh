@@ -5,13 +5,17 @@ source ~/.splash_screens
 # This file is processed on each interactive invocation of bash
 
 clearTerminal() {
-  if command -v clear >/dev/null 2>&1 && clear 2>/dev/null; then
+  if command -v clear >/dev/null 2>&1 && command clear 2>/dev/null; then
     return 0
   fi
 
   if [ -n "${TERM:-}" ] && [ "$TERM" != "dumb" ]; then
     printf '\033[H\033[2J'
   fi
+}
+
+clear() {
+  clearTerminal
 }
 
 # Avoid problems with scp -- don't process the rest of the file if non-interactive
