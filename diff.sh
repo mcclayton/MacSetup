@@ -24,6 +24,20 @@ function diff {
   fi
 }
 
+diff_managed_file() {
+  local setup_file="$1"
+  local local_file="$2"
+  local label="$3"
+
+  if [ ! -f "$setup_file" ]; then
+    warn "Managed file $setup_file is not present in MacSetup."
+  elif [ ! -f "$local_file" ]; then
+    warn "$label is not present on current machine."
+  else
+    diff "$setup_file" "$local_file"
+  fi
+}
+
 # Diff dot files in Mac Setup against current machine files
 # to detect missing files and differences.
 find_dot_file_changes() {
@@ -36,23 +50,28 @@ find_dot_file_changes() {
     "utility_aliases"
     "config_vars"
     "splash_screens"
+    "tmux.conf"
   )
 
-  filesToDiff=()
   for dotFileName in "${topLevelDotFiles[@]}"; do
-    LOCAL_FILE=~/."$dotFileName"
-    if [ ! -f $LOCAL_FILE ]; then
-      warn "Dotfile $dotFileName is not present on current machine."
-    else
-      filesToDiff+=($dotFileName)
-    fi
-  done
-
-  for dotFileName in "${filesToDiff[@]}"; do
-    LOCAL_FILE=~/."$dotFileName"
-    SETUP_FILE="$MACSETUP_CONFIG_DIR"/dotfiles/mac/"$dotFileName".sh
-    diff $SETUP_FILE $LOCAL_FILE
+    diff_managed_file \
+      "$MACSETUP_CONFIG_DIR/dotfiles/mac/$dotFileName.sh" \
+      "$HOME/.$dotFileName" \
+      "Dotfile .$dotFileName"
   done
 }
 
+find_config_file_changes() {
+  diff_managed_file \
+    "$MACSETUP_CONFIG_DIR/asdf/tool-versions" \
+    "$HOME/.tool-versions" \
+    "asdf tool versions"
+
+  diff_managed_file \
+    "$MACSETUP_CONFIG_DIR/terminal/ghostty/config" \
+    "$HOME/Library/Application Support/com.mitchellh.ghostty/config" \
+    "Ghostty config"
+}
+
 find_dot_file_changes
+find_config_file_changes

@@ -4,8 +4,12 @@ This folder contains the Ghostty terminal configuration.
 
 ## Wiring Status
 
-This config is kept as machine configuration, but the current installer does not
-yet apply it.
+`configureGhostty` in `lib/macsetup/appConfigUtil.sh`.
+
+## Installed By
+
+`install_applications.sh` installs the `ghostty` Homebrew cask and copies this
+config into Ghostty's application support directory.
 
 ## Files
 
