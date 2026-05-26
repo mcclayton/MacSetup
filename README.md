@@ -25,7 +25,7 @@ This script is designed to be safe and can be run multiple times.
 
 ## Usage
 
-Simply run the [install script](./install.sh) via the command:
+Simply run the installer via the command:
 
 ```bash
 $ ./start.sh
@@ -50,8 +50,18 @@ installer remains scriptable and portable.
 2. **Current Machine**
       Installation/Setup changes made in this environment will modify and affect the current actual machine.
 
+## Quick Reference
+
+| Command | Purpose |
+| --- | --- |
+| `./start.sh` | Open the main installer entrypoint and choose Sandbox or Current Machine mode. |
+| `./diff.sh` | Compare repo-managed config against the current machine to inspect drift. |
+| `./test.sh` | Run local shell, helper, and isolated installer checks. |
+| `./test.sh docker` | Run Docker-backed installer smoke checks. |
+
 ## Repository Layout
 
+- `bin/` contains the implementation scripts behind the root command wrappers.
 - `lib/macsetup/` contains the installer framework: shared constants, helpers, logging, prompts, backups, and application configuration helpers.
 - `sections/` contains the ordered installation sections that call into the framework.
 - `config/` contains desired machine configuration such as dotfiles, Git config, VSCode settings, terminal preferences, app preferences, and asdf tool versions.

@@ -56,3 +56,10 @@ MACSETUP_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../.." && pwd )"
 MACSETUP_LIB_DIR="$MACSETUP_ROOT/lib/macsetup"
 MACSETUP_CONFIG_DIR="$MACSETUP_ROOT/config"
 MACSETUP_ASSETS_DIR="$MACSETUP_ROOT/assets"
+
+# Docker resources created by MacSetup must use this exact label so clean.sh can
+# prune only resources owned by this project.
+MACSETUP_DOCKER_LABEL_KEY="macsetup"
+MACSETUP_DOCKER_LABEL_VALUE="true"
+MACSETUP_DOCKER_LABEL="$MACSETUP_DOCKER_LABEL_KEY=$MACSETUP_DOCKER_LABEL_VALUE"
+MACSETUP_DOCKER_LABEL_FILTER="label=$MACSETUP_DOCKER_LABEL"
