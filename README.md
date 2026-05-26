@@ -57,6 +57,16 @@ installer remains scriptable and portable.
 - `config/` contains desired machine configuration such as dotfiles, Git config, VSCode settings, terminal preferences, app preferences, and asdf tool versions.
 - `assets/` contains copied/static payloads such as fonts, wallpapers, Vim runtime files, the Aerial screensaver, splash images, and demo media.
 
+## Testing
+
+Run the local shell and installer checks with:
+
+```bash
+$ ./test.sh
+```
+
+Docker-backed smoke checks are also available through `./test.sh docker`.
+
 ## Demo
 
 ![Demo](./assets/public/demo.gif)

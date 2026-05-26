@@ -12,7 +12,7 @@ no_prompts() {
 }
 
 echo "Checking shell syntax..."
-find start.sh install.sh clean.sh diff.sh sections lib config assets ci -name '*.sh' -type f -print0 \
+find start.sh install.sh clean.sh diff.sh test.sh sections lib config assets ci -name '*.sh' -type f -print0 \
   | xargs -0 bash -n
 
 echo "Checking start.sh quit path..."
