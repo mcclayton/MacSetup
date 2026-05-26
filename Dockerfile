@@ -37,8 +37,12 @@ ENV APP_HOME /Sandbox
 RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
 
+ADD start.sh          $APP_HOME/start.sh
 ADD install.sh        $APP_HOME/install.sh
+ADD clean.sh          $APP_HOME/clean.sh
 ADD diff.sh           $APP_HOME/diff.sh
+ADD test.sh           $APP_HOME/test.sh
+ADD bin               $APP_HOME/bin
 ADD sections          $APP_HOME/sections
 ADD lib               $APP_HOME/lib
 ADD config            $APP_HOME/config

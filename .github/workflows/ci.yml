@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run shell and helper checks
-        run: bash ./ci/checks.sh
+        run: bash ./test.sh checks
 
   docker_old_profile:
     name: Docker sandbox smoke - old Vim profile
@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build and run old Vim sandbox
-        run: bash ./ci/docker_install_smoke.sh vim-old ubuntu:18.04
+        run: bash ./test.sh docker-old
 
   start_sandbox:
     name: start.sh Docker sandbox smoke - modern profile
@@ -38,11 +38,4 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run start.sh through Docker sandbox
-        run: |
-          {
-            printf '1\n'
-            printf '2\n'
-            for _ in {1..32}; do
-              printf 'n\n'
-            done
-          } | ./start.sh
+        run: bash ./test.sh start-sandbox
