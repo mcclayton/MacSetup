@@ -32,6 +32,13 @@ ps1_prompt_identity_label() {
   esac
 }
 
+ps1_prompt_identity_with_space() {
+  case "$1" in
+    *" ") printf '%s' "$1" ;;
+    *) printf '%s ' "$1" ;;
+  esac
+}
+
 ps1_prompt_default_identity() {
   whoami 2>/dev/null || printf 'user'
 }
@@ -206,6 +213,7 @@ ps1_build_prompt_for_shell() {
   local shell="$1"
   local identity="${2:-}"
   local identity_label
+  local plain_identity_label
   local path_label
   local line_1
   local line_2
@@ -213,10 +221,11 @@ ps1_build_prompt_for_shell() {
   ps1_prompt_palette
   [ -n "$identity" ] || identity="$(ps1_prompt_default_identity)"
   identity_label="$(ps1_prompt_identity_label "$shell" "$identity")"
+  plain_identity_label="$(ps1_prompt_identity_label "$shell" "$(ps1_prompt_identity_with_space "$identity")")"
   path_label="$(ps1_prompt_path_label "$shell")"
 
   if [ "$DISABLE_NERD_FONT_ICONS" = true ]; then
-    line_1="$(ps1_prompt_ascii_segment "$shell" "$identity_label" "$PS1_PROMPT_PRIMARY_RGB" "$PS1_PROMPT_TEXT_RGB" "$PS1_PROMPT_PATH_RGB" false)"
+    line_1="$(ps1_prompt_ascii_segment "$shell" "$plain_identity_label" "$PS1_PROMPT_PRIMARY_RGB" "$PS1_PROMPT_TEXT_RGB" "$PS1_PROMPT_PATH_RGB" false)"
     line_1="$line_1$(ps1_prompt_ascii_segment "$shell" "$path_label" "$PS1_PROMPT_PATH_RGB" "$PS1_PROMPT_TEXT_RGB" "$PS1_PROMPT_GIT_RGB")"
     line_1="$line_1$(ps1_prompt_git_command "$shell" plain)"
   else
