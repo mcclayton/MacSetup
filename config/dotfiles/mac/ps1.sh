@@ -7,7 +7,7 @@ ps1_prompt_palette() {
   PS1_PROMPT_GIT_RGB='91;96;120'
   PS1_PROMPT_DARK_RGB='24;25;38'
   PS1_PROMPT_TEXT_RGB='202;211;245'
-  PS1_PROMPT_PLAIN_SEPARATOR="${PS1_PROMPT_PLAIN_SEPARATOR:-⬤}"
+  PS1_PROMPT_PLAIN_SEPARATOR="${PS1_PROMPT_PLAIN_SEPARATOR:-}"
   PS1_PROMPT_PLAIN_ARROW="${PS1_PROMPT_PLAIN_ARROW:-↳}"
 }
 
@@ -119,8 +119,13 @@ ps1_prompt_ascii_segment() {
   local bg_rgb="$3"
   local fg_rgb="${4:-$PS1_PROMPT_TEXT_RGB}"
   local next_bg_rgb="${5:-}"
+  local trailing_space="${6:-true}"
 
-  printf '%s %s ' "$(ps1_prompt_style "$shell" "$fg_rgb" "$bg_rgb")" "$label"
+  if [ "$trailing_space" = false ]; then
+    printf '%s %s' "$(ps1_prompt_style "$shell" "$fg_rgb" "$bg_rgb")" "$label"
+  else
+    printf '%s %s ' "$(ps1_prompt_style "$shell" "$fg_rgb" "$bg_rgb")" "$label"
+  fi
   if [ -n "$next_bg_rgb" ]; then
     printf '%s%s' "$(ps1_prompt_style "$shell" "$bg_rgb" "$next_bg_rgb")" "$PS1_PROMPT_PLAIN_SEPARATOR"
   else
@@ -211,7 +216,7 @@ ps1_build_prompt_for_shell() {
   path_label="$(ps1_prompt_path_label "$shell")"
 
   if [ "$DISABLE_NERD_FONT_ICONS" = true ]; then
-    line_1="$(ps1_prompt_ascii_segment "$shell" "$identity_label" "$PS1_PROMPT_PRIMARY_RGB" "$PS1_PROMPT_TEXT_RGB" "$PS1_PROMPT_PATH_RGB")"
+    line_1="$(ps1_prompt_ascii_segment "$shell" "$identity_label" "$PS1_PROMPT_PRIMARY_RGB" "$PS1_PROMPT_TEXT_RGB" "$PS1_PROMPT_PATH_RGB" false)"
     line_1="$line_1$(ps1_prompt_ascii_segment "$shell" "$path_label" "$PS1_PROMPT_PATH_RGB" "$PS1_PROMPT_TEXT_RGB" "$PS1_PROMPT_GIT_RGB")"
     line_1="$line_1$(ps1_prompt_git_command "$shell" plain)"
   else
