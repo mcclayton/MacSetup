@@ -19,6 +19,13 @@ set scrolloff=8
 "Mouse support
 set mouse=a
 let g:NERDTreeMouseMode = 2
+let g:NERDTreeHijackNetrw = 0
+
+let s:macsetup_startup_directory = ''
+if argc() == 1 && isdirectory(argv(0))
+  let s:macsetup_startup_directory = fnamemodify(argv(0), ':p')
+  silent! argdelete *
+endif
 
 "Show current cursor position
 set ruler
@@ -1396,7 +1403,7 @@ function! s:toggle_git_tools() abort
 endfunction
 
 function! QuitIfOnlyUtilityWindows() abort
-  if !get(g:, 'macsetup_fzf_active', 0) && AllWindowsAreUtility()
+  if get(g:, 'macsetup_seen_file_window', 0) && !get(g:, 'macsetup_fzf_active', 0) && AllWindowsAreUtility()
     quit
   endif
 endfunction
@@ -1407,6 +1414,12 @@ function! s:current_buffer_is_file() abort
         \ && &filetype !=# 'minimap'
         \ && !empty(expand('%:p'))
         \ && filereadable(expand('%:p'))
+endfunction
+
+function! s:should_quit_utility_windows() abort
+  return get(g:, 'macsetup_seen_file_window', 0)
+        \ && !get(g:, 'macsetup_fzf_active', 0)
+        \ && AllWindowsAreUtility()
 endfunction
 
 function! s:dedupe_nerdtree_windows() abort
@@ -1447,6 +1460,16 @@ function! s:ensure_nerdtree_open() abort
   let t:macsetup_last_nerdtree_sync_path = ''
   silent! NERDTree
   call timer_start(100, { -> <SID>dedupe_nerdtree_windows() })
+endfunction
+
+function! s:open_startup_directory_in_nerdtree() abort
+  if empty(s:macsetup_startup_directory)
+    return 0
+  endif
+
+  silent! execute 'NERDTree' fnameescape(s:macsetup_startup_directory)
+  call timer_start(100, { -> <SID>dedupe_nerdtree_windows() })
+  return 1
 endfunction
 
 function! s:reveal_path_in_nerdtree_soon(path, winid) abort
@@ -1609,14 +1632,16 @@ function! s:refresh_buffer_context(bufnr, winid) abort
       silent! checktime
     endif
 
-    if !get(g:, 'macsetup_fzf_active', 0) && AllWindowsAreUtility()
-      call timer_start(0, { -> QuitIfOnlyUtilityWindows() })
+    if s:current_buffer_is_file()
+      let g:macsetup_seen_file_window = 1
+      call s:sync_nerdtree_to_current_file_soon()
+      call s:refresh_minimap_soon()
       return
     endif
 
-    if s:current_buffer_is_file()
-      call s:sync_nerdtree_to_current_file_soon()
-      call s:refresh_minimap_soon()
+    if s:should_quit_utility_windows()
+      call timer_start(0, { -> QuitIfOnlyUtilityWindows() })
+      return
     endif
   finally
     let g:macsetup_buffer_refreshing = 0
@@ -1637,7 +1662,7 @@ augroup macsetup_startup
   autocmd!
   autocmd VimEnter * let g:buffet_use_devicons = get(g:, 'macsetup_nerd_font_icons', 1)
 "Auto open Nerdtree
-  autocmd VimEnter * call <SID>ensure_nerdtree_open()
+  autocmd VimEnter * if !<SID>open_startup_directory_in_nerdtree() | call <SID>ensure_nerdtree_open() | endif
 
 "Keep focus on the file when opening vim with a file
   autocmd StdinReadPre * let s:std_in=1
