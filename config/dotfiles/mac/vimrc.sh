@@ -47,7 +47,7 @@ if has("autocmd")
 endif
 
 "Check for external file changes when returning to Vim, similar to VS Code
-augroup cadence_external_file_changes
+augroup macsetup_external_file_changes
   autocmd!
   autocmd FocusGained,BufEnter,CursorHold,CursorHoldI * if mode() !=# 'c' | checktime | endif
 augroup END
@@ -67,24 +67,24 @@ let loaded_spellfile_plugin = 1
 
 " Feature gates keep this vimrc usable on older sandbox Vim builds while
 " enabling the full IDE-like setup on modern local Vim.
-let g:cadence_has_coc = (has('nvim-0.8') || has('patch-9.0.0438')) && executable('node')
-let g:cadence_has_git_lens = has('vim9script') && has('textprop')
-let g:cadence_has_popup_windows = has('nvim-0.4') || (has('popupwin') && has('patch-8.2.191'))
-let g:cadence_has_rg = executable('rg')
-let g:cadence_has_bat = executable('bat') || executable('batcat')
-let g:cadence_has_minimap = v:version >= 800 && g:cadence_has_popup_windows && executable('code-minimap')
-let g:cadence_disabled_plugins = []
-if !g:cadence_has_coc
-  call add(g:cadence_disabled_plugins, 'coc.nvim')
+let g:macsetup_has_coc = (has('nvim-0.8') || has('patch-9.0.0438')) && executable('node')
+let g:macsetup_has_git_lens = has('vim9script') && has('textprop')
+let g:macsetup_has_popup_windows = has('nvim-0.4') || (has('popupwin') && has('patch-8.2.191'))
+let g:macsetup_has_rg = executable('rg')
+let g:macsetup_has_bat = executable('bat') || executable('batcat')
+let g:macsetup_has_minimap = v:version >= 800 && g:macsetup_has_popup_windows && executable('code-minimap')
+let g:macsetup_disabled_plugins = []
+if !g:macsetup_has_coc
+  call add(g:macsetup_disabled_plugins, 'coc.nvim')
 endif
-if !g:cadence_has_git_lens
-  call add(g:cadence_disabled_plugins, 'git-lens.vim')
+if !g:macsetup_has_git_lens
+  call add(g:macsetup_disabled_plugins, 'git-lens.vim')
 endif
-if !g:cadence_has_minimap
-  call add(g:cadence_disabled_plugins, 'minimap.vim')
+if !g:macsetup_has_minimap
+  call add(g:macsetup_disabled_plugins, 'minimap.vim')
   let g:minimap_exec_warning = 0
 endif
-let g:pathogen_disabled = get(g:, 'pathogen_disabled', []) + g:cadence_disabled_plugins
+let g:pathogen_disabled = get(g:, 'pathogen_disabled', []) + g:macsetup_disabled_plugins
 
 "Load in vim bundles using pathogen
 call pathogen#infect()
@@ -92,23 +92,23 @@ call pathogen#helptags()
 
 " Airline statusline: rounded separators when Nerd Font glyphs are available,
 " PS1-matched separators when DISABLE_NERD_FONT_ICONS=true.
-let g:cadence_nerd_font_icons = get(g:, 'cadence_nerd_font_icons',
+let g:macsetup_nerd_font_icons = get(g:, 'macsetup_nerd_font_icons',
       \ &encoding ==# 'utf-8' && $DISABLE_NERD_FONT_ICONS !=# 'true')
-let g:cadence_plain_left_sep = empty($PS1_PROMPT_PLAIN_SEPARATOR) ? '' : $PS1_PROMPT_PLAIN_SEPARATOR
-let g:cadence_plain_right_sep = empty($PS1_PROMPT_PLAIN_RIGHT_SEPARATOR) ? '' : $PS1_PROMPT_PLAIN_RIGHT_SEPARATOR
-let g:airline_powerline_fonts = g:cadence_nerd_font_icons
+let g:macsetup_plain_left_sep = empty($PS1_PROMPT_PLAIN_SEPARATOR) ? '' : $PS1_PROMPT_PLAIN_SEPARATOR
+let g:macsetup_plain_right_sep = empty($PS1_PROMPT_PLAIN_RIGHT_SEPARATOR) ? '' : $PS1_PROMPT_PLAIN_RIGHT_SEPARATOR
+let g:airline_powerline_fonts = g:macsetup_nerd_font_icons
 let g:airline_theme = 'catppuccin_macchiato'
 let g:airline_skip_empty_sections = 1
-if g:cadence_nerd_font_icons
+if g:macsetup_nerd_font_icons
   let g:airline_left_sep = ''
   let g:airline_left_alt_sep = ' '
   let g:airline_right_sep = ''
   let g:airline_right_alt_sep = ' '
 else
   let g:airline_symbols_ascii = 0
-  let g:airline_left_sep = g:cadence_plain_left_sep
+  let g:airline_left_sep = g:macsetup_plain_left_sep
   let g:airline_left_alt_sep = ' '
-  let g:airline_right_sep = g:cadence_plain_right_sep
+  let g:airline_right_sep = g:macsetup_plain_right_sep
   let g:airline_right_alt_sep = ' '
 endif
 
@@ -185,8 +185,8 @@ set ignorecase
 set smartcase
 set wrapscan
 
-let g:anzu_status_format = '%#CadenceSearchCount#find %i/%l%#None#'
-let g:anzu_no_match_word = '%#CadenceSearchNoMatch#no matches%#None#'
+let g:anzu_status_format = '%#MacSetupSearchCount#find %i/%l%#None#'
+let g:anzu_no_match_word = '%#MacSetupSearchNoMatch#no matches%#None#'
 let g:anzu_search_limit = 10000
 let g:anzu_bottomtop_word = 'bottom, continuing at top'
 let g:anzu_topbottom_word = 'top, continuing at bottom'
@@ -195,7 +195,7 @@ let g:anzu_topbottom_word = 'top, continuing at bottom'
 """"""""""""
 " coc.nvim "
 """"""""""""
-if get(g:, 'cadence_has_coc', 0)
+if get(g:, 'macsetup_has_coc', 0)
 " Keep buffers loaded for Coc workspace edits and diagnostics.
 set hidden
 set signcolumn=yes
@@ -313,7 +313,7 @@ endfunction
 
 function! s:fzf_wrap_with_layout(...) abort
   let l:spec = copy(a:0 == 1 ? a:1 : a:2)
-  if get(g:, 'cadence_has_popup_windows', 0)
+  if get(g:, 'macsetup_has_popup_windows', 0)
     let l:spec.window = { 'width': 0.95, 'height': 0.85, 'border': 'sharp' }
   else
     let l:spec.down = '40%'
@@ -727,17 +727,17 @@ endfunction
 
 function! s:fzf_begin() abort
   let s:fzf_active_id = get(s:, 'fzf_active_id', 0) + 1
-  let g:cadence_fzf_active = s:fzf_active_id
+  let g:macsetup_fzf_active = s:fzf_active_id
 endfunction
 
 function! s:fzf_release_soon() abort
-  let l:active_id = get(g:, 'cadence_fzf_active', 0)
+  let l:active_id = get(g:, 'macsetup_fzf_active', 0)
   call timer_start(500, { -> s:fzf_release_if_current(l:active_id) })
 endfunction
 
 function! s:fzf_release_if_current(active_id) abort
-  if get(g:, 'cadence_fzf_active', 0) ==# a:active_id
-    let g:cadence_fzf_active = 0
+  if get(g:, 'macsetup_fzf_active', 0) ==# a:active_id
+    let g:macsetup_fzf_active = 0
   endif
 endfunction
 
@@ -1281,7 +1281,7 @@ function! AllWindowsAreUtility() abort
 endfunction
 
 function! s:leave_minimal_mode() abort
-  let g:cadence_minimal_mode = 0
+  let g:macsetup_minimal_mode = 0
 endfunction
 
 function! s:disable_git_lens() abort
@@ -1294,30 +1294,30 @@ function! s:disable_git_lens() abort
 endfunction
 
 function! s:minimap_is_open() abort
-  return get(g:, 'cadence_has_minimap', 0) && bufwinnr('-MINIMAP-') != -1
+  return get(g:, 'macsetup_has_minimap', 0) && bufwinnr('-MINIMAP-') != -1
 endfunction
 
 function! s:side_panels_are_open() abort
   let l:nerdtree_open = exists('g:NERDTree') && g:NERDTree.IsOpen()
-  let l:minimap_open = !get(g:, 'cadence_has_minimap', 0) || s:minimap_is_open()
+  let l:minimap_open = !get(g:, 'macsetup_has_minimap', 0) || s:minimap_is_open()
   return l:nerdtree_open && l:minimap_open
 endfunction
 
 function! s:close_side_panels() abort
-  let g:cadence_minimal_mode = 1
-  let t:cadence_last_nerdtree_sync_path = ''
-  if get(t:, 'cadence_nerdtree_sync_timer', 0)
-    call timer_stop(t:cadence_nerdtree_sync_timer)
-    let t:cadence_nerdtree_sync_timer = 0
+  let g:macsetup_minimal_mode = 1
+  let t:macsetup_last_nerdtree_sync_path = ''
+  if get(t:, 'macsetup_nerdtree_sync_timer', 0)
+    call timer_stop(t:macsetup_nerdtree_sync_timer)
+    let t:macsetup_nerdtree_sync_timer = 0
   endif
 
-  if get(g:, 'cadence_has_minimap', 0)
+  if get(g:, 'macsetup_has_minimap', 0)
     let g:minimap_auto_start = 0
   endif
 
-  if get(g:, 'cadence_minimap_refresh_timer', 0)
-    call timer_stop(g:cadence_minimap_refresh_timer)
-    let g:cadence_minimap_refresh_timer = 0
+  if get(g:, 'macsetup_minimap_refresh_timer', 0)
+    call timer_stop(g:macsetup_minimap_refresh_timer)
+    let g:macsetup_minimap_refresh_timer = 0
   endif
 
   silent! MinimapClose
@@ -1341,7 +1341,7 @@ function! s:open_side_panels() abort
     call s:schedule_nerdtree_sync(l:path, l:current_winid, 75)
   endif
 
-  if get(g:, 'cadence_has_minimap', 0)
+  if get(g:, 'macsetup_has_minimap', 0)
     let g:minimap_auto_start = 1
     silent! Minimap
     call s:refresh_minimap_soon()
@@ -1365,9 +1365,9 @@ endfunction
 
 function! s:toggle_code_minimap() abort
   call s:leave_minimal_mode()
-  if !get(g:, 'cadence_has_minimap', 0)
+  if !get(g:, 'macsetup_has_minimap', 0)
     echohl WarningMsg
-    if !get(g:, 'cadence_has_popup_windows', 0)
+    if !get(g:, 'macsetup_has_popup_windows', 0)
       echo 'Minimap unavailable: requires Vim 8.2.191+ with popupwin, or Neovim 0.4+'
     elseif !executable('code-minimap')
       echo 'Minimap unavailable: requires code-minimap on PATH'
@@ -1390,7 +1390,7 @@ function! s:toggle_git_tools() abort
 endfunction
 
 function! QuitIfOnlyUtilityWindows() abort
-  if !get(g:, 'cadence_fzf_active', 0) && AllWindowsAreUtility()
+  if !get(g:, 'macsetup_fzf_active', 0) && AllWindowsAreUtility()
     quit
   endif
 endfunction
@@ -1421,7 +1421,7 @@ function! s:dedupe_nerdtree_windows() abort
 endfunction
 
 function! s:ensure_nerdtree_open() abort
-  if get(g:, 'cadence_minimal_mode', 0)
+  if get(g:, 'macsetup_minimal_mode', 0)
     return
   endif
 
@@ -1430,7 +1430,7 @@ function! s:ensure_nerdtree_open() abort
     return
   endif
 
-  let t:cadence_last_nerdtree_sync_path = ''
+  let t:macsetup_last_nerdtree_sync_path = ''
   silent! NERDTree
   call timer_start(100, { -> <SID>dedupe_nerdtree_windows() })
 endfunction
@@ -1454,21 +1454,21 @@ function! s:schedule_nerdtree_sync(path, winid, delay) abort
     return
   endif
 
-  if get(t:, 'cadence_last_nerdtree_sync_path', '') ==# a:path
+  if get(t:, 'macsetup_last_nerdtree_sync_path', '') ==# a:path
     return
   endif
 
-  if get(t:, 'cadence_nerdtree_sync_timer', 0)
-    call timer_stop(t:cadence_nerdtree_sync_timer)
+  if get(t:, 'macsetup_nerdtree_sync_timer', 0)
+    call timer_stop(t:macsetup_nerdtree_sync_timer)
   endif
 
   let l:path = a:path
   let l:winid = a:winid
-  let t:cadence_nerdtree_sync_timer = timer_start(a:delay, { -> <SID>sync_nerdtree_to_path(l:path, l:winid) })
+  let t:macsetup_nerdtree_sync_timer = timer_start(a:delay, { -> <SID>sync_nerdtree_to_path(l:path, l:winid) })
 endfunction
 
 function! s:sync_nerdtree_to_path(path, winid) abort
-  let t:cadence_nerdtree_sync_timer = 0
+  let t:macsetup_nerdtree_sync_timer = 0
 
   if empty(a:path) || !filereadable(a:path)
     return
@@ -1479,21 +1479,21 @@ function! s:sync_nerdtree_to_path(path, winid) abort
 
   let l:previous_eventignore = &eventignore
   let &eventignore = empty(l:previous_eventignore) ? 'BufEnter' : l:previous_eventignore . ',BufEnter'
-  let l:syncing = get(g:, 'cadence_nerdtree_syncing', 0)
-  let g:cadence_nerdtree_syncing = 1
+  let l:syncing = get(g:, 'macsetup_nerdtree_syncing', 0)
+  let g:macsetup_nerdtree_syncing = 1
   try
     silent! execute 'NERDTreeFind ' . fnameescape(a:path)
-    let t:cadence_last_nerdtree_sync_path = a:path
+    let t:macsetup_last_nerdtree_sync_path = a:path
     call s:dedupe_nerdtree_windows()
     call win_gotoid(a:winid)
   finally
-    let g:cadence_nerdtree_syncing = l:syncing
+    let g:macsetup_nerdtree_syncing = l:syncing
     let &eventignore = l:previous_eventignore
   endtry
 endfunction
 
 function! s:sync_nerdtree_to_current_file_soon() abort
-  if get(g:, 'cadence_nerdtree_syncing', 0)
+  if get(g:, 'macsetup_nerdtree_syncing', 0)
     return
   endif
   if &buftype !=# '' || &filetype ==# 'nerdtree' || &filetype ==# 'minimap'
@@ -1510,14 +1510,14 @@ function! s:sync_nerdtree_to_current_file_soon() abort
 endfunction
 
 function! s:refresh_minimap_soon() abort
-  if !get(g:, 'cadence_has_minimap', 0)
+  if !get(g:, 'macsetup_has_minimap', 0)
     return
   endif
-  if get(g:, 'cadence_minimal_mode', 0)
+  if get(g:, 'macsetup_minimal_mode', 0)
     return
   endif
 
-  if get(g:, 'cadence_minimap_refreshing', 0)
+  if get(g:, 'macsetup_minimap_refreshing', 0)
     return
   endif
   if &buftype !=# '' || &filetype ==# 'nerdtree' || &filetype ==# 'minimap'
@@ -1529,16 +1529,16 @@ function! s:refresh_minimap_soon() abort
     return
   endif
 
-  if get(g:, 'cadence_minimap_refresh_timer', 0)
-    call timer_stop(g:cadence_minimap_refresh_timer)
+  if get(g:, 'macsetup_minimap_refresh_timer', 0)
+    call timer_stop(g:macsetup_minimap_refresh_timer)
   endif
 
   let l:winid = win_getid()
-  let g:cadence_minimap_refresh_timer = timer_start(150, { -> s:refresh_minimap_for_window(l:path, l:winid) })
+  let g:macsetup_minimap_refresh_timer = timer_start(150, { -> s:refresh_minimap_for_window(l:path, l:winid) })
 endfunction
 
 function! s:refresh_minimap_for_window(path, winid) abort
-  let g:cadence_minimap_refresh_timer = 0
+  let g:macsetup_minimap_refresh_timer = 0
   if empty(a:path) || !filereadable(a:path)
     return
   endif
@@ -1553,7 +1553,7 @@ function! s:refresh_minimap_for_window(path, winid) abort
     return
   endif
 
-  let g:cadence_minimap_refreshing = 1
+  let g:macsetup_minimap_refreshing = 1
   try
     if exists(':MinimapRescan') == 2
       silent! MinimapRescan
@@ -1562,33 +1562,33 @@ function! s:refresh_minimap_for_window(path, winid) abort
       silent! MinimapUpdateHighlight
     endif
   finally
-    let g:cadence_minimap_refreshing = 0
+    let g:macsetup_minimap_refreshing = 0
     call win_gotoid(l:current_winid)
   endtry
 endfunction
 
 "Automatically close vim if only window(s) remaining are utility windows
-augroup cadence_utility_windows
+augroup macsetup_utility_windows
   autocmd!
-  autocmd BufEnter * if !get(g:, 'cadence_fzf_active', 0) && AllWindowsAreUtility() | call timer_start(0, { -> QuitIfOnlyUtilityWindows() }) | endif
+  autocmd BufEnter * if !get(g:, 'macsetup_fzf_active', 0) && AllWindowsAreUtility() | call timer_start(0, { -> QuitIfOnlyUtilityWindows() }) | endif
 augroup END
 
-augroup cadence_nerdtree_follow_file
+augroup macsetup_nerdtree_follow_file
   autocmd!
   autocmd BufEnter * call <SID>sync_nerdtree_to_current_file_soon()
   autocmd VimEnter * call timer_start(100, { -> <SID>sync_nerdtree_to_current_file_soon() })
 augroup END
 
-augroup cadence_minimap_refresh
+augroup macsetup_minimap_refresh
   autocmd!
   autocmd BufEnter,BufWinEnter * call <SID>refresh_minimap_soon()
   autocmd VimEnter * call timer_start(250, { -> <SID>refresh_minimap_soon() })
 augroup END
 
 " Ensure buffet uses devicons (Needs to be done on VimEnter once all plugins are loaded)
-augroup cadence_startup
+augroup macsetup_startup
   autocmd!
-  autocmd VimEnter * let g:buffet_use_devicons = get(g:, 'cadence_nerd_font_icons', 1)
+  autocmd VimEnter * let g:buffet_use_devicons = get(g:, 'macsetup_nerd_font_icons', 1)
 "Auto open Nerdtree
   autocmd VimEnter * call <SID>ensure_nerdtree_open()
 
@@ -1603,13 +1603,13 @@ augroup END
 """"""""""""""""
 let g:buffet_powerline_separators = 0
 let g:buffet_always_show_tabline = 1
-if g:cadence_nerd_font_icons
+if g:macsetup_nerd_font_icons
   let g:buffet_noseparator = ''
   let g:buffet_separator = ' '
   let g:buffet_tab_icon = '⸬ tabs ⸬'
   let g:buffet_use_devicons = 1
 else
-  let g:buffet_noseparator = g:cadence_plain_left_sep
+  let g:buffet_noseparator = g:macsetup_plain_left_sep
   let g:buffet_separator = ' '
   let g:buffet_tab_icon = 'tabs'
   let g:buffet_use_devicons = 0
@@ -1623,23 +1623,23 @@ endfunction
 """""""""""
 " Minimap "
 """""""""""
-if get(g:, 'cadence_has_minimap', 0)
+if get(g:, 'macsetup_has_minimap', 0)
   let g:minimap_width = 10
   let g:minimap_auto_start = 1
   let g:minimap_enable_highlight_colorgroup = 0
-  let g:minimap_base_highlight = 'CadenceMinimapBase'
-  let g:minimap_cursor_color = 'CadenceMinimapCursor'
-  let g:minimap_range_color = 'CadenceMinimapRange'
-  let g:minimap_search_color = 'CadenceMinimapSearch'
-  let g:minimap_diffremove_color = 'CadenceMinimapDiffRemoved'
-  let g:minimap_diffadd_color = 'CadenceMinimapDiffAdded'
-  let g:minimap_diff_color = 'CadenceMinimapDiffLine'
-  let g:minimap_cursor_diffremove_color = 'CadenceMinimapCursorDiffRemoved'
-  let g:minimap_cursor_diffadd_color = 'CadenceMinimapCursorDiffAdded'
-  let g:minimap_cursor_diff_color = 'CadenceMinimapCursorDiffLine'
-  let g:minimap_range_diffremove_color = 'CadenceMinimapRangeDiffRemoved'
-  let g:minimap_range_diffadd_color = 'CadenceMinimapRangeDiffAdded'
-  let g:minimap_range_diff_color = 'CadenceMinimapRangeDiffLine'
+  let g:minimap_base_highlight = 'MacSetupMinimapBase'
+  let g:minimap_cursor_color = 'MacSetupMinimapCursor'
+  let g:minimap_range_color = 'MacSetupMinimapRange'
+  let g:minimap_search_color = 'MacSetupMinimapSearch'
+  let g:minimap_diffremove_color = 'MacSetupMinimapDiffRemoved'
+  let g:minimap_diffadd_color = 'MacSetupMinimapDiffAdded'
+  let g:minimap_diff_color = 'MacSetupMinimapDiffLine'
+  let g:minimap_cursor_diffremove_color = 'MacSetupMinimapCursorDiffRemoved'
+  let g:minimap_cursor_diffadd_color = 'MacSetupMinimapCursorDiffAdded'
+  let g:minimap_cursor_diff_color = 'MacSetupMinimapCursorDiffLine'
+  let g:minimap_range_diffremove_color = 'MacSetupMinimapRangeDiffRemoved'
+  let g:minimap_range_diffadd_color = 'MacSetupMinimapRangeDiffAdded'
+  let g:minimap_range_diff_color = 'MacSetupMinimapRangeDiffLine'
 else
   let g:minimap_auto_start = 0
 endif
@@ -1667,10 +1667,10 @@ let g:GIT_LENS_CONFIG = {
     \ 'blame_wrap': v:false,
     \ 'blame_empty_line': v:false,
     \ 'blame_delay': 800,
-    \ 'blame_highlight': 'CadenceGitLensBlame'
+    \ 'blame_highlight': 'MacSetupGitLensBlame'
     \ }
 "Default GitGutter and GitLens to be enabled
-let g:GIT_LENS_ENABLED = get(g:, 'cadence_has_git_lens', 0) ? 1 : 0
+let g:GIT_LENS_ENABLED = get(g:, 'macsetup_has_git_lens', 0) ? 1 : 0
 let g:gitgutter_enabled = 1
 
 
@@ -2004,7 +2004,7 @@ command! ToggleCodeMinimap call <SID>toggle_code_minimap()
 command! ToggleSidePanels call <SID>toggle_side_panels()
 command! ToggleGitTools call <SID>toggle_git_tools()
 command! CloseSidePanels call <SID>enter_minimal_mode()
-if get(g:, 'cadence_has_coc', 0)
+if get(g:, 'macsetup_has_coc', 0)
   command! Problems CocList diagnostics
   command! DocumentSymbols CocList outline
   command! FormatFile call CocActionAsync('format')
@@ -2018,7 +2018,7 @@ function! s:start_current_file_search() abort
   call feedkeys('/', 'n')
 endfunction
 
-if get(g:, 'cadence_has_coc', 0)
+if get(g:, 'macsetup_has_coc', 0)
   function! s:coc_add_command(id, command, title) abort
     if !exists('g:coc_vim_commands')
       let g:coc_vim_commands = []
@@ -2066,7 +2066,7 @@ nmap <silent> N <Plug>(is-nohl)<Plug>(anzu-N-with-echo)
 nmap <silent> * <Plug>(anzu-star-with-echo)<Plug>(is-nohl-1)
 nmap <silent> # <Plug>(anzu-sharp-with-echo)<Plug>(is-nohl-1)
 
-augroup cadence_current_file_search
+augroup macsetup_current_file_search
   autocmd!
   autocmd CmdlineLeave [/\?] if exists(':AnzuUpdateSearchStatusOutput') == 2 | AnzuUpdateSearchStatusOutput | endif
 augroup END
