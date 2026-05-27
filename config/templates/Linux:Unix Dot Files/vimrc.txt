@@ -34,6 +34,7 @@ set scrolloff=8
 
 "Mouse support
 set mouse=a
+let g:NERDTreeMouseMode = 2
 
 "Enables Autoindent
 set autoindent

@@ -11,7 +11,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-for dot_file in bashrc bash_profile profile zshrc zprofile utility_aliases config_vars splash_screens tmux.conf; do
+for dot_file in bashrc bash_profile profile ps1 zshrc zprofile utility_aliases config_vars splash_screens tmux.conf; do
   cp "$repo_root/config/dotfiles/mac/$dot_file.sh" "$tmp_home/.$dot_file"
 done
 

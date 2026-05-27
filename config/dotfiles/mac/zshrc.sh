@@ -99,25 +99,12 @@ test -f ~/.bashrc && source ~/.bashrc
 if [[ $(echo $ZSH_VERSION) ]]; then
   # Source fzf for current shell
   [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+  [ -f ~/.ps1 ] && source ~/.ps1
 
   # Set the prompt
-  if [ "$TERM" != "dumb" ]; then
-    # Nice pretty color prompt with the current host and our current directory
-    RED='%F{9}'; GRAY='%F{8}'; BLUE='%F{blue}'; GREEN='%F{green}'
-    INITIALS='MCC'
-    BOLT='⚡️'
-    ARROW_SEPARATOR='      ↳'
-    HEARTS="$RED  "
-    HEARTS_ARROW_SEPARATOR='       ↳'
-
-    if [ "$DISABLE_NERD_FONT_ICONS" = true ]; then
-      PS1_LINE_1="$BOLT  $GRAY$INITIALS:$BLUE%~$RED\$(parse_git_branch)"
-      PS1_LINE_2="$GRAY$ARROW_SEPARATOR$GREEN  $ %{$reset_color%}"
-    else
-      PS1_LINE_1="$HEARTS  $GRAY$INITIALS:$BLUE%~$RED\$(parse_git_branch)"
-      PS1_LINE_2="$GRAY$HEARTS_ARROW_SEPARATOR$GREEN  $ %{$reset_color%}"
-    fi
-
-    PS1="%B$PS1_LINE_1"$'\n'"$PS1_LINE_2%"
+  if [ "$TERM" != "dumb" ] && type build_ps1_prompt >/dev/null 2>&1; then
+    setopt prompt_subst
+    PS1="$(build_ps1_prompt MCC)"
+    PROMPT="$PS1"
   fi
 fi

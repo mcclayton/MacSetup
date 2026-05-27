@@ -97,26 +97,11 @@ export LSCOLORS=GxFxCxDxBxegedabagaced
 # Source fzf for current shell
 if [[ $(echo $BASH_VERSION) ]]; then
   [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+  [ -f ~/.ps1 ] && source ~/.ps1
 
   # Set the prompt
-  if [ "$TERM" != "dumb" ]; then
-    # Nice pretty color prompt with the current host and our current directory
-    RED='\[\033[01;31m\]'; GRAY='\[\033[01;30m\]'; BLUE='\[\033[01;34m\]'; GREEN='\[\033[01;32m\]'
-    INITIALS='MCC'
-    BOLT='\342\232\241' # Lightning Bolt Emoji UTF-8
-    ARROW_SEPARATOR='      ↳'
-    HEARTS="$RED   "
-    HEARTS_ARROW_SEPARATOR='        ↳'
-
-    if [ "$DISABLE_NERD_FONT_ICONS" = true ]; then
-      PS1_LINE_1="$BOLT  $GRAY$INITIALS:$BLUE\w$RED\$(parse_git_branch)"
-      PS1_LINE_2="$GRAY$ARROW_SEPARATOR$GREEN  $ \[\e[0m\]"
-    else
-      PS1_LINE_1="$HEARTS  $GRAY$INITIALS:$BLUE%~$RED\$(parse_git_branch)"
-      PS1_LINE_2="$GRAY$HEARTS_ARROW_SEPARATOR$GREEN  $ \[\e[0m\]"
-    fi
-
-    PS1="$PS1_LINE_1\n$PS1_LINE_2"
+  if [ "$TERM" != "dumb" ] && type build_ps1_prompt >/dev/null 2>&1; then
+    PS1="$(build_ps1_prompt MCC)"
   fi
 fi
 
