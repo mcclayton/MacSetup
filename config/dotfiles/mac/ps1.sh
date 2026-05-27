@@ -119,6 +119,7 @@ ps1_prompt_ascii_segment() {
 
 ps1_prompt_git_badge_zsh() {
   local branch
+  ps1_prompt_palette
   branch="$(ps1_prompt_git_branch_name)"
   [ -z "$branch" ] && return
   branch="${branch//\%/%%}"
@@ -128,6 +129,7 @@ ps1_prompt_git_badge_zsh() {
 
 ps1_prompt_git_badge_bash() {
   local branch
+  ps1_prompt_palette
   branch="$(ps1_prompt_git_branch_name)"
   [ -z "$branch" ] && return
 
@@ -136,6 +138,7 @@ ps1_prompt_git_badge_bash() {
 
 ps1_prompt_plain_git_zsh() {
   local branch
+  ps1_prompt_palette
   branch="$(ps1_prompt_git_branch_name)"
   [ -z "$branch" ] && return
   branch="${branch//\%/%%}"
@@ -145,6 +148,7 @@ ps1_prompt_plain_git_zsh() {
 
 ps1_prompt_plain_git_bash() {
   local branch
+  ps1_prompt_palette
   branch="$(ps1_prompt_git_branch_name)"
   [ -z "$branch" ] && return
 
