@@ -49,7 +49,7 @@ endif
 "Check for external file changes when returning to Vim, similar to VS Code
 augroup macsetup_external_file_changes
   autocmd!
-  autocmd FocusGained,BufEnter,CursorHold,CursorHoldI * if mode() !=# 'c' | checktime | endif
+  autocmd FocusGained,CursorHold,CursorHoldI * if mode() !=# 'c' | checktime | endif
 augroup END
 
 " Disable unused stock Vim plugins before plugin loading. NERDTree replaces
@@ -1401,6 +1401,14 @@ function! QuitIfOnlyUtilityWindows() abort
   endif
 endfunction
 
+function! s:current_buffer_is_file() abort
+  return &buftype ==# ''
+        \ && &filetype !=# 'nerdtree'
+        \ && &filetype !=# 'minimap'
+        \ && !empty(expand('%:p'))
+        \ && filereadable(expand('%:p'))
+endfunction
+
 function! s:dedupe_nerdtree_windows() abort
   let l:current_winid = win_getid()
   let l:nerdtree_winids = []
@@ -1573,22 +1581,55 @@ function! s:refresh_minimap_for_window(path, winid) abort
   endtry
 endfunction
 
-"Automatically close vim if only window(s) remaining are utility windows
-augroup macsetup_utility_windows
-  autocmd!
-  autocmd BufEnter * if !get(g:, 'macsetup_fzf_active', 0) && AllWindowsAreUtility() | call timer_start(0, { -> QuitIfOnlyUtilityWindows() }) | endif
-augroup END
+function! s:schedule_buffer_refresh() abort
+  if get(g:, 'macsetup_buffer_refreshing', 0)
+    return
+  endif
 
-augroup macsetup_nerdtree_follow_file
-  autocmd!
-  autocmd BufEnter * call <SID>sync_nerdtree_to_current_file_soon()
-  autocmd VimEnter * call timer_start(100, { -> <SID>sync_nerdtree_to_current_file_soon() })
-augroup END
+  if get(g:, 'macsetup_buffer_refresh_timer', 0)
+    call timer_stop(g:macsetup_buffer_refresh_timer)
+  endif
 
-augroup macsetup_minimap_refresh
+  let l:winid = win_getid()
+  let l:bufnr = bufnr('%')
+  let g:macsetup_buffer_refresh_timer = timer_start(90, { -> <SID>refresh_buffer_context(l:bufnr, l:winid) })
+endfunction
+
+function! s:refresh_buffer_context(bufnr, winid) abort
+  let g:macsetup_buffer_refresh_timer = 0
+  let l:current_winid = win_getid()
+
+  if !bufexists(a:bufnr) || !win_gotoid(a:winid)
+    return
+  endif
+
+  let g:macsetup_buffer_refreshing = 1
+  try
+    if mode() !=# 'c'
+      silent! checktime
+    endif
+
+    if !get(g:, 'macsetup_fzf_active', 0) && AllWindowsAreUtility()
+      call timer_start(0, { -> QuitIfOnlyUtilityWindows() })
+      return
+    endif
+
+    if s:current_buffer_is_file()
+      call s:sync_nerdtree_to_current_file_soon()
+      call s:refresh_minimap_soon()
+    endif
+  finally
+    let g:macsetup_buffer_refreshing = 0
+    if win_getid() != l:current_winid
+      call win_gotoid(l:current_winid)
+    endif
+  endtry
+endfunction
+
+augroup macsetup_buffer_context_refresh
   autocmd!
-  autocmd BufEnter,BufWinEnter * call <SID>refresh_minimap_soon()
-  autocmd VimEnter * call timer_start(250, { -> <SID>refresh_minimap_soon() })
+  autocmd BufEnter,BufWinEnter * call <SID>schedule_buffer_refresh()
+  autocmd VimEnter * call timer_start(125, { -> <SID>schedule_buffer_refresh() })
 augroup END
 
 " Ensure buffet uses devicons (Needs to be done on VimEnter once all plugins are loaded)
