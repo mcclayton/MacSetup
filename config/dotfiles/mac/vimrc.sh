@@ -74,8 +74,14 @@ let g:macsetup_has_rg = executable('rg')
 let g:macsetup_has_bat = executable('bat') || executable('batcat')
 let g:macsetup_has_minimap = v:version >= 800 && g:macsetup_has_popup_windows && executable('code-minimap')
 let g:macsetup_disabled_plugins = []
-if !g:macsetup_has_coc
+" Coc and Supertab both want insert-mode Tab. Prefer Coc when supported;
+" keep Supertab as the old-Vim/no-Node completion fallback.
+if g:macsetup_has_coc
+  call add(g:macsetup_disabled_plugins, 'supertab')
+else
   call add(g:macsetup_disabled_plugins, 'coc.nvim')
+  let g:SuperTabDefaultCompletionType = 'context'
+  let g:SuperTabContextDefaultCompletionType = '<c-n>'
 endif
 if !g:macsetup_has_git_lens
   call add(g:macsetup_disabled_plugins, 'git-lens.vim')
@@ -1750,6 +1756,7 @@ function! s:hotkey_lines() abort
   \ '  Filters      Comma-separated rg globs; results update live',
   \ '',
   \ 'Coc / IDE',
+  \ '  Fallback     Older Vim/no node uses Supertab for <Tab> completion',
   \ '  <Tab>        Next completion item in insert mode',
   \ '  <S-Tab>      Previous completion item in insert mode',
   \ '  <C-Space>    Trigger completion',
