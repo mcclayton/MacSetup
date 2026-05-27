@@ -7,6 +7,7 @@ ps1_prompt_palette() {
   MCC_PS1_GIT_RGB='91;96;120'
   MCC_PS1_DARK_RGB='24;25;38'
   MCC_PS1_TEXT_RGB='202;211;245'
+  MCC_PS1_PLAIN_SEPARATOR="${MCC_PS1_PLAIN_SEPARATOR:-›}"
 }
 
 ps1_prompt_git_branch_name() {
@@ -106,7 +107,7 @@ ps1_prompt_ascii_segment() {
 
   printf '%s %s ' "$(ps1_prompt_style "$shell" "$fg_rgb" "$bg_rgb")" "$label"
   if [ -n "$next_bg_rgb" ]; then
-    printf '%s>' "$(ps1_prompt_style "$shell" "$bg_rgb" "$next_bg_rgb")"
+    printf '%s%s' "$(ps1_prompt_style "$shell" "$bg_rgb" "$next_bg_rgb")" "$MCC_PS1_PLAIN_SEPARATOR"
   else
     printf '%s' "$(ps1_prompt_reset "$shell")"
   fi
@@ -163,7 +164,7 @@ ps1_prompt_second_line() {
   local arrow
 
   if [ "$DISABLE_NERD_FONT_ICONS" = true ]; then
-    arrow='    '
+    arrow='  ›  '
   else
     arrow='  󱞩  '
   fi
