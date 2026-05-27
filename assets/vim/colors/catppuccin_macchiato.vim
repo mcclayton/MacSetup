@@ -110,7 +110,7 @@ function! CatppuccinMacchiatoApplyColors() abort
   highlight! GitGutterChangeDeleteLine ctermbg=58 guibg=#463B37
   highlight! GitGutterAddIntraLine cterm=bold ctermfg=150 ctermbg=22 gui=bold guifg=#A6DA95 guibg=#283E37
   highlight! GitGutterDeleteIntraLine cterm=bold ctermfg=210 ctermbg=52 gui=bold guifg=#ED8796 guibg=#44313B
-  highlight! CadenceGitLensBlame cterm=italic ctermfg=60 gui=italic guifg=#6E738D
+  highlight! MacSetupGitLensBlame cterm=italic ctermfg=60 gui=italic guifg=#6E738D
 
   highlight! CocErrorSign       cterm=bold ctermfg=210 ctermbg=235 gui=bold guifg=#ED8796 guibg=#24273A
   highlight! CocWarningSign     cterm=bold ctermfg=222 ctermbg=235 gui=bold guifg=#EED49F guibg=#24273A
@@ -158,26 +158,26 @@ function! CatppuccinMacchiatoApplyColors() abort
   highlight! BuffetModActiveBuffer cterm=bold ctermbg=60 ctermfg=189 gui=bold guibg=#5B6078 guifg=#CAD3F5
   highlight! BuffetModCurrentBuffer cterm=bold ctermbg=183 ctermfg=234 gui=bold guibg=#C6A0F6 guifg=#181926
 
-  highlight! CadenceSearchCount cterm=bold ctermfg=150 gui=bold guifg=#A6DA95
-  highlight! CadenceSearchNoMatch cterm=bold ctermfg=210 gui=bold guifg=#ED8796
+  highlight! MacSetupSearchCount cterm=bold ctermfg=150 gui=bold guifg=#A6DA95
+  highlight! MacSetupSearchNoMatch cterm=bold ctermfg=210 gui=bold guifg=#ED8796
   highlight! AnzuMatchline ctermfg=222 ctermbg=60 guifg=#EED49F guibg=#494D64
   highlight! webdevicons ctermfg=111 guifg=#8AADF4
   highlight! webdevicons_file_format ctermfg=222 guifg=#EED49F
   highlight! IndentLine ctermfg=237 guifg=#363A4F
 
-  highlight! CadenceMinimapBase ctermfg=60 ctermbg=234 guifg=#6E738D guibg=#1E2030
-  highlight! CadenceMinimapCursor cterm=bold ctermfg=111 ctermbg=60 gui=bold guifg=#8AADF4 guibg=#494D64
-  highlight! CadenceMinimapRange ctermfg=60 ctermbg=234 guifg=#A5ADCB guibg=#1E2030
-  highlight! CadenceMinimapSearch cterm=bold ctermfg=216 ctermbg=58 gui=bold guifg=#F5A97F guibg=#463B37
-  highlight! CadenceMinimapDiffRemoved ctermfg=210 guifg=#ED8796
-  highlight! CadenceMinimapDiffAdded ctermfg=150 guifg=#A6DA95
-  highlight! CadenceMinimapDiffLine ctermfg=216 guifg=#F5A97F
-  highlight! CadenceMinimapCursorDiffRemoved cterm=bold ctermfg=210 ctermbg=60 gui=bold guifg=#ED8796 guibg=#494D64
-  highlight! CadenceMinimapCursorDiffAdded cterm=bold ctermfg=150 ctermbg=60 gui=bold guifg=#A6DA95 guibg=#494D64
-  highlight! CadenceMinimapCursorDiffLine cterm=bold ctermfg=216 ctermbg=60 gui=bold guifg=#F5A97F guibg=#494D64
-  highlight! CadenceMinimapRangeDiffRemoved ctermfg=210 ctermbg=234 guifg=#ED8796 guibg=#1E2030
-  highlight! CadenceMinimapRangeDiffAdded ctermfg=150 ctermbg=234 guifg=#A6DA95 guibg=#1E2030
-  highlight! CadenceMinimapRangeDiffLine ctermfg=216 ctermbg=234 guifg=#F5A97F guibg=#1E2030
+  highlight! MacSetupMinimapBase ctermfg=60 ctermbg=234 guifg=#6E738D guibg=#1E2030
+  highlight! MacSetupMinimapCursor cterm=bold ctermfg=111 ctermbg=60 gui=bold guifg=#8AADF4 guibg=#494D64
+  highlight! MacSetupMinimapRange ctermfg=60 ctermbg=234 guifg=#A5ADCB guibg=#1E2030
+  highlight! MacSetupMinimapSearch cterm=bold ctermfg=216 ctermbg=58 gui=bold guifg=#F5A97F guibg=#463B37
+  highlight! MacSetupMinimapDiffRemoved ctermfg=210 guifg=#ED8796
+  highlight! MacSetupMinimapDiffAdded ctermfg=150 guifg=#A6DA95
+  highlight! MacSetupMinimapDiffLine ctermfg=216 guifg=#F5A97F
+  highlight! MacSetupMinimapCursorDiffRemoved cterm=bold ctermfg=210 ctermbg=60 gui=bold guifg=#ED8796 guibg=#494D64
+  highlight! MacSetupMinimapCursorDiffAdded cterm=bold ctermfg=150 ctermbg=60 gui=bold guifg=#A6DA95 guibg=#494D64
+  highlight! MacSetupMinimapCursorDiffLine cterm=bold ctermfg=216 ctermbg=60 gui=bold guifg=#F5A97F guibg=#494D64
+  highlight! MacSetupMinimapRangeDiffRemoved ctermfg=210 ctermbg=234 guifg=#ED8796 guibg=#1E2030
+  highlight! MacSetupMinimapRangeDiffAdded ctermfg=150 ctermbg=234 guifg=#A6DA95 guibg=#1E2030
+  highlight! MacSetupMinimapRangeDiffLine ctermfg=216 ctermbg=234 guifg=#F5A97F guibg=#1E2030
 
   highlight! airline_a cterm=bold ctermfg=234 ctermbg=183 gui=bold guifg=#181926 guibg=#C6A0F6
   highlight! airline_b ctermfg=189 ctermbg=60 guifg=#CAD3F5 guibg=#5B6078

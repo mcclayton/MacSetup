@@ -15,7 +15,7 @@ function runSection {
     cp -r "$MACSETUP_ASSETS_DIR/vim" ~/.vim
     assertDirectoryExists ~/.vim "~/.vim directory set" "Failed to set ~/.vim directory"
     assertFileExists ~/.vim/autoload/pathogen.vim "pathogen.vim set" "Failed to set pathogen.vim"
-    assertFileExists ~/.vim/colors/atom_one_dark.vim "Atom One Dark colorscheme set" "Failed to set Atom One Dark colorscheme"
+    assertFileExists ~/.vim/colors/catppuccin_macchiato.vim "Catppuccin Macchiato colorscheme set" "Failed to set Catppuccin Macchiato colorscheme"
     mkdir -p ~/.vim/bundle
 
     # Backup .vimrc
