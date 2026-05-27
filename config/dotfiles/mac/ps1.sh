@@ -7,7 +7,7 @@ ps1_prompt_palette() {
   PS1_PROMPT_GIT_RGB='91;96;120'
   PS1_PROMPT_DARK_RGB='24;25;38'
   PS1_PROMPT_TEXT_RGB='202;211;245'
-  PS1_PROMPT_PLAIN_SEPARATOR="${PS1_PROMPT_PLAIN_SEPARATOR:-›}"
+  PS1_PROMPT_PLAIN_SEPARATOR="${PS1_PROMPT_PLAIN_SEPARATOR:-▌}"
   PS1_PROMPT_PLAIN_ARROW="${PS1_PROMPT_PLAIN_ARROW:-↳}"
 }
 
@@ -114,7 +114,10 @@ ps1_prompt_ascii_segment() {
   if [ -n "$next_bg_rgb" ]; then
     printf '%s%s' "$(ps1_prompt_style "$shell" "$bg_rgb" "$next_bg_rgb")" "$PS1_PROMPT_PLAIN_SEPARATOR"
   else
-    printf '%s' "$(ps1_prompt_reset "$shell")"
+    printf '%s%s%s' \
+      "$(ps1_prompt_fg "$shell" "$bg_rgb")" \
+      "$PS1_PROMPT_PLAIN_SEPARATOR" \
+      "$(ps1_prompt_reset "$shell")"
   fi
 }
 
