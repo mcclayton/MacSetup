@@ -90,13 +90,25 @@ let g:pathogen_disabled = get(g:, 'pathogen_disabled', []) + g:cadence_disabled_
 call pathogen#infect()
 call pathogen#helptags()
 
-"Enable airline powerline fonts
-let g:airline_powerline_fonts = 1
-let g:airline_theme = 'atom_one_dark'
-let g:airline_left_sep = ''
-let g:airline_left_alt_sep = ''
-let g:airline_right_sep = ''
-let g:airline_right_alt_sep = ''
+" Airline statusline: rounded separators when Nerd Font glyphs are available,
+" plain separators when DISABLE_NERD_FONT_ICONS=true.
+let g:cadence_nerd_font_icons = get(g:, 'cadence_nerd_font_icons',
+      \ &encoding ==# 'utf-8' && $DISABLE_NERD_FONT_ICONS !=# 'true')
+let g:airline_powerline_fonts = g:cadence_nerd_font_icons
+let g:airline_theme = 'catppuccin_macchiato'
+let g:airline_skip_empty_sections = 1
+if g:cadence_nerd_font_icons
+  let g:airline_left_sep = ''
+  let g:airline_left_alt_sep = ' '
+  let g:airline_right_sep = ''
+  let g:airline_right_alt_sep = ' '
+else
+  let g:airline_symbols_ascii = 1
+  let g:airline_left_sep = ''
+  let g:airline_left_alt_sep = '|'
+  let g:airline_right_sep = ''
+  let g:airline_right_alt_sep = '|'
+endif
 
 """""""""""""""""""""""""
 " Colors + Highlighting "
@@ -119,14 +131,14 @@ if has('termguicolors')
   set termguicolors
 endif
 
-"Set the colorscheme to Atom One Dark (Must be in the '~/.vim/colors/' directory)
-colorscheme atom_one_dark
+"Set the colorscheme to Catppuccin Macchiato (Must be in the '~/.vim/colors/' directory)
+colorscheme catppuccin_macchiato
 
 " Reapply plugin highlight groups after plugins initialize their own colors.
-augroup atom_one_dark_plugin_colors
+augroup catppuccin_macchiato_plugin_colors
   autocmd!
-  autocmd VimEnter * if exists('*AtomOneDarkApplyColors') | call AtomOneDarkApplyColors() | endif
-  autocmd User AirlineAfterTheme if exists('*AtomOneDarkApplyColors') | call AtomOneDarkApplyColors() | endif
+  autocmd VimEnter * if exists('*CatppuccinMacchiatoApplyColors') | call CatppuccinMacchiatoApplyColors() | endif
+  autocmd User AirlineAfterTheme if exists('*CatppuccinMacchiatoApplyColors') | call CatppuccinMacchiatoApplyColors() | endif
 augroup END
 
 "Highlight the current line
@@ -157,6 +169,8 @@ set backspace=indent,eol,start
 " Indentation visualization via indentline plugin
 let g:indentLine_char_list = ['︴']
 let g:indentLine_enabled = 1
+let g:indentLine_color_gui = '#363A4F'
+let g:indentLine_color_term = 24
 
 
 """""""""""""""""""""""
@@ -169,8 +183,8 @@ set ignorecase
 set smartcase
 set wrapscan
 
-let g:anzu_status_format = 'find %i/%l'
-let g:anzu_no_match_word = 'no matches'
+let g:anzu_status_format = '%#CadenceSearchCount#find %i/%l%#None#'
+let g:anzu_no_match_word = '%#CadenceSearchNoMatch#no matches%#None#'
 let g:anzu_search_limit = 10000
 let g:anzu_bottomtop_word = 'bottom, continuing at top'
 let g:anzu_topbottom_word = 'top, continuing at bottom'
@@ -242,9 +256,9 @@ endif
 """""""
 " FZF "
 """""""
-function! s:fzf_atom_one_dark_colors() abort
+function! s:fzf_catppuccin_macchiato_colors() abort
   return [
-  \ '--color', 'fg:#ABB2BF,bg:#282C34,hl:#61AFEF,fg+:#D7DAE0,bg+:#2C313A,hl+:#61AFEF,info:#636D83,prompt:#98C379,pointer:#528BFF,marker:#98C379,spinner:#E5C07B,header:#5C6370,border:#3A3F4B,preview-fg:#ABB2BF,preview-bg:#282C34,preview-border:#3A3F4B,label:#61AFEF,query:#D7DAE0,gutter:#282C34'
+  \ '--color', 'fg:#CAD3F5,bg:#24273A,hl:#F5A97F,fg+:#CAD3F5,bg+:#494D64,hl+:#EED49F,info:#A5ADCB,prompt:#A6DA95,pointer:#F5BDE6,marker:#A6DA95,spinner:#F5A97F,header:#A5ADCB,border:#5B6078,preview-fg:#CAD3F5,preview-bg:#24273A,preview-border:#5B6078,label:#8AADF4,query:#CAD3F5,gutter:#24273A'
   \ ]
 endfunction
 
@@ -258,11 +272,31 @@ function! s:fzf_bat_command() abort
   return ''
 endfunction
 
+let s:fzf_bat_theme = 'Catppuccin Macchiato'
+let s:fzf_bat_theme_options = {}
+
+function! s:fzf_bat_theme_option(bat) abort
+  if has_key(s:fzf_bat_theme_options, a:bat)
+    return s:fzf_bat_theme_options[a:bat]
+  endif
+
+  let l:theme_option = '--theme="ansi"'
+  if !empty(a:bat)
+    let l:themes = systemlist(a:bat . ' --list-themes')
+    if index(l:themes, s:fzf_bat_theme) >= 0
+      let l:theme_option = '--theme="' . s:fzf_bat_theme . '"'
+    endif
+  endif
+
+  let s:fzf_bat_theme_options[a:bat] = l:theme_option
+  return l:theme_option
+endfunction
+
 function! s:fzf_file_preview_command(file_placeholder) abort
-  let l:header = 'printf "\033[1;38;2;97;175;239m%s\033[0m\n\033[2;38;2;92;99;112m%s\033[0m\n\n" "$(basename "$file")" "$file"; '
+  let l:header = 'printf "\033[1;38;2;138;173;244m%s\033[0m\n\033[2;38;2;165;173;203m%s\033[0m\n\n" "$(basename "$file")" "$file"; '
   let l:bat = s:fzf_bat_command()
   if !empty(l:bat)
-    return 'sh -c ''file="$1"; ' . l:header . 'exec ' . l:bat . ' --theme="OneHalfDark" --style=numbers --color=always -- "$file"'' _ ' . a:file_placeholder
+    return 'sh -c ''file="$1"; ' . l:header . 'exec ' . l:bat . ' ' . s:fzf_bat_theme_option(l:bat) . ' --style=numbers --color=always -- "$file"'' _ ' . a:file_placeholder
   endif
   return 'sh -c ''file="$1"; ' . l:header . 'sed -n "1,200p" "$file"'' _ ' . a:file_placeholder
 endfunction
@@ -270,7 +304,7 @@ endfunction
 function! s:fzf_result_preview_command(file_placeholder, line_placeholder) abort
   let l:bat = s:fzf_bat_command()
   if !empty(l:bat)
-    return l:bat . ' --theme="OneHalfDark" --style=numbers --color=always --highlight-line ' . a:line_placeholder . ' ' . a:file_placeholder
+    return l:bat . ' ' . s:fzf_bat_theme_option(l:bat) . ' --style=numbers --color=always --highlight-line ' . a:line_placeholder . ' ' . a:file_placeholder
   endif
   return 'sh -c ''line="$1"; file="$2"; start=$((line > 20 ? line - 20 : 1)); end=$((line + 80)); nl -ba "$file" | sed -n "${start},${end}p"'' _ ' . a:line_placeholder . ' ' . a:file_placeholder
 endfunction
@@ -314,6 +348,8 @@ function! s:fzf_file_options(state) abort
   \ '--preview', s:fzf_file_preview_command('{2}'),
   \ '--preview-window', 'right:55%,border-left,~3',
   \ '--bind', 'focus:transform-preview-label:sh -c ''printf " %s " "$1"'' _ {2}',
+  \ '--bind', 'start:unbind(change)',
+  \ '--bind', 'change:transform:' . s:fzf_file_state_command(a:state, 'change'),
   \ '--bind', 'ctrl-o:transform:' . s:fzf_file_state_command(a:state, 'ctrl-o'),
   \ '--bind', 'ctrl-e:transform:' . s:fzf_file_state_command(a:state, 'ctrl-e'),
   \ '--bind', 'ctrl-r:transform:' . s:fzf_file_state_command(a:state, 'ctrl-r'),
@@ -323,7 +359,7 @@ function! s:fzf_file_options(state) abort
   \ ]
 
   call extend(l:options, ['--header', 'Smart path display, filename + path in preview | Ctrl-o include | Ctrl-e exclude | Ctrl-r reset filters', '--header-first'])
-  call extend(l:options, s:fzf_atom_one_dark_colors())
+  call extend(l:options, s:fzf_catppuccin_macchiato_colors())
   return l:options
 endfunction
 
@@ -421,7 +457,7 @@ function! s:fzf_file_state_script(state) abort
   \ '',
   \ 'format_files() {',
   \ "  awk '",
-  \ '  BEGIN { blue = "\033[38;5;75m"; fg = "\033[38;5;145m"; dim = "\033[38;5;99m"; reset = "\033[0m" }',
+  \ '  BEGIN { blue = "\033[38;2;135;215;255m"; fg = "\033[38;2;199;210;212m"; dim = "\033[38;2;109;139;150m"; reset = "\033[0m" }',
   \ '  {',
   \ '    path = $0',
   \ '    name = path',
@@ -507,12 +543,25 @@ function! s:fzf_file_state_script(state) abort
   \ '  "$@" | format_files',
   \ '}',
   \ '',
+  \ 'filter_saved_search() {',
+  \ '  search=$(read_file "$search_file")',
+  \ '  if [ -n "$search" ] && command -v fzf >/dev/null 2>&1; then',
+  \ '    fzf --ansi --filter "$search" --delimiter "$(printf ''\t'')" --with-nth 1 --nth 1,2',
+  \ '  else',
+  \ '    cat',
+  \ '  fi',
+  \ '}',
+  \ '',
+  \ 'list_files_for_search() {',
+  \ '  list_files | filter_saved_search',
+  \ '}',
+  \ '',
   \ 'header() {',
   \ '  include=$(read_file "$include_file")',
   \ '  exclude=$(read_file "$exclude_file")',
   \ '  case "$FZF_PROMPT" in',
-  \ '    "Include > ") printf "%s\n" "Include filter: type rg glob/path, Enter applies, Esc cancels, Ctrl-r resets" ;;',
-  \ '    "Exclude > ") printf "%s\n" "Exclude filter: type rg glob/path, Enter applies, Esc cancels, Ctrl-r resets" ;;',
+  \ '    "Include > ") printf "%s\n" "Include filter: type rg glob/path; results update live; Enter applies" ;;',
+  \ '    "Exclude > ") printf "%s\n" "Exclude filter: type rg glob/path; results update live; Enter applies" ;;',
   \ '    *) printf "%s\n" "Smart path display, filename + path in preview | Ctrl-o include | Ctrl-e exclude | Ctrl-r reset filters" ;;',
   \ '  esac',
   \ '  if ! command -v rg >/dev/null 2>&1; then',
@@ -523,15 +572,23 @@ function! s:fzf_file_state_script(state) abort
   \ '}',
   \ '',
   \ 'search_actions() {',
-  \ '  printf "%s\n" "change-prompt(Files > )+enable-search+transform-query(cat \"$search_file\")+reload(\"$script_file\" files)+transform-header(\"$script_file\" header)"',
+  \ '  printf "%s\n" "unbind(change)+change-prompt(Files > )+enable-search+transform-query(cat \"$search_file\")+reload(\"$script_file\" files)+transform-header(\"$script_file\" header)"',
   \ '}',
   \ '',
   \ 'edit_include_actions() {',
-  \ '  printf "%s\n" "disable-search+change-prompt(Include > )+transform-query(cat \"$include_file\")+reload(printf \"\")+transform-header(\"$script_file\" header)"',
+  \ '  printf "%s\n" "disable-search+change-prompt(Include > )+transform-query(cat \"$include_file\")+rebind(change)+reload(\"$script_file\" files-for-search)+transform-header(\"$script_file\" header)"',
   \ '}',
   \ '',
   \ 'edit_exclude_actions() {',
-  \ '  printf "%s\n" "disable-search+change-prompt(Exclude > )+transform-query(cat \"$exclude_file\")+reload(printf \"\")+transform-header(\"$script_file\" header)"',
+  \ '  printf "%s\n" "disable-search+change-prompt(Exclude > )+transform-query(cat \"$exclude_file\")+rebind(change)+reload(\"$script_file\" files-for-search)+transform-header(\"$script_file\" header)"',
+  \ '}',
+  \ '',
+  \ 'live_filter_actions() {',
+  \ '  case "$FZF_PROMPT" in',
+  \ '    "Include > ") write_current_query "$include_file"; printf "%s\n" "reload(sleep 0.1; \"$script_file\" files-for-search)+transform-header(\"$script_file\" header)" ;;',
+  \ '    "Exclude > ") write_current_query "$exclude_file"; printf "%s\n" "reload(sleep 0.1; \"$script_file\" files-for-search)+transform-header(\"$script_file\" header)" ;;',
+  \ '    *) printf "%s\n" "transform-header(\"$script_file\" header)" ;;',
+  \ '  esac',
   \ '}',
   \ '',
   \ 'enter_include() {',
@@ -576,7 +633,9 @@ function! s:fzf_file_state_script(state) abort
   \ '',
   \ 'case "$1" in',
   \ '  files) list_files ;;',
+  \ '  files-for-search) list_files_for_search ;;',
   \ '  header) header ;;',
+  \ '  change) live_filter_actions ;;',
   \ '  ctrl-o) enter_include ;;',
   \ '  ctrl-e) enter_exclude ;;',
   \ '  ctrl-r) reset_filters ;;',
@@ -766,7 +825,7 @@ function! s:fzf_rg_state_script(state) abort
   \ '',
   \ 'run_rg() {',
   \ '  query="$1"',
-  \ '  set -- rg --with-filename --column --line-number --no-heading --color=always --colors path:fg:171,178,191 --colors line:fg:99,109,131 --colors column:fg:86,182,194 --colors match:fg:224,108,117 --colors match:style:bold --smart-case --hidden --ignore --ignore-vcs --no-require-git --no-messages --glob "!.git" --glob "!.git/*" --glob "!.gitignore"',
+  \ '  set -- rg --with-filename --column --line-number --no-heading --color=always --colors path:fg:135,215,255 --colors line:fg:109,139,150 --colors column:fg:105,172,205 --colors match:fg:216,153,27 --colors match:style:bold --smart-case --hidden --ignore --ignore-vcs --no-require-git --no-messages --glob "!.git" --glob "!.git/*" --glob "!.gitignore"',
   \ '',
   \ '  while IFS= read -r glob; do',
   \ '    [ -n "$glob" ] || continue',
@@ -885,7 +944,7 @@ endfunction
 
 function! s:fzf_rg_current_file_reload_command(file, format) abort
   if executable('rg')
-    let l:command = 'rg --with-filename --column --line-number --no-heading --color=always --colors ''path:fg:171,178,191'' --colors ''line:fg:99,109,131'' --colors ''column:fg:86,182,194'' --colors ''match:fg:224,108,117'' --colors ''match:style:bold'' --smart-case --no-messages'
+    let l:command = 'rg --with-filename --column --line-number --no-heading --color=always --colors ''path:fg:135,215,255'' --colors ''line:fg:109,139,150'' --colors ''column:fg:105,172,205'' --colors ''match:fg:216,153,27'' --colors ''match:style:bold'' --smart-case --no-messages'
     return 'test -n {q} && ' . l:command . ' -- {q} ' . shellescape(a:file) . ' | awk -F: -f ' . shellescape(a:format) . ' || true'
   endif
 
@@ -908,7 +967,7 @@ endfunction
 
 function! s:fzf_rg_format_script() abort
   return [
-  \ 'BEGIN { blue = "\033[38;5;75m"; fg = "\033[38;5;145m"; reset = "\033[0m" }',
+  \ 'BEGIN { blue = "\033[38;2;135;215;255m"; fg = "\033[38;2;199;210;212m"; reset = "\033[0m" }',
   \ '{',
   \ '  file = $1; line = $2; col = $3',
   \ '  clean = file; gsub(/\033\[[0-9;]*m/, "", clean)',
@@ -943,7 +1002,7 @@ endfunction
 
 function! s:fzf_rg_current_file_format_script() abort
   return [
-  \ 'BEGIN { blue = "\033[38;5;75m"; fg = "\033[38;5;145m"; dim = "\033[38;5;99m"; reset = "\033[0m" }',
+  \ 'BEGIN { blue = "\033[38;2;135;215;255m"; fg = "\033[38;2;199;210;212m"; dim = "\033[38;2;109;139;150m"; reset = "\033[0m" }',
   \ '{',
   \ '  file = $1; line = $2; col = $3',
   \ '  clean = file; gsub(/\033\[[0-9;]*m/, "", clean)',
@@ -1023,7 +1082,7 @@ function! s:fzf_rg_options(query, include, exclude, state) abort
   endif
   call extend(l:options, ['--header', join(l:header, "\n"), '--header-first'])
 
-  call extend(l:options, s:fzf_atom_one_dark_colors())
+  call extend(l:options, s:fzf_catppuccin_macchiato_colors())
 
   if !empty(a:query)
     call extend(l:options, ['--query', a:query])
@@ -1064,7 +1123,7 @@ function! s:fzf_rg_current_file_options(file, format) abort
   \ '--bind', 'shift-up:preview-page-up,shift-down:preview-page-down,ctrl-u:preview-page-up,ctrl-d:preview-page-down,ctrl-/:toggle-preview'
   \ ]
 
-  return extend(l:options, s:fzf_atom_one_dark_colors())
+  return extend(l:options, s:fzf_catppuccin_macchiato_colors())
 endfunction
 
 function! s:parse_rg_result(line) abort
@@ -1183,7 +1242,17 @@ function! s:disable_git_lens() abort
   let b:git_lens_enabled = 0
 endfunction
 
-function! s:enter_minimal_mode() abort
+function! s:minimap_is_open() abort
+  return get(g:, 'cadence_has_minimap', 0) && bufwinnr('-MINIMAP-') != -1
+endfunction
+
+function! s:side_panels_are_open() abort
+  let l:nerdtree_open = exists('g:NERDTree') && g:NERDTree.IsOpen()
+  let l:minimap_open = !get(g:, 'cadence_has_minimap', 0) || s:minimap_is_open()
+  return l:nerdtree_open && l:minimap_open
+endfunction
+
+function! s:close_side_panels() abort
   let g:cadence_minimal_mode = 1
   let t:cadence_last_nerdtree_sync_path = ''
   if get(t:, 'cadence_nerdtree_sync_timer', 0)
@@ -1202,8 +1271,40 @@ function! s:enter_minimal_mode() abort
 
   silent! MinimapClose
   silent! NERDTreeClose
+endfunction
+
+function! s:enter_minimal_mode() abort
+  call s:close_side_panels()
   silent! GitGutterDisable
   call s:disable_git_lens()
+endfunction
+
+function! s:open_side_panels() abort
+  let l:current_winid = win_getid()
+  let l:path = expand('%:p')
+
+  call s:leave_minimal_mode()
+  call s:ensure_nerdtree_open()
+
+  if filereadable(l:path) && exists('g:NERDTree') && g:NERDTree.IsOpen()
+    call s:schedule_nerdtree_sync(l:path, l:current_winid, 75)
+  endif
+
+  if get(g:, 'cadence_has_minimap', 0)
+    let g:minimap_auto_start = 1
+    silent! Minimap
+    call s:refresh_minimap_soon()
+  endif
+
+  call win_gotoid(l:current_winid)
+endfunction
+
+function! s:toggle_side_panels() abort
+  if s:side_panels_are_open()
+    call s:close_side_panels()
+  else
+    call s:open_side_panels()
+  endif
 endfunction
 
 function! s:toggle_explorer() abort
@@ -1436,7 +1537,7 @@ augroup END
 " Ensure buffet uses devicons (Needs to be done on VimEnter once all plugins are loaded)
 augroup cadence_startup
   autocmd!
-  autocmd VimEnter * let g:buffet_use_devicons = 1
+  autocmd VimEnter * let g:buffet_use_devicons = get(g:, 'cadence_nerd_font_icons', 1)
 "Auto open Nerdtree
   autocmd VimEnter * call <SID>ensure_nerdtree_open()
 
@@ -1449,15 +1550,24 @@ augroup END
 """"""""""""""""
 " Tabbed Files "
 """"""""""""""""
-let g:buffet_powerline_separators = 1
+let g:buffet_powerline_separators = 0
 let g:buffet_always_show_tabline = 1
+if g:cadence_nerd_font_icons
+  let g:buffet_noseparator = ''
+  let g:buffet_separator = ' '
+  let g:buffet_tab_icon = '⸬ tabs ⸬'
+  let g:buffet_use_devicons = 1
+else
+  let g:buffet_noseparator = ' '
+  let g:buffet_separator = '|'
+  let g:buffet_tab_icon = 'tabs'
+  let g:buffet_use_devicons = 0
+endif
 function! g:BuffetSetCustomColors()
-  if exists('*AtomOneDarkApplyColors')
-    call AtomOneDarkApplyColors()
+  if exists('*CatppuccinMacchiatoApplyColors')
+    call CatppuccinMacchiatoApplyColors()
   endif
 endfunction
-let g:buffet_tab_icon = '⸬ tabs ⸬'
-let g:buffet_use_devicons = 1
 
 """""""""""
 " Minimap "
@@ -1465,6 +1575,20 @@ let g:buffet_use_devicons = 1
 if get(g:, 'cadence_has_minimap', 0)
   let g:minimap_width = 10
   let g:minimap_auto_start = 1
+  let g:minimap_enable_highlight_colorgroup = 0
+  let g:minimap_base_highlight = 'CadenceMinimapBase'
+  let g:minimap_cursor_color = 'CadenceMinimapCursor'
+  let g:minimap_range_color = 'CadenceMinimapRange'
+  let g:minimap_search_color = 'CadenceMinimapSearch'
+  let g:minimap_diffremove_color = 'CadenceMinimapDiffRemoved'
+  let g:minimap_diffadd_color = 'CadenceMinimapDiffAdded'
+  let g:minimap_diff_color = 'CadenceMinimapDiffLine'
+  let g:minimap_cursor_diffremove_color = 'CadenceMinimapCursorDiffRemoved'
+  let g:minimap_cursor_diffadd_color = 'CadenceMinimapCursorDiffAdded'
+  let g:minimap_cursor_diff_color = 'CadenceMinimapCursorDiffLine'
+  let g:minimap_range_diffremove_color = 'CadenceMinimapRangeDiffRemoved'
+  let g:minimap_range_diffadd_color = 'CadenceMinimapRangeDiffAdded'
+  let g:minimap_range_diff_color = 'CadenceMinimapRangeDiffLine'
 else
   let g:minimap_auto_start = 0
 endif
@@ -1491,7 +1615,8 @@ set updatetime=250
 let g:GIT_LENS_CONFIG = {
     \ 'blame_wrap': v:false,
     \ 'blame_empty_line': v:false,
-    \ 'blame_delay': 800
+    \ 'blame_delay': 800,
+    \ 'blame_highlight': 'CadenceGitLensBlame'
     \ }
 "Default GitGutter and GitLens to be enabled
 let g:GIT_LENS_ENABLED = get(g:, 'cadence_has_git_lens', 0) ? 1 : 0
@@ -1514,7 +1639,7 @@ function! s:hotkey_lines() abort
   \ '  <C-g>        Search all files',
   \ '  <C-l>        Toggle GitGutter signs and GitLens blame',
   \ '  <C-m>        Toggle minimap',
-  \ '  <C-d>        Close side panels / minimal mode',
+  \ '  <C-d>        Toggle NERDTree + minimap side panels',
   \ '',
   \ 'Text Navigation',
   \ '  Insert mode uses your shell-style Ctrl+WASD navigation',
@@ -1627,7 +1752,7 @@ function! s:hotkey_lines() abort
   \ '',
   \ 'Minimap / Side Panels',
   \ '  <C-m>        Toggle minimap',
-  \ '  <C-d>        Close minimap, NERDTree, and GitGutter signs',
+  \ '  <C-d>        Toggle NERDTree and minimap together',
   \ '  Auto-start   Minimap starts with Vim',
   \ '',
   \ 'Buffers / Tabs / Windows',
@@ -1649,7 +1774,7 @@ function! s:hotkey_lines() abort
   \ '  Auto-pairs   vim-closer auto-closes brackets, quotes, and tags',
   \ '  Indent guides indentLine shows vertical indentation guides',
   \ '  Devicons     vim-devicons adds filetype icons to UI plugins',
-  \ '  Airline      Statusline uses Atom One Dark theme',
+  \ '  Airline      Statusline uses the Catppuccin Macchiato theme',
   \ '  Buffet       Tab/buffer line shows buffers across the top',
   \ '  Indentation  Tabs expand to 4 spaces; filetype indent is enabled',
   \ '',
@@ -1703,7 +1828,7 @@ function! s:command_palette_entries() abort
   \ {'keys': '<C-g>', 'label': 'Search all files', 'command': 'SearchFiles'},
   \ {'keys': '<C-l>', 'label': 'Toggle GitGutter and GitLens', 'command': 'ToggleGitTools'},
   \ {'keys': '<C-m>', 'label': 'Toggle minimap', 'command': 'ToggleCodeMinimap'},
-  \ {'keys': '<C-d>', 'label': 'Close side panels / minimal mode', 'command': 'CloseSidePanels'},
+  \ {'keys': '<C-d>', 'label': 'Toggle NERDTree and minimap', 'command': 'ToggleSidePanels'},
   \ {'keys': ':help', 'label': 'Show full hotkeys', 'command': 'VimHotkeys'}
   \ ]
 endfunction
@@ -1752,7 +1877,7 @@ function! s:command_palette_filter(id, key) abort
     return s:run_command_palette_command(a:id, 'ToggleGitTools')
   endif
   if a:key ==# "\<C-d>"
-    return s:run_command_palette_command(a:id, 'CloseSidePanels')
+    return s:run_command_palette_command(a:id, 'ToggleSidePanels')
   endif
 
   return popup_filter_menu(a:id, a:key)
@@ -1825,6 +1950,7 @@ command! SearchFiles FZFRgPrompt
 command! FindInFile call <SID>start_current_file_search()
 command! ToggleExplorer call <SID>toggle_explorer()
 command! ToggleCodeMinimap call <SID>toggle_code_minimap()
+command! ToggleSidePanels call <SID>toggle_side_panels()
 command! ToggleGitTools call <SID>toggle_git_tools()
 command! CloseSidePanels call <SID>enter_minimal_mode()
 if get(g:, 'cadence_has_coc', 0)
@@ -1863,8 +1989,9 @@ if get(g:, 'cadence_has_coc', 0)
   call s:coc_add_command('vim.searchFiles', 'SearchFiles', 'Search all files (<C-g>)')
   call s:coc_add_command('vim.toggleExplorer', 'ToggleExplorer', 'Toggle NERDTree explorer (<C-n>)')
   call s:coc_add_command('vim.toggleMinimap', 'ToggleCodeMinimap', 'Toggle minimap (<C-m>)')
+  call s:coc_add_command('vim.toggleSidePanels', 'ToggleSidePanels', 'Toggle NERDTree and minimap (<C-d>)')
   call s:coc_add_command('vim.toggleGitTools', 'ToggleGitTools', 'Toggle GitGutter and GitLens (<C-l>)')
-  call s:coc_add_command('vim.closeSidePanels', 'CloseSidePanels', 'Close side panels / minimal mode (<C-d>)')
+  call s:coc_add_command('vim.closeSidePanels', 'CloseSidePanels', 'Close side panels / full minimal mode')
   call s:coc_add_command('vim.problems', 'Problems', 'Problems: diagnostics list (\\d)')
   call s:coc_add_command('vim.documentSymbols', 'DocumentSymbols', 'Document symbols / outline (\\s)')
   call s:coc_add_command('vim.formatFile', 'FormatFile', 'Format current file (\\f)')
@@ -1899,8 +2026,8 @@ inoremap <silent> <C-d> <C-o>w
 inoremap <silent> <C-s> <Home>
 inoremap <silent> <C-w> <End>
 
-"Ctrl+d to close side panels and enter a more minimal mode
-nnoremap <silent> <C-d> :CloseSidePanels<CR>
+"Ctrl+d to toggle NERDTree and the minimap together
+nnoremap <silent> <C-d> :ToggleSidePanels<CR>
 
 "Ctrl+m to toggle code minimap
 nnoremap <silent> <C-m> :ToggleCodeMinimap<CR>
