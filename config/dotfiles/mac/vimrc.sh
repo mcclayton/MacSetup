@@ -91,9 +91,11 @@ call pathogen#infect()
 call pathogen#helptags()
 
 " Airline statusline: rounded separators when Nerd Font glyphs are available,
-" plain separators when DISABLE_NERD_FONT_ICONS=true.
+" PS1-matched separators when DISABLE_NERD_FONT_ICONS=true.
 let g:cadence_nerd_font_icons = get(g:, 'cadence_nerd_font_icons',
       \ &encoding ==# 'utf-8' && $DISABLE_NERD_FONT_ICONS !=# 'true')
+let g:cadence_plain_left_sep = empty($PS1_PROMPT_PLAIN_SEPARATOR) ? '' : $PS1_PROMPT_PLAIN_SEPARATOR
+let g:cadence_plain_right_sep = empty($PS1_PROMPT_PLAIN_RIGHT_SEPARATOR) ? '' : $PS1_PROMPT_PLAIN_RIGHT_SEPARATOR
 let g:airline_powerline_fonts = g:cadence_nerd_font_icons
 let g:airline_theme = 'catppuccin_macchiato'
 let g:airline_skip_empty_sections = 1
@@ -103,11 +105,11 @@ if g:cadence_nerd_font_icons
   let g:airline_right_sep = ''
   let g:airline_right_alt_sep = ' '
 else
-  let g:airline_symbols_ascii = 1
-  let g:airline_left_sep = ''
-  let g:airline_left_alt_sep = '|'
-  let g:airline_right_sep = ''
-  let g:airline_right_alt_sep = '|'
+  let g:airline_symbols_ascii = 0
+  let g:airline_left_sep = g:cadence_plain_left_sep
+  let g:airline_left_alt_sep = ' '
+  let g:airline_right_sep = g:cadence_plain_right_sep
+  let g:airline_right_alt_sep = ' '
 endif
 
 """""""""""""""""""""""""
@@ -1607,8 +1609,8 @@ if g:cadence_nerd_font_icons
   let g:buffet_tab_icon = '⸬ tabs ⸬'
   let g:buffet_use_devicons = 1
 else
-  let g:buffet_noseparator = ' '
-  let g:buffet_separator = '|'
+  let g:buffet_noseparator = g:cadence_plain_left_sep
+  let g:buffet_separator = ' '
   let g:buffet_tab_icon = 'tabs'
   let g:buffet_use_devicons = 0
 endif
