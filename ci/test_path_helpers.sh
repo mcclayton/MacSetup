@@ -71,6 +71,49 @@ assertPathMissing() {
   fi
 }
 
+echo "Checking idempotent managed block appends..."
+tmp_lines="$(mktemp)"
+printf '%s\n' '}' > "$tmp_lines"
+addManagedLinesToFiles "Example Block" "$tmp_lines" -- \
+  "" \
+  "# Example Block" \
+  "example() {" \
+  "}"
+addManagedLinesToFiles "Example Block" "$tmp_lines" -- \
+  "" \
+  "# Example Block" \
+  "example() {" \
+  "}"
+assertEquals "1" "$(grep -Fxc "# Example Block (Added by MacSetup)" "$tmp_lines")" "managed block marker should be appended once"
+assertEquals "1" "$(grep -Fxc "example() {" "$tmp_lines")" "managed block content should be appended once"
+assertEquals "2" "$(grep -Fxc "}" "$tmp_lines")" "managed block should preserve structural lines even when already present"
+rm -f "$tmp_lines"
+
+echo "Checking idempotent asdf plugin installation..."
+asdf_plugin_adds=0
+ASDF_PLUGIN_LIST="nodejs"
+asdf() {
+  case "$1:$2" in
+    plugin:list)
+      printf '%s\n' "$ASDF_PLUGIN_LIST"
+      ;;
+    plugin:add)
+      asdf_plugin_adds=$((asdf_plugin_adds + 1))
+      ASDF_PLUGIN_LIST="${ASDF_PLUGIN_LIST}
+$3"
+      ;;
+    *)
+      return 2
+      ;;
+  esac
+}
+installAsdfPlugin nodejs
+assertEquals "0" "$asdf_plugin_adds" "existing asdf plugin should not be added again"
+installAsdfPlugin python
+assertEquals "1" "$asdf_plugin_adds" "missing asdf plugin should be added once"
+unset -f asdf
+unset ASDF_PLUGIN_LIST
+
 echo "Checking PATH entry detection..."
 PATH="/opt/macsetup/bin:/usr/bin:/bin:/Applications/Test App/bin"
 assertPathContains "/opt/macsetup/bin" "expected first PATH entry to be detected"

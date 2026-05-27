@@ -13,7 +13,7 @@ View the automatic installation instructions [Here](https://github.com/mcclayton
 #### Manual
 
 Be sure to backup and remove your current dot files if you have them:
-(.bashrc, .vimrc, .profile, .bash_profile, .ps1)
+(.bashrc, .vimrc, .profile, .bash_profile, .ps1, .shell_common)
 
 Place `.sh` files into home directory (cd ~/)
 

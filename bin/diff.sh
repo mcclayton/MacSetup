@@ -50,6 +50,7 @@ find_dot_file_changes() {
     "bash_profile"
     "profile"
     "ps1"
+    "shell_common"
     "zshrc"
     "zprofile"
     "utility_aliases"

@@ -52,9 +52,10 @@ function runSection {
         brew doctor
 
         info 'Adding Homebrew to $PATH in .bash_profile and .zprofile'
-        addLineToFiles "" ~/.bash_profile ~/.zprofile
-        addLineToFiles "# Homebrew Package Manager" ~/.bash_profile ~/.zprofile
-        addLineToFiles "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" ~/.bash_profile ~/.zprofile
+        addManagedLinesToFiles "Homebrew Package Manager" ~/.bash_profile ~/.zprofile -- \
+          "" \
+          "# Homebrew Package Manager" \
+          "eval \"\$($(brew --prefix)/bin/brew shellenv)\""
         eval "$($(brew --prefix)/bin/brew shellenv)"
         success 'Added Homebrew to $PATH in ~/.bash_profile and ~/.zprofile'
       else
