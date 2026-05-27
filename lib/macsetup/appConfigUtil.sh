@@ -163,7 +163,7 @@ configureITerm() {
     cp "$MACSETUP_CONFIG_DIR/terminal/iterm2/com.googlecode.iterm2.plist" ~/Library/Preferences/com.googlecode.iterm2.plist
     # Reading in new config file
     info "Reading in new configurations file"
-    `defaults read -app iTerm` 2>/dev/null
+    defaults read -app iTerm >/dev/null 2>&1 || true
     # Assert configuration file was copied over successfully
     assertFileExists ~/Library/Preferences/"com.googlecode.iterm2.plist" "iTerm config file set correctly" "Failed to set iTerm config file"
   else

@@ -1,6 +1,11 @@
 #!/bin/bash
 
 # Install Homebrew packages
+function installYtop {
+  brew tap cjbassi/ytop
+  brew install ytop
+}
+
 function runSection {
   promptNewSection "HOMEBREW PACKAGES"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -48,7 +53,7 @@ function runSection {
       installPackage delta "brew install git-delta"
       assertPackageInstallation delta "delta (Better 'diff' Command)"
       # Install ytop
-      installPackage ytop `brew tap cjbassi/ytop ; brew install ytop`
+      installPackage ytop installYtop
       assertPackageInstallation ytop "ytop (Better 'top' Command)"
       # Install htop
       installPackage htop "brew install htop"

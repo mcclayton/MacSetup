@@ -71,6 +71,41 @@ assertPathMissing() {
   fi
 }
 
+echo "Checking idempotent managed file appends..."
+tmp_lines="$(mktemp)"
+addLineToFiles "# Example" "$tmp_lines"
+addLineToFiles "# Example" "$tmp_lines"
+addLineToFiles "value" "$tmp_lines"
+addLineToFiles "value" "$tmp_lines"
+assertEquals "1" "$(grep -Fxc "# Example (Added by MacSetup)" "$tmp_lines")" "comment line should be appended once"
+assertEquals "1" "$(grep -Fxc "value" "$tmp_lines")" "plain line should be appended once"
+rm -f "$tmp_lines"
+
+echo "Checking idempotent asdf plugin installation..."
+asdf_plugin_adds=0
+ASDF_PLUGIN_LIST="nodejs"
+asdf() {
+  case "$1:$2" in
+    plugin:list)
+      printf '%s\n' "$ASDF_PLUGIN_LIST"
+      ;;
+    plugin:add)
+      asdf_plugin_adds=$((asdf_plugin_adds + 1))
+      ASDF_PLUGIN_LIST="${ASDF_PLUGIN_LIST}
+$3"
+      ;;
+    *)
+      return 2
+      ;;
+  esac
+}
+installAsdfPlugin nodejs
+assertEquals "0" "$asdf_plugin_adds" "existing asdf plugin should not be added again"
+installAsdfPlugin python
+assertEquals "1" "$asdf_plugin_adds" "missing asdf plugin should be added once"
+unset -f asdf
+unset ASDF_PLUGIN_LIST
+
 echo "Checking PATH entry detection..."
 PATH="/opt/macsetup/bin:/usr/bin:/bin:/Applications/Test App/bin"
 assertPathContains "/opt/macsetup/bin" "expected first PATH entry to be detected"

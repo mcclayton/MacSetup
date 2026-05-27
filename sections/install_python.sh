@@ -8,7 +8,7 @@ function runSection {
       assertFileExists ~/.tool-versions "Found ~/.tool-versions file" "~/.tool-versions not found, cannot install Python via \`asdf\`."
 
       info "Adding Python Plugin..."
-      asdf plugin add python
+      installAsdfPlugin python || return
 
       if [[ $REPLY =~ ^[Yy]$ ]]; then
         info "Installing Python from ~/.tool-versions: "$'\n'"---TOOLS---"$'\n'"$(cat ~/.tool-versions)"$'\n'"-----------"

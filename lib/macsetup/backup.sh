@@ -71,12 +71,16 @@ addLineToFiles() {
   local text="$1"
   local files_arr=("${@:2}")
   local file=""
+  local line="$text"
+
+  if [[ $text =~ ^\# ]]; then
+    line="$text (Added by MacSetup)"
+  fi
 
   for file in "${files_arr[@]}"; do
-    if [[ $text =~ ^\# ]]; then
-      echo "$text (Added by MacSetup)" >> "$file"
-    else
-      echo "$text" >> "$file"
+    touch "$file"
+    if ! grep -Fqx "$line" "$file"; then
+      echo "$line" >> "$file"
     fi
   done
 }
