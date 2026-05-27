@@ -8,6 +8,7 @@ ps1_prompt_palette() {
   PS1_PROMPT_DARK_RGB='24;25;38'
   PS1_PROMPT_TEXT_RGB='202;211;245'
   PS1_PROMPT_PLAIN_SEPARATOR="${PS1_PROMPT_PLAIN_SEPARATOR:-›}"
+  PS1_PROMPT_PLAIN_ARROW="${PS1_PROMPT_PLAIN_ARROW:-↳}"
 }
 
 ps1_prompt_git_branch_name() {
@@ -172,7 +173,7 @@ ps1_prompt_second_line() {
   local arrow
 
   if [ "$DISABLE_NERD_FONT_ICONS" = true ]; then
-    arrow='  ›  '
+    arrow="  $PS1_PROMPT_PLAIN_ARROW  "
   else
     arrow='  󱞩  '
   fi
