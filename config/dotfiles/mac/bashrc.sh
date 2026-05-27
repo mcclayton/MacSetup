@@ -97,104 +97,11 @@ export LSCOLORS=GxFxCxDxBxegedabagaced
 # Source fzf for current shell
 if [[ $(echo $BASH_VERSION) ]]; then
   [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+  [ -f ~/.ps1 ] && source ~/.ps1
 
   # Set the prompt
-  if [ "$TERM" != "dumb" ]; then
-    # Nix-prompt-inspired stacked badge prompt with a dark teal pill ramp and Catppuccin accents.
-    PROMPT_RESET='\[\033[0m\]'
-    PROMPT_FG_BLUE='\[\033[38;2;138;173;244m\]'
-    PROMPT_FG_GREEN='\[\033[38;2;166;218;149m\]'
-    PROMPT_FG_YELLOW='\[\033[38;2;238;212;159m\]'
-    PROMPT_FG_TEXT='\[\033[38;2;202;211;245m\]'
-    PROMPT_PRIMARY_RGB='36;39;58'
-    PROMPT_PATH_RGB='73;77;100'
-    PROMPT_GIT_RGB='91;96;120'
-    PROMPT_DARK_RGB='24;25;38'
-    PROMPT_PRIMARY_FG_RGB='202;211;245'
-    PROMPT_LIGHT_RGB='202;211;245'
-    INITIALS=$'\001\033[1m\002MCC\001\033[22m\002'
-
-    prompt_badge_bash() {
-      local label="$1"
-      local bg_rgb="$2"
-      local fg_rgb="${3:-$PROMPT_DARK_RGB}"
-
-      if [ "$DISABLE_NERD_FONT_ICONS" = true ]; then
-        printf '%s' "$label"
-        return
-      fi
-
-      printf '\001\033[38;2;%sm\002' "$bg_rgb"
-      printf '\001\033[38;2;%s;48;2;%sm\002 %s ' "$fg_rgb" "$bg_rgb" "$label"
-      printf '\001\033[0m\002'
-      printf '\001\033[38;2;%sm\002' "$bg_rgb"
-      printf '\001\033[0m\002'
-    }
-
-    prompt_leading_badge_bash() {
-      local label="$1"
-      local bg_rgb="$2"
-      local fg_rgb="${3:-$PROMPT_DARK_RGB}"
-      local next_bg_rgb="${4:-}"
-
-      if [ "$DISABLE_NERD_FONT_ICONS" = true ]; then
-        printf '%s' "$label"
-        return
-      fi
-
-      printf '\001\033[38;2;%s;48;2;%sm\002 %s ' "$fg_rgb" "$bg_rgb" "$label"
-      printf '\001\033[0m\002'
-      if [ -n "$next_bg_rgb" ]; then
-        printf '\001\033[38;2;%s;48;2;%sm\002' "$bg_rgb" "$next_bg_rgb"
-      else
-        printf '\001\033[38;2;%sm\002' "$bg_rgb"
-      fi
-      printf '\001\033[0m\002'
-    }
-
-    prompt_git_branch_name() {
-      git branch --show-current 2>/dev/null || git rev-parse --short HEAD 2>/dev/null
-    }
-
-    prompt_git_badge_bash() {
-      local branch
-      branch="$(prompt_git_branch_name)"
-      [ -z "$branch" ] && return
-
-      printf '%s' "$(prompt_leading_badge_bash " $branch" "$PROMPT_GIT_RGB" "$PROMPT_LIGHT_RGB")"
-    }
-
-    prompt_plain_git_bash() {
-      local branch
-      branch="$(prompt_git_branch_name)"
-      [ -z "$branch" ] && return
-
-      printf '%s' "$(prompt_ascii_segment_bash "$branch" "$PROMPT_GIT_RGB" "$PROMPT_LIGHT_RGB")"
-    }
-
-    prompt_ascii_segment_bash() {
-      local label="$1"
-      local bg_rgb="$2"
-      local fg_rgb="${3:-$PROMPT_LIGHT_RGB}"
-      local next_bg_rgb="${4:-}"
-
-      printf '\001\033[38;2;%s;48;2;%sm\002 %s ' "$fg_rgb" "$bg_rgb" "$label"
-      if [ -n "$next_bg_rgb" ]; then
-        printf '\001\033[38;2;%s;48;2;%sm\002>' "$bg_rgb" "$next_bg_rgb"
-      else
-        printf '\001\033[0m\002'
-      fi
-    }
-
-    if [ "$DISABLE_NERD_FONT_ICONS" = true ]; then
-      PS1_LINE_1="$(prompt_ascii_segment_bash "$INITIALS" "$PROMPT_PRIMARY_RGB" "$PROMPT_PRIMARY_FG_RGB" "$PROMPT_PATH_RGB")$(prompt_ascii_segment_bash "\w" "$PROMPT_PATH_RGB" "$PROMPT_LIGHT_RGB" "$PROMPT_GIT_RGB")\$(prompt_plain_git_bash)"
-      PS1_LINE_2="${PROMPT_FG_YELLOW}    $ $PROMPT_RESET"
-    else
-      PS1_LINE_1="$(prompt_leading_badge_bash "$INITIALS" "$PROMPT_PRIMARY_RGB" "$PROMPT_PRIMARY_FG_RGB" "$PROMPT_PATH_RGB")$(prompt_leading_badge_bash " \w" "$PROMPT_PATH_RGB" "$PROMPT_LIGHT_RGB" "$PROMPT_GIT_RGB")\$(prompt_git_badge_bash)"
-      PS1_LINE_2="$PROMPT_FG_YELLOW  󱞩  $ $PROMPT_RESET"
-    fi
-
-    PS1="$PS1_LINE_1\n$PS1_LINE_2"
+  if [ "$TERM" != "dumb" ] && type build_ps1_prompt >/dev/null 2>&1; then
+    PS1="$(build_ps1_prompt MCC)"
   fi
 fi
 

@@ -1,0 +1,217 @@
+# Shared shell prompt renderer for bash and zsh.
+
+ps1_prompt_palette() {
+  MCC_PS1_YELLOW_RGB='238;212;159'
+  MCC_PS1_PRIMARY_RGB='36;39;58'
+  MCC_PS1_PATH_RGB='73;77;100'
+  MCC_PS1_GIT_RGB='91;96;120'
+  MCC_PS1_DARK_RGB='24;25;38'
+  MCC_PS1_TEXT_RGB='202;211;245'
+}
+
+ps1_prompt_git_branch_name() {
+  git branch --show-current 2>/dev/null || git rev-parse --short HEAD 2>/dev/null
+}
+
+ps1_prompt_initials_label() {
+  local shell="$1"
+  local initials="$2"
+
+  case "$shell" in
+    zsh)
+      printf '%%B%s%%b' "$initials"
+      ;;
+    bash)
+      printf '\001\033[1m\002%s\001\033[22m\002' "$initials"
+      ;;
+    *)
+      printf '%s' "$initials"
+      ;;
+  esac
+}
+
+ps1_prompt_path_label() {
+  case "$1" in
+    zsh) printf '%%~' ;;
+    bash) printf '\\w' ;;
+  esac
+}
+
+ps1_prompt_reset() {
+  case "$1" in
+    zsh) printf '%%{\033[0m%%}' ;;
+    bash) printf '\001\033[0m\002' ;;
+  esac
+}
+
+ps1_prompt_fg() {
+  local shell="$1"
+  local rgb="$2"
+
+  case "$shell" in
+    zsh) printf '%%{\033[38;2;%sm%%}' "$rgb" ;;
+    bash) printf '\001\033[38;2;%sm\002' "$rgb" ;;
+  esac
+}
+
+ps1_prompt_style() {
+  local shell="$1"
+  local fg_rgb="$2"
+  local bg_rgb="$3"
+
+  case "$shell" in
+    zsh) printf '%%{\033[38;2;%s;48;2;%sm%%}' "$fg_rgb" "$bg_rgb" ;;
+    bash) printf '\001\033[38;2;%s;48;2;%sm\002' "$fg_rgb" "$bg_rgb" ;;
+  esac
+}
+
+ps1_prompt_segment_end() {
+  local shell="$1"
+  local bg_rgb="$2"
+  local next_bg_rgb="${3:-}"
+
+  if [ -n "$next_bg_rgb" ]; then
+    printf '%s' "$(ps1_prompt_style "$shell" "$bg_rgb" "$next_bg_rgb")"
+    printf ''
+  else
+    printf '%s' "$(ps1_prompt_fg "$shell" "$bg_rgb")"
+    printf ''
+  fi
+  printf '%s' "$(ps1_prompt_reset "$shell")"
+}
+
+ps1_prompt_leading_badge() {
+  local shell="$1"
+  local label="$2"
+  local bg_rgb="$3"
+  local fg_rgb="${4:-$MCC_PS1_DARK_RGB}"
+  local next_bg_rgb="${5:-}"
+
+  if [ "$DISABLE_NERD_FONT_ICONS" = true ]; then
+    printf '%s' "$label"
+    return
+  fi
+
+  printf '%s %s ' "$(ps1_prompt_style "$shell" "$fg_rgb" "$bg_rgb")" "$label"
+  printf '%s' "$(ps1_prompt_reset "$shell")"
+  ps1_prompt_segment_end "$shell" "$bg_rgb" "$next_bg_rgb"
+}
+
+ps1_prompt_ascii_segment() {
+  local shell="$1"
+  local label="$2"
+  local bg_rgb="$3"
+  local fg_rgb="${4:-$MCC_PS1_TEXT_RGB}"
+  local next_bg_rgb="${5:-}"
+
+  printf '%s %s ' "$(ps1_prompt_style "$shell" "$fg_rgb" "$bg_rgb")" "$label"
+  if [ -n "$next_bg_rgb" ]; then
+    printf '%s>' "$(ps1_prompt_style "$shell" "$bg_rgb" "$next_bg_rgb")"
+  else
+    printf '%s' "$(ps1_prompt_reset "$shell")"
+  fi
+}
+
+ps1_prompt_git_badge_zsh() {
+  local branch
+  branch="$(ps1_prompt_git_branch_name)"
+  [ -z "$branch" ] && return
+  branch="${branch//\%/%%}"
+
+  printf '%s' "$(ps1_prompt_leading_badge zsh " $branch" "$MCC_PS1_GIT_RGB" "$MCC_PS1_TEXT_RGB")"
+}
+
+ps1_prompt_git_badge_bash() {
+  local branch
+  branch="$(ps1_prompt_git_branch_name)"
+  [ -z "$branch" ] && return
+
+  printf '%s' "$(ps1_prompt_leading_badge bash " $branch" "$MCC_PS1_GIT_RGB" "$MCC_PS1_TEXT_RGB")"
+}
+
+ps1_prompt_plain_git_zsh() {
+  local branch
+  branch="$(ps1_prompt_git_branch_name)"
+  [ -z "$branch" ] && return
+  branch="${branch//\%/%%}"
+
+  printf '%s' "$(ps1_prompt_ascii_segment zsh "$branch" "$MCC_PS1_GIT_RGB" "$MCC_PS1_TEXT_RGB")"
+}
+
+ps1_prompt_plain_git_bash() {
+  local branch
+  branch="$(ps1_prompt_git_branch_name)"
+  [ -z "$branch" ] && return
+
+  printf '%s' "$(ps1_prompt_ascii_segment bash "$branch" "$MCC_PS1_GIT_RGB" "$MCC_PS1_TEXT_RGB")"
+}
+
+ps1_prompt_git_command() {
+  local shell="$1"
+  local mode="$2"
+
+  case "$shell:$mode" in
+    zsh:plain) printf '$(ps1_prompt_plain_git_zsh)' ;;
+    zsh:badge) printf '$(ps1_prompt_git_badge_zsh)' ;;
+    bash:plain) printf '$(ps1_prompt_plain_git_bash)' ;;
+    bash:badge) printf '$(ps1_prompt_git_badge_bash)' ;;
+  esac
+}
+
+ps1_prompt_second_line() {
+  local shell="$1"
+  local arrow
+
+  if [ "$DISABLE_NERD_FONT_ICONS" = true ]; then
+    arrow='    '
+  else
+    arrow='  󱞩  '
+  fi
+
+  printf '%s%s$ %s' \
+    "$(ps1_prompt_fg "$shell" "$MCC_PS1_YELLOW_RGB")" \
+    "$arrow" \
+    "$(ps1_prompt_reset "$shell")"
+}
+
+ps1_build_prompt_for_shell() {
+  local shell="$1"
+  local initials="${2:-MCC}"
+  local initials_label
+  local path_label
+  local line_1
+  local line_2
+
+  ps1_prompt_palette
+  initials_label="$(ps1_prompt_initials_label "$shell" "$initials")"
+  path_label="$(ps1_prompt_path_label "$shell")"
+
+  if [ "$DISABLE_NERD_FONT_ICONS" = true ]; then
+    line_1="$(ps1_prompt_ascii_segment "$shell" "$initials_label" "$MCC_PS1_PRIMARY_RGB" "$MCC_PS1_TEXT_RGB" "$MCC_PS1_PATH_RGB")"
+    line_1="$line_1$(ps1_prompt_ascii_segment "$shell" "$path_label" "$MCC_PS1_PATH_RGB" "$MCC_PS1_TEXT_RGB" "$MCC_PS1_GIT_RGB")"
+    line_1="$line_1$(ps1_prompt_git_command "$shell" plain)"
+  else
+    line_1="$(ps1_prompt_leading_badge "$shell" "$initials_label" "$MCC_PS1_PRIMARY_RGB" "$MCC_PS1_TEXT_RGB" "$MCC_PS1_PATH_RGB")"
+    line_1="$line_1$(ps1_prompt_leading_badge "$shell" " $path_label" "$MCC_PS1_PATH_RGB" "$MCC_PS1_TEXT_RGB" "$MCC_PS1_GIT_RGB")"
+    line_1="$line_1$(ps1_prompt_git_command "$shell" badge)"
+  fi
+
+  line_2="$(ps1_prompt_second_line "$shell")"
+  printf '%s\n%s' "$line_1" "$line_2"
+}
+
+build_ps1_prompt_zsh() {
+  ps1_build_prompt_for_shell zsh "$1"
+}
+
+build_ps1_prompt_bash() {
+  ps1_build_prompt_for_shell bash "$1"
+}
+
+build_ps1_prompt() {
+  if [ -n "${ZSH_VERSION:-}" ]; then
+    build_ps1_prompt_zsh "$@"
+  elif [ -n "${BASH_VERSION:-}" ]; then
+    build_ps1_prompt_bash "$@"
+  fi
+}
