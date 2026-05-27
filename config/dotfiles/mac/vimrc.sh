@@ -18,6 +18,7 @@ set scrolloff=8
 
 "Mouse support
 set mouse=a
+let g:NERDTreeMouseMode = 2
 
 "Show current cursor position
 set ruler

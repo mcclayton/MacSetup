@@ -102,22 +102,108 @@ if [[ $(echo $ZSH_VERSION) ]]; then
 
   # Set the prompt
   if [ "$TERM" != "dumb" ]; then
-    # Nice pretty color prompt with the current host and our current directory
-    RED='%F{9}'; GRAY='%F{8}'; BLUE='%F{blue}'; GREEN='%F{green}'
-    INITIALS='MCC'
-    BOLT='⚡️'
-    ARROW_SEPARATOR='      ↳'
-    HEARTS="$RED  "
-    HEARTS_ARROW_SEPARATOR='       ↳'
+    # Nix-prompt-inspired stacked badge prompt with a dark teal pill ramp and Catppuccin accents.
+    setopt prompt_subst
+    PROMPT_RESET=$'%{\e[0m%}'
+    PROMPT_FG_BLUE=$'%{\e[38;2;138;173;244m%}'
+    PROMPT_FG_GREEN=$'%{\e[38;2;166;218;149m%}'
+    PROMPT_FG_YELLOW=$'%{\e[38;2;238;212;159m%}'
+    PROMPT_FG_TEXT=$'%{\e[38;2;202;211;245m%}'
+    PROMPT_PRIMARY_RGB='36;39;58'
+    PROMPT_PATH_RGB='73;77;100'
+    PROMPT_GIT_RGB='91;96;120'
+    PROMPT_DARK_RGB='24;25;38'
+    PROMPT_PRIMARY_FG_RGB='202;211;245'
+    PROMPT_LIGHT_RGB='202;211;245'
+    INITIALS='%BMCC%b'
 
-    if [ "$DISABLE_NERD_FONT_ICONS" = true ]; then
-      PS1_LINE_1="$BOLT  $GRAY$INITIALS:$BLUE%~$RED\$(parse_git_branch)"
-      PS1_LINE_2="$GRAY$ARROW_SEPARATOR$GREEN  $ %{$reset_color%}"
-    else
-      PS1_LINE_1="$HEARTS  $GRAY$INITIALS:$BLUE%~$RED\$(parse_git_branch)"
-      PS1_LINE_2="$GRAY$HEARTS_ARROW_SEPARATOR$GREEN  $ %{$reset_color%}"
-    fi
+    prompt_badge_zsh() {
+      local label="$1"
+      local bg_rgb="$2"
+      local fg_rgb="${3:-$PROMPT_DARK_RGB}"
 
-    PS1="%B$PS1_LINE_1"$'\n'"$PS1_LINE_2%"
+      if [ "$DISABLE_NERD_FONT_ICONS" = true ]; then
+        printf '%s' "$label"
+        return
+      fi
+
+      printf '%%{\033[38;2;%sm%%}' "$bg_rgb"
+      printf '%%{\033[38;2;%s;48;2;%sm%%} %s ' "$fg_rgb" "$bg_rgb" "$label"
+      printf '%%{\033[0m%%}'
+      printf '%%{\033[38;2;%sm%%}' "$bg_rgb"
+      printf '%%{\033[0m%%}'
+    }
+
+    prompt_leading_badge_zsh() {
+      local label="$1"
+      local bg_rgb="$2"
+      local fg_rgb="${3:-$PROMPT_DARK_RGB}"
+      local next_bg_rgb="${4:-}"
+
+      if [ "$DISABLE_NERD_FONT_ICONS" = true ]; then
+        printf '%s' "$label"
+        return
+      fi
+
+      printf '%%{\033[38;2;%s;48;2;%sm%%} %s ' "$fg_rgb" "$bg_rgb" "$label"
+      printf '%%{\033[0m%%}'
+      if [ -n "$next_bg_rgb" ]; then
+        printf '%%{\033[38;2;%s;48;2;%sm%%}' "$bg_rgb" "$next_bg_rgb"
+      else
+        printf '%%{\033[38;2;%sm%%}' "$bg_rgb"
+      fi
+      printf '%%{\033[0m%%}'
+    }
+
+    prompt_git_branch_name() {
+      git branch --show-current 2>/dev/null || git rev-parse --short HEAD 2>/dev/null
+    }
+
+    prompt_git_badge_zsh() {
+      local branch
+      branch="$(prompt_git_branch_name)"
+      [ -z "$branch" ] && return
+      branch="${branch//\%/%%}"
+
+      printf '%s' "$(prompt_leading_badge_zsh " $branch" "$PROMPT_GIT_RGB" "$PROMPT_LIGHT_RGB")"
+    }
+
+    prompt_plain_git_zsh() {
+      local branch
+      branch="$(prompt_git_branch_name)"
+      [ -z "$branch" ] && return
+      branch="${branch//\%/%%}"
+
+      printf '%s' "$(prompt_ascii_segment_zsh "$branch" "$PROMPT_GIT_RGB" "$PROMPT_LIGHT_RGB")"
+    }
+
+    prompt_ascii_segment_zsh() {
+      local label="$1"
+      local bg_rgb="$2"
+      local fg_rgb="${3:-$PROMPT_LIGHT_RGB}"
+      local next_bg_rgb="${4:-}"
+
+      printf '%%{\033[38;2;%s;48;2;%sm%%} %s ' "$fg_rgb" "$bg_rgb" "$label"
+      if [ -n "$next_bg_rgb" ]; then
+        printf '%%{\033[38;2;%s;48;2;%sm%%}>' "$bg_rgb" "$next_bg_rgb"
+      else
+        printf '%%{\033[0m%%}'
+      fi
+    }
+
+    prompt_set_mcc_zsh() {
+      if [ "$DISABLE_NERD_FONT_ICONS" = true ]; then
+        PS1_LINE_1="$(prompt_ascii_segment_zsh "$INITIALS" "$PROMPT_PRIMARY_RGB" "$PROMPT_PRIMARY_FG_RGB" "$PROMPT_PATH_RGB")$(prompt_ascii_segment_zsh "%~" "$PROMPT_PATH_RGB" "$PROMPT_LIGHT_RGB" "$PROMPT_GIT_RGB")\$(prompt_plain_git_zsh)"
+        PS1_LINE_2="${PROMPT_FG_YELLOW}    \$ $PROMPT_RESET"
+      else
+        PS1_LINE_1="$(prompt_leading_badge_zsh "$INITIALS" "$PROMPT_PRIMARY_RGB" "$PROMPT_PRIMARY_FG_RGB" "$PROMPT_PATH_RGB")$(prompt_leading_badge_zsh " %~" "$PROMPT_PATH_RGB" "$PROMPT_LIGHT_RGB" "$PROMPT_GIT_RGB")\$(prompt_git_badge_zsh)"
+        PS1_LINE_2="$PROMPT_FG_YELLOW  󱞩  \$ $PROMPT_RESET"
+      fi
+
+      PS1="$PS1_LINE_1"$'\n'"$PS1_LINE_2"
+      PROMPT="$PS1"
+    }
+
+    prompt_set_mcc_zsh
   fi
 fi
