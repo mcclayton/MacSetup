@@ -71,14 +71,22 @@ assertPathMissing() {
   fi
 }
 
-echo "Checking idempotent managed file appends..."
+echo "Checking idempotent managed block appends..."
 tmp_lines="$(mktemp)"
-addLineToFiles "# Example" "$tmp_lines"
-addLineToFiles "# Example" "$tmp_lines"
-addLineToFiles "value" "$tmp_lines"
-addLineToFiles "value" "$tmp_lines"
-assertEquals "1" "$(grep -Fxc "# Example (Added by MacSetup)" "$tmp_lines")" "comment line should be appended once"
-assertEquals "1" "$(grep -Fxc "value" "$tmp_lines")" "plain line should be appended once"
+printf '%s\n' '}' > "$tmp_lines"
+addManagedLinesToFiles "Example Block" "$tmp_lines" -- \
+  "" \
+  "# Example Block" \
+  "example() {" \
+  "}"
+addManagedLinesToFiles "Example Block" "$tmp_lines" -- \
+  "" \
+  "# Example Block" \
+  "example() {" \
+  "}"
+assertEquals "1" "$(grep -Fxc "# Example Block (Added by MacSetup)" "$tmp_lines")" "managed block marker should be appended once"
+assertEquals "1" "$(grep -Fxc "example() {" "$tmp_lines")" "managed block content should be appended once"
+assertEquals "2" "$(grep -Fxc "}" "$tmp_lines")" "managed block should preserve structural lines even when already present"
 rm -f "$tmp_lines"
 
 echo "Checking idempotent asdf plugin installation..."

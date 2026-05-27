@@ -8,19 +8,22 @@ configureICU4C() {
   info "Configuring icu4c"
   ICU_PATH=$(brew --prefix icu4c)
   # Add To Path
-  addLineToFiles "" ~/.bash_profile ~/.zprofile
-  addLineToFiles "# Add icu4c to path" ~/.bash_profile ~/.zprofile
-  addLineToFiles "$(pathPrependShellLine "$ICU_PATH/bin")" ~/.bash_profile ~/.zprofile
-  addLineToFiles "$(pathPrependShellLine "$ICU_PATH/sbin")" ~/.bash_profile ~/.zprofile
+  addManagedLinesToFiles "Add icu4c to path" ~/.bash_profile ~/.zprofile -- \
+    "" \
+    "# Add icu4c to path" \
+    "$(pathPrependShellLine "$ICU_PATH/bin")" \
+    "$(pathPrependShellLine "$ICU_PATH/sbin")"
   # Enable Compilers to find icu4c
-  addLineToFiles "" ~/.bash_profile ~/.zprofile
-  addLineToFiles "# Enable compilers to find icu4c" ~/.bash_profile ~/.zprofile
-  addLineToFiles "export LDFLAGS=\"-L$ICU_PATH/lib\"" ~/.bash_profile ~/.zprofile
-  addLineToFiles "export CPPFLAGS=\"-I$ICU_PATH/include\"" ~/.bash_profile ~/.zprofile
+  addManagedLinesToFiles "Enable compilers to find icu4c" ~/.bash_profile ~/.zprofile -- \
+    "" \
+    "# Enable compilers to find icu4c" \
+    "export LDFLAGS=\"-L$ICU_PATH/lib\"" \
+    "export CPPFLAGS=\"-I$ICU_PATH/include\""
   # Enable pkg-config to find icu4c
-  addLineToFiles "" ~/.bash_profile ~/.zprofile
-  addLineToFiles "# Enable pkg-config to find icu4c" ~/.bash_profile ~/.zprofile
-  addLineToFiles "export PKG_CONFIG_PATH=\"$ICU_PATH/lib/pkgconfig\"" ~/.bash_profile ~/.zprofile
+  addManagedLinesToFiles "Enable pkg-config to find icu4c" ~/.bash_profile ~/.zprofile -- \
+    "" \
+    "# Enable pkg-config to find icu4c" \
+    "export PKG_CONFIG_PATH=\"$ICU_PATH/lib/pkgconfig\""
 
   # Source in the changes
   [ -f ~/.bash_profile ] && source ~/.bash_profile
@@ -31,10 +34,11 @@ configureOpenSSL() {
   info "Configuring openssl"
   OPEN_SSL_PATH=$(brew --prefix openssl)
   # Add To Path
-  addLineToFiles "" ~/.bash_profile ~/.zprofile
-  addLineToFiles "# Add openssl to path" ~/.bash_profile ~/.zprofile
-  addLineToFiles "$(pathPrependShellLine "$OPEN_SSL_PATH/bin")" ~/.bash_profile ~/.zprofile
-  addLineToFiles "$(pathPrependShellLine "$OPEN_SSL_PATH/sbin")" ~/.bash_profile ~/.zprofile
+  addManagedLinesToFiles "Add openssl to path" ~/.bash_profile ~/.zprofile -- \
+    "" \
+    "# Add openssl to path" \
+    "$(pathPrependShellLine "$OPEN_SSL_PATH/bin")" \
+    "$(pathPrependShellLine "$OPEN_SSL_PATH/sbin")"
 
   # TODO: Need to make sure that this adds values to these env vars rather than directly
   # setting them
@@ -112,9 +116,10 @@ configureVSCode() {
       done
 
       info 'Adding VSCode to $PATH'
-      addLineToFiles "" ~/.bash_profile ~/.zprofile
-      addLineToFiles "# Add Visual Studio Code (code)" ~/.bash_profile ~/.zprofile
-      addLineToFiles "$(pathAppendShellLine '/Applications/Visual Studio Code.app/Contents/Resources/app/bin')" ~/.bash_profile ~/.zprofile
+      addManagedLinesToFiles "Add Visual Studio Code (code)" ~/.bash_profile ~/.zprofile -- \
+        "" \
+        "# Add Visual Studio Code (code)" \
+        "$(pathAppendShellLine '/Applications/Visual Studio Code.app/Contents/Resources/app/bin')"
 
       info 'Setting settings.json file'
       SETTINGS_PATH=~/Library/'Application Support'/Code/User/settings.json
