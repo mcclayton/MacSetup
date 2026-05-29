@@ -61,4 +61,6 @@ runWithoutStderr env TERM=xterm-ghostty bash -c '
   source ./config/dotfiles/mac/bashrc.sh || true
   declare -F clearTerminal >/dev/null
   clearTerminal >/dev/null
+  declare -F clear >/dev/null
+  clear >/dev/null
 '
