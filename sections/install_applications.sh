@@ -38,6 +38,8 @@ function runSection {
         unset IFS
 
         # Install applications that need configuring
+        # Install DisplayLink Manager for external displays
+        caskInstallAppPrompt "DisplayLink Manager.app" "displaylink" configureDisplayLink
         # Install Rectangle
         caskInstallAppPrompt "Rectangle.app" "rectangle" configureRectangle
         # Install Visual Studio Code

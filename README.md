@@ -67,6 +67,14 @@ installer remains scriptable and portable.
 - `config/` contains desired machine configuration such as dotfiles, Git config, VSCode settings, terminal preferences, app preferences, and asdf tool versions.
 - `assets/` contains copied/static payloads such as fonts, wallpapers, Vim runtime files, the Aerial screensaver, splash images, and demo media.
 
+## Personal Skills
+
+Place custom skills in `config/skills/shared/`, `config/skills/claude/`, or
+`config/skills/codex/`. The installer offers a Skills section that links them into
+Claude Code and Codex personal skill directories, backing up conflicts and
+preserving unrelated skills. These directories start empty.
+See [the skills guide](config/skills/README.md) for structure and installation.
+
 ## Testing
 
 Run the local shell and installer checks with:

@@ -1,0 +1,4 @@
+interface:
+  display_name: "My Address Comments"
+  short_description: "Triage and resolve PR review comments"
+  default_prompt: "Use $my-address-comments to triage and resolve the review comments on this pull request."

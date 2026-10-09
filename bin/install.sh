@@ -35,6 +35,7 @@ function main {
     "setup_wallpaper"
     "setup_screensavers"
     "setup_dot_files"
+    "setup_skills"
     "setup_splash_screen"
     "setup_vim"
     "setup_homebrew"

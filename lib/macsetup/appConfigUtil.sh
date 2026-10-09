@@ -207,3 +207,13 @@ configureGhostty() {
 configureDocker() {
   manualAction "Open the Docker Desktop Application and grant priveledged access"
 }
+
+configureDisplayLink() {
+  local applications_dir="${MACSETUP_APPLICATIONS_DIR:-/Applications}"
+  if [ ! -d "$applications_dir/DisplayLink Manager.app" ]; then
+    fail "Cannot configure DisplayLink Manager as it is not installed"
+    return 1
+  fi
+
+  manualAction "Open DisplayLink Manager from Applications and connect your DisplayLink dock or adapter.\nFollow its setup wizard to allow Screen Recording in System Settings > Privacy & Security (Screen & System Audio Recording on newer macOS versions), then restart DisplayLink Manager when prompted.\nAllow background activity if requested, and enable automatic launch at login if available.\nRestart your Mac if the installer requests it, then verify your external displays work."
+}

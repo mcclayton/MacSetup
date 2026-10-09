@@ -67,6 +67,8 @@ runChecks() {
   echo "Checking focused package configuration behavior..."
   ./ci/test_configure_bat.sh
   ./ci/test_configure_ghostty.sh
+  bash ./ci/test_configure_displaylink.sh
+  bash ./ci/test_setup_skills.sh
 }
 
 runDockerOldProfile() {

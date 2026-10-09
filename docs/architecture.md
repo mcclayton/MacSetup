@@ -38,6 +38,9 @@ verify the result.
   ignore files copied into the user's home directory.
 - `config/git/` contains Git configuration files.
 - `config/asdf/` contains asdf tool version configuration.
+- `config/skills/` contains complete personal skills shared between or specific
+  to Claude Code and Codex. `setup_skills` links each selected skill into its
+  agent's personal discovery directory; source files remain in the checkout.
 - `config/vscode/` contains VSCode settings and extension lists.
 - `config/terminal/` contains terminal emulator preferences.
 - `config/apps/` contains application preference files.
