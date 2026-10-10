@@ -74,6 +74,7 @@ HIST_STAMPS="mm/dd/yyyy"
 plugins=(git zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
+[ -f ~/.shell_common ] && source ~/.shell_common
 
 # User configuration
 
@@ -82,24 +83,9 @@ source $ZSH/oh-my-zsh.sh
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
-# Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='code'
-fi
-
-
-export PATH="/usr/local/bin:$PATH"
-export PATH="/usr/local/sbin:$PATH"
-
-# Load .bashrc if it exists
-test -f ~/.bashrc && source ~/.bashrc
-
 if [[ $(echo $ZSH_VERSION) ]]; then
   # Source fzf for current shell
   [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-  [ -f ~/.ps1 ] && source ~/.ps1
 
   # Set the prompt
   if [ "$TERM" != "dumb" ] && type build_ps1_prompt >/dev/null 2>&1; then

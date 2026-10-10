@@ -63,14 +63,17 @@ function runSection {
 
         # Preserve white space by changing the Internal Field Separator
         IFS='%'
-        addLineToFiles "" $SSH_CONFIG
-        addLineToFiles "# Git SSH" $SSH_CONFIG
-        addLineToFiles "Host *" $SSH_CONFIG
-        addLineToFiles "  AddKeysToAgent yes" $SSH_CONFIG
+        local gitSshConfigLines=(
+          ""
+          "# Git SSH"
+          "Host *"
+          "  AddKeysToAgent yes"
+        )
         if isMacOs; then
-          addLineToFiles "  UseKeychain yes" $SSH_CONFIG
+          gitSshConfigLines+=("  UseKeychain yes")
         fi
-        addLineToFiles "  IdentityFile $KEY_PATH" $SSH_CONFIG
+        gitSshConfigLines+=("  IdentityFile $KEY_PATH")
+        addManagedLinesToFiles "Git SSH" "$SSH_CONFIG" -- "${gitSshConfigLines[@]}"
         # Reset the Internal Field Separator
         unset IFS
 

@@ -1,6 +1,4 @@
-source ~/.config_vars
-source ~/.utility_aliases
-source ~/.splash_screens
+[ -f ~/.shell_common ] && source ~/.shell_common
 
 # This file is processed on each interactive invocation of bash
 
@@ -22,16 +20,6 @@ bind '"\C-a": backward-word'
 bind '"\C-d": forward-word' # Note Ctrl+D is EOF, so this is a bit of a misnomer to override
 bind '"\C-s": beginning-of-line'
 bind '"\C-w": end-of-line'
-
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  if cmdExists code; then
-    export EDITOR='code'
-  else
-    export EDITOR='vim'
-  fi
-fi
 
 # Don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
@@ -97,7 +85,6 @@ export LSCOLORS=GxFxCxDxBxegedabagaced
 # Source fzf for current shell
 if [[ $(echo $BASH_VERSION) ]]; then
   [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-  [ -f ~/.ps1 ] && source ~/.ps1
 
   # Set the prompt
   if [ "$TERM" != "dumb" ] && type build_ps1_prompt >/dev/null 2>&1; then

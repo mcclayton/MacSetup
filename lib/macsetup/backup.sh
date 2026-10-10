@@ -73,10 +73,44 @@ addLineToFiles() {
   local file=""
 
   for file in "${files_arr[@]}"; do
+    touch "$file"
     if [[ $text =~ ^\# ]]; then
       echo "$text (Added by MacSetup)" >> "$file"
     else
       echo "$text" >> "$file"
     fi
+  done
+}
+
+addManagedLinesToFiles() {
+  local marker="$1"
+  shift
+  local files_arr=()
+  local file=""
+  local text=""
+  local marker_line="# $marker (Added by MacSetup)"
+
+  while [ "$#" -gt 0 ] && [ "$1" != "--" ]; do
+    files_arr+=("$1")
+    shift
+  done
+
+  if [ "$#" -gt 0 ] && [ "$1" = "--" ]; then
+    shift
+  fi
+
+  for file in "${files_arr[@]}"; do
+    touch "$file"
+    if grep -Fqx "$marker_line" "$file"; then
+      continue
+    fi
+
+    for text in "$@"; do
+      if [[ $text =~ ^\# ]]; then
+        echo "$text (Added by MacSetup)" >> "$file"
+      else
+        echo "$text" >> "$file"
+      fi
+    done
   done
 }

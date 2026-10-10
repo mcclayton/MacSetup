@@ -18,17 +18,30 @@ cmdExists() {
 
 pathContainsEntry() {
   local path_entry="$1"
-  local old_ifs="$IFS"
+  local old_ifs="${IFS-}"
+  local had_ifs=0
   local part=""
+
+  if [ "${IFS+x}" = "x" ]; then
+    had_ifs=1
+  fi
 
   IFS=:
   for part in $PATH; do
     if [ "$part" = "$path_entry" ]; then
-      IFS="$old_ifs"
+      if [ "$had_ifs" -eq 1 ]; then
+        IFS="$old_ifs"
+      else
+        unset IFS
+      fi
       return 0
     fi
   done
-  IFS="$old_ifs"
+  if [ "$had_ifs" -eq 1 ]; then
+    IFS="$old_ifs"
+  else
+    unset IFS
+  fi
 
   return 1
 }

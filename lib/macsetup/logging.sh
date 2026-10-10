@@ -14,43 +14,75 @@ logEntry() {
 
 warn() {
   local msg=""
+  local old_ifs="${IFS-}"
+  local had_ifs=0
 
+  if [ "${IFS+x}" = "x" ]; then
+    had_ifs=1
+  fi
   IFS='%'
   msg="$YELLOW ⚠ $1 $RESET_COLOR"
   echo -e "$msg"
   echo
 
   logEntry "$msg"
-  unset IFS
+  if [ "$had_ifs" -eq 1 ]; then
+    IFS="$old_ifs"
+  else
+    unset IFS
+  fi
 }
 
 info() {
   local msg=""
+  local old_ifs="${IFS-}"
+  local had_ifs=0
 
+  if [ "${IFS+x}" = "x" ]; then
+    had_ifs=1
+  fi
   IFS='%'
   msg="$GRAY ⓘ $1 $RESET_COLOR"
   echo -e "$msg"
   echo
 
   logEntry "$msg"
-  unset IFS
+  if [ "$had_ifs" -eq 1 ]; then
+    IFS="$old_ifs"
+  else
+    unset IFS
+  fi
 }
 
 success() {
   local msg=""
+  local old_ifs="${IFS-}"
+  local had_ifs=0
 
+  if [ "${IFS+x}" = "x" ]; then
+    had_ifs=1
+  fi
   IFS='%'
   msg="$GREEN ✔ $1 $RESET_COLOR"
   echo -e "$msg"
   echo
 
   logEntry "$msg"
-  unset IFS
+  if [ "$had_ifs" -eq 1 ]; then
+    IFS="$old_ifs"
+  else
+    unset IFS
+  fi
 }
 
 fail() {
   local msg=""
+  local old_ifs="${IFS-}"
+  local had_ifs=0
 
+  if [ "${IFS+x}" = "x" ]; then
+    had_ifs=1
+  fi
   IFS='%'
   msg="$RED ✘ $1 $RESET_COLOR"
   echo -e "$msg"
@@ -58,7 +90,11 @@ fail() {
 
   logEntry "$msg"
   FAILURES_ARRAY+=("$msg")
-  unset IFS
+  if [ "$had_ifs" -eq 1 ]; then
+    IFS="$old_ifs"
+  else
+    unset IFS
+  fi
 }
 
 generateLog() {

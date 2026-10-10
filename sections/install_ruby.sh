@@ -8,7 +8,7 @@ function runSection {
       assertFileExists ~/.tool-versions "Found ~/.tool-versions file" "~/.tool-versions not found, cannot install Ruby via \`asdf\`."
 
       info "Adding Ruby Plugin..."
-      asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
+      installAsdfPlugin ruby https://github.com/asdf-vm/asdf-ruby.git || return
 
       if [[ $REPLY =~ ^[Yy]$ ]]; then
         info "Installing Ruby from ~/.tool-versions: "$'\n'"---TOOLS---"$'\n'"$(cat ~/.tool-versions)"$'\n'"-----------"

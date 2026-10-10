@@ -16,6 +16,22 @@ installPackage() {
   fi
 }
 
+installAsdfPlugin() {
+  local plugin="$1"
+  local plugin_url="${2:-}"
+
+  if asdf plugin list 2>/dev/null | grep -Fxq "$plugin"; then
+    info "asdf plugin $plugin is already installed"
+    return 0
+  fi
+
+  if [ -n "$plugin_url" ]; then
+    asdf plugin add "$plugin" "$plugin_url"
+  else
+    asdf plugin add "$plugin"
+  fi
+}
+
 caskInstallAppPrompt() {
   promptYesNo "Install application $1?"
 

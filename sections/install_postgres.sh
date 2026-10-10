@@ -8,7 +8,7 @@ function runSection {
       assertFileExists ~/.tool-versions "Found ~/.tool-versions file" "~/.tool-versions not found, cannot install Postgres via \`asdf\`."
 
       info "Adding Postgres Plugin..."
-      asdf plugin add postgres
+      installAsdfPlugin postgres || return
 
       if [[ $REPLY =~ ^[Yy]$ ]]; then
         info "Installing Postgres from ~/.tool-versions: "$'\n'"---TOOLS---"$'\n'"$(cat ~/.tool-versions)"$'\n'"-----------"
@@ -21,11 +21,12 @@ function runSection {
           POSTGRES_PATH=$(asdf where postgres)
           # Preserve white space by changing the Internal Field Separator
           IFS='%'
-          addLineToFiles "" ~/.utility_aliases
-          addLineToFiles "# Start Postgres" ~/.utility_aliases
-          addLineToFiles "startPostgres() {" ~/.utility_aliases
-          addLineToFiles "  $POSTGRES_PATH/bin/pg_ctl -D $POSTGRES_PATH/data start" ~/.utility_aliases
-          addLineToFiles "}" ~/.utility_aliases
+          addManagedLinesToFiles "Start Postgres" ~/.utility_aliases -- \
+            "" \
+            "# Start Postgres" \
+            "startPostgres() {" \
+            "  $POSTGRES_PATH/bin/pg_ctl -D $POSTGRES_PATH/data start" \
+            "}"
           # Reset the Internal Field Separator
           unset IFS
 
